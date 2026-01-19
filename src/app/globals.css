@@ -1,26 +1,48 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: var(--font-inter);
+  
+  --color-medical-green-50: #ecfdf5;
+  --color-medical-green-100: #d1fae5;
+  --color-medical-green-200: #a7f3d0;
+  --color-medical-green-300: #6ee7b7;
+  --color-medical-green-400: #34d399;
+  --color-medical-green-500: #10b981;
+  --color-medical-green-600: #059669;
+  --color-medical-green-700: #047857;
+  --color-medical-green-800: #065f46;
+  --color-medical-green-900: #064e3b;
+
+  --color-medical-blue-50: #f0f9ff;
+  --color-medical-blue-100: #e0f2fe;
+  --color-medical-blue-200: #bae6fd;
+  --color-medical-blue-300: #7dd3fc;
+  --color-medical-blue-400: #38bdf8;
+  --color-medical-blue-500: #0ea5e9;
+  --color-medical-blue-600: #0284c7;
+  --color-medical-blue-700: #0369a1;
+  --color-medical-blue-800: #075985;
+  --color-medical-blue-900: #0c4a6e;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Custom Utilities for Glassmorphism */
+@utility glass-panel {
+  @apply backdrop-blur-md bg-white/60 border border-white/40 shadow-xl;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility glass-card {
+  @apply backdrop-blur-sm bg-white/40 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300;
 }
 
+@utility glass-btn {
+  @apply backdrop-blur-sm bg-medical-green-600/90 text-white hover:bg-medical-green-500 transition-colors shadow-md;
+}
+
+/* Base Styles */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(circle at top left, var(--color-medical-green-50), transparent 40%),
+              radial-gradient(circle at bottom right, var(--color-medical-blue-50), transparent 40%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
