@@ -18,7 +18,7 @@ export default function ContactPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                         {/* Contact Info */}
-                        <GlassCard className="p-8" variant="panel">
+                        <GlassCard className="p-8" variant="panel" id="contact-details">
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
                             <div className="space-y-6">
                                 <div className="flex items-start gap-4">
@@ -27,7 +27,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-gray-900">Address</h3>
-                                        <p className="text-gray-600">123 Health Avenue<br />Medical City, MC 10293</p>
+                                        <p className="text-gray-600">29 C, Perera Avenue,<br />Kohuwala, Nugegoda,<br />Sri Lanka</p>
                                     </div>
                                 </div>
 
@@ -37,8 +37,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-gray-900">Phone</h3>
-                                        <p className="text-gray-600">+1 (234) 567-890</p>
-                                        <p className="text-gray-500 text-sm">Mon-Fri 8am to 6pm</p>
+                                        <p className="text-gray-600">+94 71 873 9060</p>
                                     </div>
                                 </div>
 
@@ -48,8 +47,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-gray-900">Email</h3>
-                                        <p className="text-gray-600">admissions@medinstitute.edu</p>
-                                        <p className="text-gray-600">info@medinstitute.edu</p>
+                                        <p className="text-gray-600">mrcgpinternationalosce@gmail.com</p>
                                     </div>
                                 </div>
                             </div>
@@ -75,8 +73,17 @@ export default function ContactPage() {
                                 </ul>
                             </div>
 
-                            <div className="mt-8 rounded-xl overflow-hidden bg-gray-200 h-48 flex items-center justify-center">
-                                <span className="text-gray-500 font-medium">Google Maps Integration</span>
+                            <div className="mt-8 rounded-xl overflow-hidden bg-gray-200 h-64 shadow-inner">
+                                <iframe
+                                    src="https://www.google.com/maps?q=29+C,+Perera+Avenue,+Kohuwala,+Nugegoda,+Sri+Lanka&output=embed"
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0 }}
+                                    allowFullScreen
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    title="Family Medicine Forum Location"
+                                ></iframe>
                             </div>
                         </GlassCard>
                     </div>

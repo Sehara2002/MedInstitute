@@ -6,7 +6,7 @@ export function Footer() {
             <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">MedInstitute</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Family Medicine Forum</h3>
                         <p className="text-gray-600">
                             Excellence in medical education and healthcare training.
                             Building the next generation of healthcare professionals.
@@ -15,17 +15,17 @@ export function Footer() {
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact</h3>
                         <ul className="space-y-3">
-                            <li className="flex items-center text-gray-600 gap-2">
-                                <MapPin className="h-4 w-4 text-medical-green-600" />
-                                123 Health Avenue, Medical City
+                            <li className="flex items-start text-gray-600 gap-2">
+                                <MapPin className="h-4 w-4 text-medical-green-600 mt-1 flex-shrink-0" />
+                                <span>29 C, Perera Avenue,<br />Kohuwala, Nugegoda,<br />Sri Lanka</span>
                             </li>
                             <li className="flex items-center text-gray-600 gap-2">
                                 <Phone className="h-4 w-4 text-medical-green-600" />
-                                +1 234 567 890
+                                +94 71 873 9060
                             </li>
                             <li className="flex items-center text-gray-600 gap-2">
                                 <Mail className="h-4 w-4 text-medical-green-600" />
-                                info@medinstitute.edu
+                                mrcgpinternationalosce@gmail.com
                             </li>
                         </ul>
                     </div>
@@ -41,7 +41,7 @@ export function Footer() {
                     </div>
                 </div>
                 <div className="mt-8 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
-                    © {new Date().getFullYear()} MedInstitute. All rights reserved.
+                    © {new Date().getFullYear()} Family Medicine Forum. All rights reserved.
                 </div>
             </div>
         </footer>

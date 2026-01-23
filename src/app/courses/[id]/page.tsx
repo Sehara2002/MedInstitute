@@ -65,46 +65,69 @@ export default async function CoursePage({ params }: PageProps) {
                                 <p className="text-gray-700 leading-relaxed text-lg">
                                     {course.description}
                                 </p>
-                                <p className="text-gray-700 leading-relaxed mt-4">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                </p>
+                                {/* Display Mode of Delivery if available */}
+                                {course.mode && (
+                                    <div className="mt-8">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-4">Mode of Delivery</h3>
+                                        <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                                            {course.mode.map((m, i) => (
+                                                <li key={i}>{m}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                                {/* Display Target Audience if available */}
+                                {course.targetAudience && (
+                                    <div className="mt-8">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-4">Who Can Apply</h3>
+                                        <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                                            {course.targetAudience.map((aud, i) => (
+                                                <li key={i}>{aud}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </GlassCard>
 
-                            <GlassCard className="p-8" variant="panel">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-6">What You Will Learn</h2>
-                                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                                        <li key={i} className="flex items-start gap-3">
-                                            <CheckCircle className="h-5 w-5 text-medical-green-600 flex-shrink-0 mt-0.5" />
-                                            <span className="text-gray-700">Medical Module {i}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </GlassCard>
+                            {course.curriculum && (
+                                <GlassCard className="p-8" variant="panel">
+                                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Curriculum</h2>
+                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {course.curriculum.map((item, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <CheckCircle className="h-5 w-5 text-medical-green-600 flex-shrink-0 mt-0.5" />
+                                                <span className="text-gray-700">{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </GlassCard>
+                            )}
                         </div>
 
                         {/* Sidebar */}
                         <div className="space-y-6">
                             <GlassCard className="p-6">
-                                <h3 className="text-xl font-bold text-gray-900 mb-4">Admissions</h3>
+                                <h3 className="text-xl font-bold text-gray-900 mb-4">Course Details</h3>
                                 <div className="space-y-4 mb-6">
                                     <div className="text-sm">
-                                        <span className="text-gray-500 block">Next Intake</span>
-                                        <span className="font-medium text-gray-900">September 2026</span>
+                                        <span className="text-gray-500 block">Course Fee</span>
+                                        <span className="font-medium text-gray-900">{course.fee || "Contact for details"}</span>
                                     </div>
                                     <div className="text-sm">
-                                        <span className="text-gray-500 block">Duration</span>
+                                        <span className="text-gray-500 block">Duration/Mode</span>
                                         <span className="font-medium text-gray-900">{course.duration}</span>
                                     </div>
                                     <div className="text-sm">
-                                        <span className="text-gray-500 block">Study Mode</span>
-                                        <span className="font-medium text-gray-900">Full Time / Part Time</span>
+                                        <span className="text-gray-500 block">Level</span>
+                                        <span className="font-medium text-gray-900">{course.level}</span>
                                     </div>
                                 </div>
-                                <button className="w-full py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors">
-                                    Apply Now
-                                </button>
+                                <Link
+                                    href="/contact#contact-details"
+                                    className="block w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors"
+                                >
+                                    Contact to Register
+                                </Link>
                             </GlassCard>
                         </div>
                     </div>

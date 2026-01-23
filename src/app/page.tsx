@@ -3,6 +3,7 @@ import { ArrowRight, Activity, Users, Award } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
+import { TypewriterEffect } from "@/components/TypewriterEffect";
 
 export default function Home() {
   return (
@@ -12,22 +13,34 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative pt-20 pb-32 overflow-hidden">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="max-w-3xl">
+            <div className="max-w-4xl">
               <span className="inline-block px-4 py-2 rounded-full bg-medical-green-100/80 text-medical-green-700 font-semibold text-sm mb-6 backdrop-blur-sm">
-                Evidence Based • Patient Centered
+                Empowering Doctors in Primary Care & MRCGP [INT] Success
               </span>
-              <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight mb-8">
-                Facilitating <span className="text-medical-green-600">Patient Centered</span> First Contact Care
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-8 min-h-[3em]">
+                Marking Grid <span className="text-medical-green-600">Guided Training</span> with{" "}
+                <TypewriterEffect
+                  texts={[
+                    "12 Years of Examiner Experience",
+                    "Global PG Qualifications",
+                    "Evidence-Based Training",
+                    "Structured Clinical Skills"
+                  ]}
+                  speed={70}
+                  pause={2000}
+                  className="text-medical-blue-600 block sm:inline"
+                />
               </h1>
               <p className="text-xl text-gray-700 mb-10 leading-relaxed max-w-2xl">
-                Provision of Evidence based updated knowledge to facilitate patient centered first contact care.
+                We provide evidence-based, updated knowledge to facilitate patient-centered first contact care.
+                Shaping the future of doctors locally and globally.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
                   href="/courses"
                   className="px-8 py-4 rounded-full bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 hover:shadow-xl transition-all flex items-center gap-2"
                 >
-                  Explore Courses <ArrowRight className="h-5 w-5" />
+                  View MRCGP Courses <ArrowRight className="h-5 w-5" />
                 </Link>
                 <Link
                   href="/contact"
@@ -44,17 +57,32 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[600px] h-[600px] bg-medical-green-300/20 rounded-full blur-3xl z-0" />
         </section>
 
-        {/* Stats Section with Glass Cards */}
+        {/* About Section */}
+        <section className="py-16 bg-white/40 backdrop-blur-sm">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">About Family Medicine Forum</h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Family Medicine Forum is a professional academic platform dedicated to supporting doctors pursuing careers and postgraduate qualifications in Family Medicine and Primary Care.
+                <br /><br />
+                We specialize in exam-focused preparatory courses for doctors appearing for MRCGP International (INT) examinations, with a strong emphasis on understanding examiner expectations, real-world clinical reasoning, and structured consultation skills.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Why Choose Us Section with Glass Cards */}
         <section className="py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Why Choose Family Medicine Forum</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <GlassCard className="p-8 flex items-start gap-4" variant="panel">
                 <div className="p-3 rounded-xl bg-blue-100 text-blue-600">
                   <Activity className="h-8 w-8" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">PG Doctor Training</h3>
-                  <p className="text-gray-600">Training in hands on experiences for training of PG Doctors in Family Medicine (General Practice).</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Exam-Focused</h3>
+                  <p className="text-gray-600">Teaching methodology specifically aimed at improving first-attempt success in MRCGP exams.</p>
                 </div>
               </GlassCard>
               <GlassCard className="p-8 flex items-start gap-4" variant="panel">
@@ -62,8 +90,8 @@ export default function Home() {
                   <Users className="h-8 w-8" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Clinical Confidence</h3>
-                  <p className="text-gray-600">Training of PG Doctors for build up their clinical confidency during their day to day actvities.</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Experienced Faculty</h3>
+                  <p className="text-gray-600">Learn from experienced clinicians with extensive exposure to postgraduate medical training.</p>
                 </div>
               </GlassCard>
               <GlassCard className="p-8 flex items-start gap-4" variant="panel">
@@ -71,8 +99,8 @@ export default function Home() {
                   <Award className="h-8 w-8" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Evidence Based</h3>
-                  <p className="text-gray-600">Provision of updated knowledge based on the latest medical evidence to facilitate patient centered care.</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Guideline Based</h3>
+                  <p className="text-gray-600">Clinically relevant content based on the latest guidelines and medical evidence.</p>
                 </div>
               </GlassCard>
             </div>
@@ -84,15 +112,15 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <GlassCard className="max-w-4xl mx-auto p-12 relative overflow-hidden">
               <div className="relative z-10">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Ready to Start Your Medical Journey?</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Ready to take the next step?</h2>
                 <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                  Enroll today in one of our diverse medical programs and take the first step towards a rewarding career in healthcare.
+                  Contact us today to enroll in our upcoming MRCGP [INT] preparatory courses and start your journey towards excellence.
                 </p>
                 <Link
-                  href="/courses"
+                  href="/contact"
                   className="inline-flex px-8 py-3 rounded-full bg-gray-900 text-white font-semibold hover:bg-gray-800 transition-colors shadow-lg"
                 >
-                  View All Programs
+                  Contact Us to Enroll
                 </Link>
               </div>
               {/* Subtle background decoration within card */}
