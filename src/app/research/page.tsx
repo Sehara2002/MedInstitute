@@ -10,7 +10,7 @@ export default function ResearchPage() {
             <main className="min-h-screen py-16">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <h1 className="text-4xl font-bold text-gray-900 mb-4">Research at MedInstitute</h1>
+                        <h1 className="text-4xl font-bold text-gray-900 mb-4">Research at Family Medicine Forum</h1>
                         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                             Pioneering discoveries that shape the future of medicine and healthcare.
                         </p>
