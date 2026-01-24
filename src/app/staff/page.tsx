@@ -1,38 +1,10 @@
+import Link from "next/link";
+import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
-import { Mail, Linkedin } from "lucide-react";
-
-const staff = [
-    {
-        id: 1,
-        name: "Dr. Sarah Johnson",
-        role: "Dean of Medicine",
-        bio: "Over 20 years of experience in clinical practice and medical education.",
-        image: "bg-gradient-to-br from-green-100 to-green-200",
-    },
-    {
-        id: 2,
-        name: "Prof. Michael Chen",
-        role: "Head of Research",
-        bio: "Leading expert in immunology with numerous cited publications.",
-        image: "bg-gradient-to-br from-blue-100 to-blue-200",
-    },
-    {
-        id: 3,
-        name: "Dr. Emily Davis",
-        role: "Senior Lecturer",
-        bio: "Specializes in pediatric care and innovative teaching methodologies.",
-        image: "bg-gradient-to-br from-purple-100 to-purple-200",
-    },
-    {
-        id: 4,
-        name: "James Wilson",
-        role: "Lab Director",
-        bio: "Oversees all laboratory operations and student safety training.",
-        image: "bg-gradient-to-br from-orange-100 to-orange-200",
-    },
-];
+import { Mail, Linkedin, ArrowRight } from "lucide-react";
+import { staff } from "@/data/staff";
 
 export default function StaffPage() {
     return (
@@ -49,22 +21,38 @@ export default function StaffPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {staff.map((member) => (
-                            <GlassCard key={member.id} className="p-6 text-center group" variant="default">
-                                <div className={`w-32 h-32 mx-auto rounded-full mb-4 ${member.image} flex items-center justify-center text-2xl font-bold text-white shadow-inner`}>
-                                    {member.name.charAt(0)}
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
-                                <p className="text-medical-green-600 font-medium text-sm mb-3">{member.role}</p>
-                                <p className="text-gray-600 text-sm mb-4">
-                                    {member.bio}
+                            <GlassCard key={member.id} className="p-6 text-center group flex flex-col h-full" variant="default">
+                                <Link href={`/staff/${member.id}`} className="block">
+                                    <div className="w-32 h-32 mx-auto rounded-full mb-4 overflow-hidden relative shadow-inner">
+                                        {typeof member.image === 'string' && member.image.startsWith('bg-') ? (
+                                            <div className={`w-full h-full ${member.image} flex items-center justify-center text-2xl font-bold text-white`}>
+                                                {member.name.charAt(0)}
+                                            </div>
+                                        ) : member.image ? (
+                                            <Image
+                                                src={member.image}
+                                                alt={member.name}
+                                                fill
+                                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-400">
+                                                {member.name.charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-medical-green-600 transition-colors">{member.name}</h3>
+                                </Link>
+
+                                <p className="text-gray-600 text-sm mb-2 font-medium">
+                                    {member.qualification}
                                 </p>
-                                <div className="flex justify-center gap-3">
-                                    <button className="p-2 rounded-full bg-gray-100 hover:bg-medical-green-100 hover:text-medical-green-600 transition-colors">
-                                        <Mail className="h-4 w-4" />
-                                    </button>
-                                    <button className="p-2 rounded-full bg-gray-100 hover:bg-medical-blue-100 hover:text-medical-blue-600 transition-colors">
-                                        <Linkedin className="h-4 w-4" />
-                                    </button>
+                                <p className="text-medical-green-600 font-semibold text-sm mb-4">{member.role}</p>
+
+                                <div className="mt-auto flex justify-center gap-3">
+                                    <Link href={`/staff/${member.id}`} className="inline-flex items-center text-sm font-semibold text-medical-blue-600 hover:text-medical-blue-700 transition-colors">
+                                        View Profile <ArrowRight className="ml-1 h-3 w-3" />
+                                    </Link>
                                 </div>
                             </GlassCard>
                         ))}
