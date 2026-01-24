@@ -5,6 +5,8 @@ import { Stethoscope, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import Logo from "@/app/logo.png";
+import Image from "next/image";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +29,7 @@ export function Navbar() {
                 <div className="flex h-16 items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
                         <div className="rounded-full bg-medical-green-500/20 p-2">
-                            <Stethoscope className="h-6 w-6 text-medical-green-600" />
+                            <Image src={Logo} alt="Logo" className="h-6 w-6 text-medical-green-600" />
                         </div>
                         <span className="text-xl font-bold text-gray-900">
                             Family Medicine <span className="text-medical-green-600">Forum</span>

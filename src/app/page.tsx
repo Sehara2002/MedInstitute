@@ -23,13 +23,14 @@ export default function Home() {
                 Marking Grid <span className="text-medical-green-600">Guided Training</span> {" "}
                 <TypewriterEffect
                   texts={[
-                    "In Master unique skills in MRCGP [INT] Examinations With 12 Years Experienced Examiner",
+                    "Master unique skills in MRCGP [INT] Examinations With a 12 Years Experienced Examiner",
+                    "Mock Examinations in MRCGP International exam OSCE/AKT for success in first attempt",
                     "For Global PG Qualifications in General Practice / Primary Care",
                     "Evidence-Based Management aligned Training",
                     "Structured Clinical Skills",
-                    "Course Materials with Clinical Case Scenario Practice Videos with Marking Grade & Summarized updated practice guidelines.",
-                    "Individual & Group Training",
-                    "Mock Examinations in MRCGP International exam OSCE/AKT for successful at first attempt",
+                    "Course Materials with Clinical Case Scenario Practice Videos with Marking Grid",
+                    "Summarized updated practice guidelines",
+                    "Individual & Group Training"
                   ]}
                   speed={70}
                   pause={2000}
