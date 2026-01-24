@@ -126,7 +126,7 @@ export default async function CoursePage({ params }: PageProps) {
                                     href="/contact#contact-details"
                                     className="block w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors"
                                 >
-                                    Contact to Register
+                                    Inquire
                                 </Link>
                             </GlassCard>
                         </div>

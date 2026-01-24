@@ -4,6 +4,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
 import { TypewriterEffect } from "@/components/TypewriterEffect";
+import { TestimonialCard } from "@/components/TestimonialCard";
+import { testimonials } from "@/data/testimonials";
 
 export default function Home() {
   return (
@@ -18,13 +20,16 @@ export default function Home() {
                 Empowering Doctors in Primary Care & MRCGP [INT] Success
               </span>
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-8 min-h-[3em]">
-                Marking Grid <span className="text-medical-green-600">Guided Training</span> with{" "}
+                Marking Grid <span className="text-medical-green-600">Guided Training</span> {" "}
                 <TypewriterEffect
                   texts={[
-                    "12 Years of Examiner Experience",
-                    "Global PG Qualifications",
-                    "Evidence-Based Training",
-                    "Structured Clinical Skills"
+                    "In Master unique skills in MRCGP [INT] Examinations With 12 Years Experienced Examiner",
+                    "For Global PG Qualifications in General Practice / Primary Care",
+                    "Evidence-Based Management aligned Training",
+                    "Structured Clinical Skills",
+                    "Course Materials with Clinical Case Scenario Practice Videos with Marking Grade & Summarized updated practice guidelines.",
+                    "Individual & Group Training",
+                    "Mock Examinations in MRCGP International exam OSCE/AKT for successful at first attempt",
                   ]}
                   speed={70}
                   pause={2000}
@@ -106,6 +111,36 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+
+        {/* Testimonials Preview */}
+        <div className="py-20 bg-white/50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-medical-green-100 text-medical-green-700 font-semibold text-sm mb-4">
+                Testimonials
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                What our students say
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {testimonials.slice(0, 3).map((testimonial) => (
+                <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+              ))}
+            </div>
+
+            <div className="text-center">
+              <Link
+                href="/testimonials"
+                className="inline-flex items-center gap-2 text-medical-green-700 font-semibold hover:text-medical-green-800 transition-colors"
+              >
+                View all success stories <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
 
         {/* Call to Action */}
         <section className="py-20 text-center">
