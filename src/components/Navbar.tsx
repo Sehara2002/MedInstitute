@@ -50,7 +50,7 @@ export function Navbar() {
                             </Link>
                         ))}
                         <Link
-                            href="#"
+                            href="https://lms.mrcgpfasttrack.com"
                             className="ml-2 px-5 py-2 rounded-full bg-gradient-to-r from-medical-green-600 to-medical-blue-600 text-white text-sm font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out relative group overflow-hidden"
                         >
                             <span className="relative z-10">LMS Portal</span>
