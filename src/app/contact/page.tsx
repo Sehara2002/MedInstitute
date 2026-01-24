@@ -60,16 +60,13 @@ export default function ContactPage() {
                                 <ul className="space-y-4">
                                     <li className="flex justify-between items-center text-gray-600 border-b border-gray-100 pb-2">
                                         <span>Monday - Friday</span>
-                                        <span className="font-medium">8:00 AM - 6:00 PM</span>
+                                        <span className="font-medium">8:00 AM - 6:00 PM IST</span>
                                     </li>
                                     <li className="flex justify-between items-center text-gray-600 border-b border-gray-100 pb-2">
-                                        <span>Saturday</span>
-                                        <span className="font-medium">9:00 AM - 1:00 PM</span>
+                                        <span>Saturday & Sunday</span>
+                                        <span className="font-medium">9:00 AM - 1:00 PM IST</span>
                                     </li>
-                                    <li className="flex justify-between items-center text-gray-600 pb-2">
-                                        <span>Sunday</span>
-                                        <span className="text-red-500 font-medium">Closed</span>
-                                    </li>
+
                                 </ul>
                             </div>
 

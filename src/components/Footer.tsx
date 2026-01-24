@@ -34,7 +34,7 @@ export function Footer() {
                         <ul className="space-y-2 text-gray-600">
                             <li><a href="/" className="hover:text-medical-green-600 transition-colors">Home</a></li>
                             <li><a href="/courses" className="hover:text-medical-green-600 transition-colors">Courses</a></li>
-                            <li><a href="/research" className="hover:text-medical-green-600 transition-colors">Research</a></li>
+                            {/* <li><a href="/research" className="hover:text-medical-green-600 transition-colors">Research</a></li> */}
                             <li><a href="/staff" className="hover:text-medical-green-600 transition-colors">Staff</a></li>
                             <li><a href="/contact" className="hover:text-medical-green-600 transition-colors">Contact Us</a></li>
                         </ul>
