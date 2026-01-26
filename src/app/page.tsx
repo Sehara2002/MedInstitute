@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
 import { TypewriterEffect } from "@/components/TypewriterEffect";
 import { TestimonialCard } from "@/components/TestimonialCard";
+import { SessionGallery } from "@/components/SessionGallery";
 import { testimonials } from "@/data/testimonials";
 
 export default function Home() {
@@ -113,6 +114,8 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Session Gallery */}
+        <SessionGallery />
 
         {/* Testimonials Preview */}
         <div className="py-20 bg-white/50">

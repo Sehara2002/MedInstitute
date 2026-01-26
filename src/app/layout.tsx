@@ -10,6 +10,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Family Medicine Forum",
   description: "Family Medicine Forum is a professional academic platform dedicated to supporting doctors pursuing careers and postgraduate qualifications in Family Medicine and Primary Care.",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({

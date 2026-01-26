@@ -91,7 +91,7 @@ export function Navbar() {
                                 </Link>
                             ))}
                             <Link
-                                href="#"
+                                href="https://lms.mrcgpfasttrack.com"
                                 className="mt-2 text-center text-sm font-bold text-white bg-gradient-to-r from-medical-green-600 to-medical-blue-600 px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all"
                                 onClick={() => setIsOpen(false)}
                             >
