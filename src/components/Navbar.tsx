@@ -32,7 +32,7 @@ export function Navbar() {
                             <Image src={Logo} alt="Logo" className="h-6 w-6 text-medical-green-600" />
                         </div>
                         <span className="text-xl font-bold text-gray-900">
-                            Family Medicine <span className="text-medical-green-600">Forum</span>
+                            MRCGP <span className="text-medical-green-600">Fast Track</span>
                         </span>
                     </Link>
 

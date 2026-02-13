@@ -6,7 +6,7 @@ export function Footer() {
             <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Family Medicine Forum</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">MRCGP Fast Track</h3>
                         <p className="text-gray-600">
                             Excellence in medical education and healthcare training.
                             Building the next generation of healthcare professionals.
