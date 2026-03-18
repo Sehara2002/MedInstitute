@@ -1,23 +1,31 @@
+import { StaticImageData } from "next/image";
+import ExPost1 from "./images/Posts/exam_post1.png";
+
 export interface Exam {
     id: string;
     title: string;
     description: string;
     date?: string;
     time?: string;
+    loc?: string;
     fee: string;
     type: 'Mock Exam' | 'Practice Session';
     offer?: string;
+    image?: string | StaticImageData;
 }
 
 export const exams: Exam[] = [
     {
         id: "osce-mock-circuit",
-        title: "Real Exam Scenario Mock Circuit OSCE Application",
-        description: "A complete 14-station OSCE circuit (Most focus for the exam) with examiners and role players. Receive immediate feedback and a marking grid from examinar.",
-        date: "28th Jan 2026",
-        time: "2:00 PM - 5:00 PM",
-        fee: "LKR 30,000",
+        title: "MRCGP INT. OSCE Mock Exam",
+        description: "Realistic Exam simulation with an experienced examiner. Ideal Marking Grid driven assessment & feedback for each candidate for all 14 cases. Also Unique exam tips will be given.",
+        date: "22nd MARCH 2026",
+        time: "9.00 AM ONWARDS",
+        loc:"Colombo, Sri Lanka",
+        fee: "LKR 16,000 per slot",
         type: "Mock Exam",
-        offer: "Early Bird Offer available before 12 noon 28th January 2026 IST"
-    }
+        offer: "LIMITED SLOTS AVAILABLE!",
+        image: ExPost1
+    },
+
 ];

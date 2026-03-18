@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Calendar, Clock, ArrowRight } from "lucide-react";
+import { Calendar, Clock, ArrowRight, MapPin } from "lucide-react";
 import { GlassCard } from "@/components/GlassCard";
 import { Exam } from "@/data/exams";
+import Image from "next/image";
 
 interface ExamCardProps {
     exam: Exam;
@@ -10,6 +11,15 @@ interface ExamCardProps {
 export function ExamCard({ exam }: ExamCardProps) {
     return (
         <GlassCard className="flex flex-col h-full p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+            {
+                exam.image ?(
+                    <Image src={exam.image} alt={exam.title} className="w-full h-110 object-cover rounded-lg mb-4"/>
+                ):(
+                    <div className="w-full h-40 bg-gray-200 rounded-lg mb-4 flex items-center justify-center text-gray-500">
+                        No Image
+                    </div>
+                )
+            }
             <div className="mb-4">
                 <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${exam.type === 'Mock Exam'
                     ? 'bg-purple-100 text-purple-700'
@@ -31,6 +41,13 @@ export function ExamCard({ exam }: ExamCardProps) {
                     <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-2" />
                         <span>{exam.time}</span>
+                    </div>
+                )}
+
+                {exam.loc && (
+                    <div className="flex items-center text-sm text-gray-500">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        <span>{exam.loc}</span>
                     </div>
                 )}
                 <div className="text-lg font-bold text-medical-green-700">

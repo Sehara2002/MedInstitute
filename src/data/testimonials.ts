@@ -37,4 +37,12 @@ export const testimonials: Testimonial[] = [
         rating: 5,
         image: DrJanieImg
     }
+    , {
+        id: '4',
+        name: 'Dr Manjula Giragama',
+        role: '2026 OSCE Exam MRCGP Intl.',
+        content: 'I passed the MRCGP OSCE on my first attempt thanks to Dr. Malkanthi Galhena’s exceptional individually focused mentorship. Her 12 years of examiner experience provided true insider insight. The dedicated One-to-One Training training and marking grid-driven consultation practice gave me the clarity, structure and confidence to score. She trains you to succeed with confidence.',
+        rating: 5,
+        image: DrNilanthiImg
+    }
 ];
