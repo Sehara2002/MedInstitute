@@ -7,6 +7,7 @@ import { TypewriterEffect } from "@/components/TypewriterEffect";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { SessionGallery } from "@/components/SessionGallery";
 import { testimonials } from "@/data/testimonials";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -15,13 +16,14 @@ export default function Home() {
       <main className="min-h-screen">
         {/* Hero Section */}
         <section className="relative pt-20 pb-32 overflow-hidden">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="max-w-4xl">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_520px] items-center gap-12 min-h-[580px]">
+            <div className="flex-1 max-w-4xl">
               <span className="inline-block px-4 py-2 rounded-full bg-medical-green-100/80 text-medical-green-700 font-semibold text-sm mb-6 backdrop-blur-sm">
                 Empowering Doctors in Primary Care & MRCGP [INT] Success
               </span>
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-8 min-h-[3em]">
-                Marking Grid <span className="text-medical-green-600">Guided Training</span> {" "}
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-8">
+                Marking Grid <span className="text-medical-green-600">Guided Training</span>
+                <br />
                 <TypewriterEffect
                   texts={[
                     "Master unique skills in MRCGP [INT] Examinations With a 12 Years Experienced Examiner",
@@ -35,7 +37,7 @@ export default function Home() {
                   ]}
                   speed={70}
                   pause={2000}
-                  className="text-medical-blue-600 block sm:inline"
+                  className="text-medical-blue-600 block"
                 />
               </h1>
               <p className="text-xl text-gray-700 mb-10 leading-relaxed max-w-2xl">
@@ -55,6 +57,17 @@ export default function Home() {
                 >
                   Contact Us
                 </Link>
+              </div>
+            </div>
+            <div className="flex justify-center lg:justify-end">
+              <div className="w-full max-w-[520px]">
+                <Image
+                  src="/images/promotion-lms.png"
+                  alt="Promotion LMS"
+                  width={520}
+                  height={360}
+                  className="rounded-xl shadow-2xl"
+                />
               </div>
             </div>
           </div>
