@@ -1,137 +1,79 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Script from "next/script";
+import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
 
-declare global {
-  interface Window {
-    Checkout: any;
-  }
-}
-
-export default function SummaryPage() {
+function ResultContent() {
   const params = useSearchParams();
-  const id = params.get("id");
-
-  const [reg, setReg] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [paying, setPaying] = useState(false);
-  const [mpgsReady, setMpgsReady] = useState(false);
+  const regId = params.get("regId");
+  const [status, setStatus] = useState<"checking" | "paid" | "failed" | "error">("checking");
+  const [registration, setRegistration] = useState<any>(null);
 
   useEffect(() => {
-    if (!id) return;
-
-    setLoading(true);
-    fetch(`/api/registration?id=${id}`)
-      .then((r) => r.json())
-      .then((d) => setReg(d.registration))
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  async function handlePay() {
-    if (!reg || !mpgsReady) return;
-
-    setPaying(true);
-
-    try {
-      const res = await fetch("/api/mpgs/create-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          registrationId: reg.id,
-          amount: reg.amount,
-        }),
-      });
-
-      const data = await res.json();
-
-      console.log("[MPGS session response]", data);
-
-      // IMPORTANT: backend must return sessionId
-      const sessionId = data.sessionId || data?.session?.id;
-
-      if (!sessionId) {
-        alert(data?.error || "Payment session failed");
-        setPaying(false);
-        return;
-      }
-
-      window.Checkout.configure({
-        session: {
-          id: sessionId,
-        },
-      });
-
-      window.Checkout.showPaymentPage();
-    } catch (err) {
-      console.error(err);
-      alert("Payment could not be started");
-      setPaying(false);
+    if (!regId) {
+      setStatus("error");
+      return;
     }
-  }
-
-  if (!id) return <p className="p-8">Missing registration id.</p>;
+    fetch(`/api/payment/verify?regId=${regId}`)
+      .then((r) => r.json())
+      .then((d) => {
+        setRegistration(d.registration);
+        setStatus(d.isPaid ? "paid" : "failed");
+      })
+      .catch(() => setStatus("error"));
+  }, [regId]);
 
   return (
-    <>
-      {/* MPGS SCRIPT (SAFE LOADING) */}
-      <Script
-        src="https://ap-gateway.mastercard.com/static/checkout/checkout.min.js"
-        strategy="afterInteractive"
-        onLoad={() => setMpgsReady(true)}
-      />
+    <GlassCard className="p-8 text-center">
+      {status === "checking" && <p>Verifying your payment...</p>}
 
-      <Navbar />
-
-      <main className="min-h-screen flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-3xl">
-
-          <h1 className="text-3xl font-extrabold mb-4">
-            Registration Summary
-          </h1>
-
-          <p className="text-gray-600 mb-6">
-            Review your details below and proceed to payment.
+      {status === "paid" && (
+        <>
+          <h1 className="text-2xl font-bold text-green-700 mb-2">Payment Successful</h1>
+          <p className="text-gray-600 mb-4">
+            Your registration for <strong>{registration?.course}</strong> is confirmed.
           </p>
+          <Link href="/" className="glass-btn inline-block px-4 py-2 rounded-md">
+            Back to Home
+          </Link>
+        </>
+      )}
 
-          <GlassCard className="p-8 max-w-xl w-full mx-auto">
+      {status === "failed" && (
+        <>
+          <h1 className="text-2xl font-bold text-red-700 mb-2">Payment Not Completed</h1>
+          <p className="text-gray-600 mb-4">
+            We couldn't confirm your payment. No charge may have been made.
+          </p>
+          <Link href={`/register/summary?id=${regId}`} className="glass-btn inline-block px-4 py-2 rounded-md">
+            Try Again
+          </Link>
+        </>
+      )}
 
-            {loading && <p>Loading...</p>}
+      {status === "error" && (
+        <p className="text-red-700">
+          Something went wrong verifying your payment. Please contact support with your registration ID.
+        </p>
+      )}
+    </GlassCard>
+  );
+}
 
-            {reg && (
-              <div className="space-y-4">
-
-                <div><b>Name:</b> {reg.firstName} {reg.lastName}</div>
-                <div><b>Email:</b> {reg.email}</div>
-                <div><b>Phone:</b> {reg.phone}</div>
-                <div><b>Course:</b> {reg.course}</div>
-                <div>
-                  <b>Amount:</b> {reg.amount} LKR
-                </div>
-
-                <button
-                  onClick={handlePay}
-                  disabled={paying || !mpgsReady}
-                  className="w-full mt-6 glass-btn px-4 py-3 rounded-md disabled:opacity-50"
-                >
-                  {!mpgsReady
-                    ? "Loading payment gateway..."
-                    : paying
-                    ? "Redirecting..."
-                    : "Proceed to Payment"}
-                </button>
-
-              </div>
-            )}
-
-          </GlassCard>
+export default function ResultPage() {
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen flex items-center justify-center py-12 px-4">
+        <div className="w-full max-w-xl">
+          <Suspense fallback={<p className="text-center">Loading...</p>}>
+            <ResultContent />
+          </Suspense>
         </div>
       </main>
-
       <Footer />
     </>
   );
