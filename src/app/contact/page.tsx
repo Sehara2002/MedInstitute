@@ -36,8 +36,8 @@ export default function ContactPage() {
                                         <Phone className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">Make Inquiry</h3>
-                                        <p className="text-gray-600">+94 71 873 9060</p>
+                                            <h3 className="font-semibold text-gray-900">Make Inquiry</h3>
+                                            <p className="text-gray-600">+94 71 873 9060</p>
                                     </div>
                                 </div>
 

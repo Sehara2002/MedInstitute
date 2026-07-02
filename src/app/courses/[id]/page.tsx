@@ -123,10 +123,10 @@ export default async function CoursePage({ params }: PageProps) {
                                     </div>
                                 </div>
                                 <Link
-                                    href="/contact#contact-details"
+                                    href={`/register?id=${encodeURIComponent(course.id)}&amount=${encodeURIComponent(String(course.fee || ""))}`}
                                     className="block w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors"
                                 >
-                                    Inquire
+                                    Register / Inquire
                                 </Link>
                             </GlassCard>
                         </div>

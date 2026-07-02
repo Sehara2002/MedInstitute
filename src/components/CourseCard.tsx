@@ -34,12 +34,20 @@ export function CourseCard({ course }: CourseCardProps) {
                         <Clock className="h-4 w-4 mr-1" />
                         {course.duration}
                     </div>
-                    <Link
-                        href={`/courses/${course.id}`}
-                        className="inline-flex items-center text-sm font-semibold text-medical-green-600 hover:text-medical-green-700 transition-colors"
-                    >
-                        Details <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href={`/register?id=${encodeURIComponent(course.id)}&amount=${encodeURIComponent(String(course.fee || ""))}`}
+                            className="inline-flex items-center text-sm font-semibold text-white bg-medical-green-600 px-3 py-1 rounded-md shadow-sm hover:bg-medical-green-500 transition-colors"
+                        >
+                            Register
+                        </Link>
+                        <Link
+                            href={`/courses/${course.id}`}
+                            className="inline-flex items-center text-sm font-semibold text-medical-green-600 hover:text-medical-green-700 transition-colors"
+                        >
+                            Details <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
+                    </div>
                 </div>
             </div>
         </GlassCard>

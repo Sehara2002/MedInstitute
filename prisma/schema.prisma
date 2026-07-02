@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Registration {
+  id          String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  email       String
+  phone       String
+  course      String
+  amount      Float
+  status      String   @default("pending") // pending | paid | failed
+  orderId     String?
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+}

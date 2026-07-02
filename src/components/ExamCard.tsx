@@ -59,7 +59,7 @@ export function ExamCard({ exam }: ExamCardProps) {
             </div>
 
             <Link
-                href="/contact#contact-details"
+                href={`/register?id=${encodeURIComponent(exam.id)}&amount=${encodeURIComponent(String(exam.fee || ""))}`}
                 className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-medical-green-600 text-white font-semibold hover:bg-medical-green-700 transition-colors"
             >
                 Register Now <ArrowRight className="ml-2 h-4 w-4" />
