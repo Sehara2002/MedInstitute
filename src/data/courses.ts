@@ -53,7 +53,7 @@ export const courses: Course[] = [
         level: "Personalized",
         imageUrl: "bg-gradient-to-br from-purple-100 to-pink-200",
         targetAudience: ["Last-minute revision candidates", "Repeat candidates needing focused correction"],
-        fee: "LKR 125,000",
+        fee: "LKR 100,000",
         mode: ["Individual sessions", "Online or physical (by appointment)"]
     },
 ];
