@@ -17,7 +17,9 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative pt-20 pb-32 overflow-hidden">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_520px] items-center gap-12 min-h-[580px]">
-            <div className="flex-1 max-w-4xl">
+
+            {/* Text Column — shows SECOND on mobile, FIRST on desktop */}
+            <div className="flex-1 max-w-4xl order-2 lg:order-1">
 
               {/* Eyebrow badge — live indicator dot instead of a flat pill */}
               <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-medical-green-100/80 backdrop-blur-sm mb-6 shadow-sm ring-1 ring-medical-green-200/60">
@@ -38,7 +40,7 @@ export default function Home() {
                 <br />
                 <TypewriterEffect
                   texts={[
-                    "Master unique skills in MRCGP [INT] Examinations.",
+                    "Master unique skills in MRCGP [INT] Examinations With a 12 Years Experienced Examiner",
                     "Mock Examinations in MRCGP International exam OSCE/AKT for success in first attempt",
                     "For Global PG Qualifications in General Practice / Primary Care",
                     "Evidence-Based Management aligned Training",
@@ -60,10 +62,10 @@ export default function Home() {
 
               <div className="flex flex-wrap gap-4 mb-10">
                 <Link
-                  href="/courses"
+                  href="/courses/OCSE-AKT-Package"
                   className="group px-8 py-4 rounded-full bg-red-600 text-white font-semibold shadow-lg shadow-medical-green-600/30 hover:bg-medical-green-500 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2"
                 >
-                  View OFFER
+                  VIEW OFFER
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
@@ -74,7 +76,7 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Trust stat strip — pulls the credibility already on the poster into the text column */}
+              {/* Trust stat strip */}
               <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-8 border-t border-gray-200/70">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-medical-blue-100 text-medical-blue-600">
@@ -112,26 +114,26 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Hero Image with Promo Highlight */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[520px]">
+            {/* Hero Image with Promo Highlight — shows FIRST on mobile, SECOND on desktop */}
+            <div className="flex justify-center lg:justify-end order-1 lg:order-2">
+              <div className="relative w-full max-w-[440px] sm:max-w-[480px] lg:max-w-[520px]">
 
                 {/* Animated glow ring behind the poster */}
                 <div className="absolute -inset-2 rounded-[28px] bg-gradient-to-r from-medical-green-400 via-medical-blue-400 to-medical-green-400 opacity-70 blur-xl animate-pulse" />
 
                 {/* "Limited Time Offer" badge — tilted, top-left */}
-                <div className="absolute -top-5 -left-5 z-20 -rotate-6">
+                <div className="absolute -top-3 -left-3 sm:-top-5 sm:-left-5 z-20 -rotate-6">
                   <div className="relative">
                     <span className="absolute inset-0 rounded-full bg-red-500 blur-md opacity-60 animate-pulse" />
-                    <span className="relative flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold uppercase tracking-wide shadow-lg ring-2 ring-white whitespace-nowrap">
+                    <span className="relative flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wide shadow-lg ring-2 ring-white whitespace-nowrap">
                       🔥 Limited Time Offer
                     </span>
                   </div>
                 </div>
 
                 {/* "Seats filling fast" ribbon — bottom-right */}
-                <div className="absolute -bottom-3 -right-3 z-20">
-                  <span className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-medical-green-600 text-white text-xs font-bold shadow-lg ring-2 ring-white whitespace-nowrap">
+                <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 z-20">
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-medical-green-600 text-white text-[10px] sm:text-xs font-bold shadow-lg ring-2 ring-white whitespace-nowrap">
                     ⏳ Seats Filling Fast
                   </span>
                 </div>
