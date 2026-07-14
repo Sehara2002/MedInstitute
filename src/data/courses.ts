@@ -13,6 +13,23 @@ export interface Course {
 
 export const courses: Course[] = [
     {
+        id: "pg exams learning platform",
+        title: "MD (SCREENING) & DFM Exam Preperation",
+        description: "By Dr. Malkanthi Galhena",
+        duration: "Online",
+        level: "Exam Prep",
+        imageUrl: "bg-gradient-to-br from-yellow-100 to-orange-200",
+        curriculum: [
+            "Structured Exam Preperation",
+            "Examiner-Based Guidance",
+            "Practical Exam Techniques",
+            "Interactive Learning Sessions"
+        ],
+        fee: "LKR 35,000",
+        targetAudience: ["Postgraduate medical students", "Doctors preparing for postgraduate exams"],
+        mode: ["Online access", "Self-paced learning"]
+    },
+    {
         id: "mrcgp-akt",
         title: "MRCGP International AKT Course",
         description: "A comprehensive, exam-oriented program designed to help doctors master the breadth of knowledge required to pass the AKT with confidence. Focuses on high-yield topics and clinical guidelines.",
@@ -25,7 +42,7 @@ export const courses: Course[] = [
             "Dermatology", "Women’s Health", "Mental Health", "Infectious Diseases",
             "Ethics, Professionalism & Patient Safety", "Preventive Care & Screening"
         ],
-        fee: "LKR 10",
+        fee: "LKR 35,000",
         targetAudience: ["Doctors preparing for MRCGP International AKT", "Doctors pursuing postgraduate qualifications in Primary Care"],
         mode: ["Online live interactive sessions", "Group-based learning", "Recordings provided"]
     },
@@ -42,7 +59,7 @@ export const courses: Course[] = [
             "Mental Health Consultations", "Women’s Health Scenarios", "Ethics, Consent & Breaking Bad News",
             "Data Interpretation & Risk Communication"
         ],
-        fee: "LKR 35,000",
+        fee: "LKR 40,000",
         mode: ["Physical OSCE sessions", "Small group training", "Examiner-oriented feedback"]
     },
     {
@@ -56,4 +73,5 @@ export const courses: Course[] = [
         fee: "LKR 100,000",
         mode: ["Individual sessions", "Online or physical (by appointment)"]
     },
+    
 ];
