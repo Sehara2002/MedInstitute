@@ -13,7 +13,7 @@ export interface Course {
 
 export const courses: Course[] = [
     {
-        id: "pg exams learning platform",
+        id: "pg-exams-learning-platform",
         title: "MD (SCREENING) & DFM Exam Preperation",
         description: "By Dr. Malkanthi Galhena",
         duration: "Online",
@@ -28,6 +28,25 @@ export const courses: Course[] = [
         fee: "LKR 35,000",
         targetAudience: ["Postgraduate medical students", "Doctors preparing for postgraduate exams"],
         mode: ["Online access", "Self-paced learning"]
+    },
+    {
+        id:"OCSE-AKT-Package",
+        title: "MRCGP International OSCE + AKT Package",
+        description: "Examiner Driven. Marking Grid Focused. Secret of Success",
+        duration: "Online + Physical",
+        level: "Offer",
+        imageUrl: "bg-gradient-to-br from-red-100 to-orange-200",
+        curriculum: [
+            "OCSE SELF LEARNING",
+            "AKT SELF LEARNING",
+            "MOCK EXAMS",
+            "EXAMINER MARKING GRID",
+            "GUIDELINE SUMMARIES",
+            "BLUE PRINT TOPIC FOCUS"
+        ],
+        fee:"LKR 50,000",
+        targetAudience: ["Doctors preparing for MRCGP International OSCE and AKT", "Doctors seeking comprehensive exam preparation"],
+        mode: ["Online live interactive sessions", "Physical group training", "1 Year Access to materials"]
     },
     {
         id: "mrcgp-akt",
@@ -73,5 +92,6 @@ export const courses: Course[] = [
         fee: "LKR 100,000",
         mode: ["Individual sessions", "Online or physical (by appointment)"]
     },
+    
     
 ];
