@@ -1,6 +1,8 @@
 import { StaticImageData } from "next/image";
 import ExPost1 from "./images/Posts/exam_post1.png";
 import ExPost2 from "./images/Posts/exam_post2.png";
+import ExPost3 from "./images/Posts/exam_post3.jpeg";
+
 
 export interface Exam {
     id: string;
@@ -40,6 +42,19 @@ export const exams: Exam[] = [
         type: "Mock Exam",
         offer: "LIMITED SLOTS AVAILABLE!",
         image: ExPost2
+    }
+    ,
+    {
+        id: "osce-mock-circuit-3",
+        title: "MRCGP INT. OSCE Mock Exam",
+        description: "Practice. Feedback. Perform with Confidence",
+        date: "26th July 2026",
+        time: "9.00 AM ONWARDS",
+        loc:"PGIM Academic Center, COTTA Road",
+        fee: "LKR 35,000 per slot",
+        type: "Mock Exam",
+        offer: "LIMITED SLOTS AVAILABLE!",
+        image: ExPost3
     }
 
 ];

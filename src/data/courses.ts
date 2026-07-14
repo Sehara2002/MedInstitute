@@ -25,7 +25,7 @@ export const courses: Course[] = [
             "Dermatology", "Women’s Health", "Mental Health", "Infectious Diseases",
             "Ethics, Professionalism & Patient Safety", "Preventive Care & Screening"
         ],
-        fee: "LKR 35,000",
+        fee: "LKR 10",
         targetAudience: ["Doctors preparing for MRCGP International AKT", "Doctors pursuing postgraduate qualifications in Primary Care"],
         mode: ["Online live interactive sessions", "Group-based learning", "Recordings provided"]
     },
