@@ -2,7 +2,7 @@ import { courses } from "@/data/courses";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
-import { Clock, GraduationCap, ArrowLeft, CheckCircle } from "lucide-react";
+import { Clock, GraduationCap, ArrowLeft, CheckCircle, Download } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -128,6 +128,22 @@ export default async function CoursePage({ params }: PageProps) {
                                 >
                                     Register / Inquire
                                 </Link>
+                                {course.brochures && course.brochures.length > 0 && (
+                                    <div className="mt-3 space-y-2">
+                                        {course.brochures.map((brochure, i) => (
+                                            <a
+                                                key={i}
+                                                href={brochure.url}
+                                                download
+                                                className="flex items-center justify-center gap-2 w-full text-center py-3 rounded-xl bg-white border-2 border-medical-green-600 text-medical-green-700 font-semibold hover:bg-medical-green-50 transition-colors"
+                                            >
+                                                <Download className="h-5 w-5" />
+                                                Download {brochure.label}
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
+
                             </GlassCard>
                         </div>
                     </div>

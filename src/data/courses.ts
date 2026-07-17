@@ -1,14 +1,20 @@
+export interface Brochure {
+    label: string;   // e.g. "Course Brochure", "Fee Structure", "Syllabus"
+    url: string;      // path in /public/brochures
+}
+
 export interface Course {
     id: string;
     title: string;
     description: string;
-    duration: string; // Used for "Mode" or duration text
-    level: string; // Used for badges
+    duration: string;
+    level: string;
     imageUrl: string;
-    curriculum?: string[]; // Optional curriculum modules
+    curriculum?: string[];
     fee?: string;
     targetAudience?: string[];
     mode?: string[];
+    brochures?: Brochure[]; // NEW — optional, 0, 1, or many
 }
 
 export const courses: Course[] = [
@@ -27,7 +33,10 @@ export const courses: Course[] = [
         ],
         fee: "LKR 35,000",
         targetAudience: ["Postgraduate medical students", "Doctors preparing for postgraduate exams"],
-        mode: ["Online access", "Self-paced learning"]
+        mode: ["Online access", "Self-paced learning"],
+        brochures: [
+            { label: "Course Brochure", url: "/brochures/MD_Screening_DFM.pdf" }
+        ]
     },
     {
         id:"OCSE-AKT-Package",
@@ -63,7 +72,10 @@ export const courses: Course[] = [
         ],
         fee: "LKR 35,000",
         targetAudience: ["Doctors preparing for MRCGP International AKT", "Doctors pursuing postgraduate qualifications in Primary Care"],
-        mode: ["Online live interactive sessions", "Group-based learning", "Recordings provided"]
+        mode: ["Online live interactive sessions", "Group-based learning", "Recordings provided"],
+        brochures: [
+            { label: "Course Brochure", url: "/brochures/akt.pdf" }
+        ]
     },
     {
         id: "mrcgp-osce",
@@ -79,7 +91,10 @@ export const courses: Course[] = [
             "Data Interpretation & Risk Communication"
         ],
         fee: "LKR 40,000",
-        mode: ["Physical OSCE sessions", "Small group training", "Examiner-oriented feedback"]
+        mode: ["Physical OSCE sessions", "Small group training", "Examiner-oriented feedback"],
+        brochures: [
+            { label: "Course Brochure", url: "/brochures/osce.pdf" }
+        ]
     },
     {
         id: "individual-osce",
