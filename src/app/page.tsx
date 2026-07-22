@@ -8,6 +8,7 @@ import { TestimonialCard } from "@/components/TestimonialCard";
 import { SessionGallery } from "@/components/SessionGallery";
 import { testimonials } from "@/data/testimonials";
 import ExamPost from "@/data/images/Posts/exam_post3.jpeg";
+import { FlipCard } from "@/components/FlipCard";
 import Image from "next/image";
 
 export default function Home() {
@@ -139,18 +140,18 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* The poster itself */}
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/70">
-                  <Link href="/exams">
-                    <Image
-                      src={ExamPost}
-                      alt="Family Medicine Forum - MRCGP [INT] OSCE & AKT Training Program by Dr Malkanthi Galhena"
-                      width={520}
-                      height={674}
-                      priority
-                      className="w-full h-auto object-cover"
-                    />
-                    </Link>
+                {/* The flipping poster */}
+                <div className="relative rounded-2xl shadow-2xl ring-1 ring-white/70 overflow-visible">
+                  <FlipCard
+                    frontSrc={ExamPost}
+                    frontHref="/exams"
+                    frontAlt="Family Medicine Forum - MRCGP INT OSCE Mock Exam"
+                    backSrc="/images/Promotion.jpeg"
+                    backHref="/courses"
+                    backAlt="Family Medicine Forum - MRCGP INT OSCE & AKT Training Program by Dr Malkanthi Galhena"
+                    intervalMs={4000}
+                    transitionMs={1400}
+                  />
                 </div>
               </div>
             </div>
