@@ -96,7 +96,7 @@ export default async function CoursePage({ params }: PageProps) {
                                         {course.curriculum.map((item, i) => (
                                             <li key={i} className="flex items-start gap-3">
                                                 <CheckCircle className="h-5 w-5 text-medical-green-600 flex-shrink-0 mt-0.5" />
-                                                <span className="text-gray-700">{item}</span>
+                                                <span className="text-gray-700 uppercase">{item}</span>
                                             </li>
                                         ))}
                                     </ul>

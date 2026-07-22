@@ -84,7 +84,12 @@ export const courses: Course[] = [
         freeVideos: [
             { id: "osce-akt-package-preview-2", title: "OSCE INTRODUCTION CLASS", vimeoId: "1203215477" },
             { id: "osce-akt-package-preview-1", title: "PREMATURE OVARIAN FAILURE", vimeoId: "1149767001" },
-        ]
+        ],
+        brochures: [
+            { label: "AKT Course Brochure", url: "/brochures/akt.pdf" },
+            { label: "OSCE Course Brochure", url: "/brochures/osce.pdf" }
+            
+        ],
     },
     {
         id: "mrcgp-akt",
