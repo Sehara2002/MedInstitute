@@ -1,61 +1,45 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 interface TypewriterEffectProps {
-    texts: string[];
-    speed?: number;
-    pause?: number;
-    className?: string;
-    cursorClassName?: string;
+  texts: string[];
+  speed?: number;
+  pause?: number;
+  className?: string;
 }
 
 export function TypewriterEffect({
-    texts,
-    speed = 50,
-    pause = 1500,
-    className = "",
-    cursorClassName = "",
-}: {
-    texts: string[];
-    speed?: number;
-    pause?: number;
-    className?: string;
-    cursorClassName?: string;
-}) {
-    const [displayedText, setDisplayedText] = useState("");
-    const [currentTextIndex, setCurrentTextIndex] = useState(0);
-    const [isDeleting, setIsDeleting] = useState(false);
+  texts,
+  pause = 2000,
+  className = "",
+}: TypewriterEffectProps) {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
 
-    useEffect(() => {
-        const currentFullText = texts[currentTextIndex];
+  useEffect(() => {
+    // Fade out slightly before switching text, then fade the new one in
+    const fadeOutTimer = setTimeout(() => {
+      setVisible(false);
+    }, pause);
 
-        const handleTyping = () => {
-            setDisplayedText((prev) => {
-                if (isDeleting) {
-                    return currentFullText.substring(0, prev.length - 1);
-                } else {
-                    return currentFullText.substring(0, prev.length + 1);
-                }
-            });
+    const switchTimer = setTimeout(() => {
+      setIndex((i) => (i + 1) % texts.length);
+      setVisible(true);
+    }, pause + 400); // 400ms matches the CSS transition duration below
 
-            if (!isDeleting && displayedText === currentFullText) {
-                setTimeout(() => setIsDeleting(true), pause);
-            } else if (isDeleting && displayedText === "") {
-                setIsDeleting(false);
-                setCurrentTextIndex((prev) => (prev + 1) % texts.length);
-            }
-        };
+    return () => {
+      clearTimeout(fadeOutTimer);
+      clearTimeout(switchTimer);
+    };
+  }, [index, pause, texts.length]);
 
-        const timer = setTimeout(handleTyping, isDeleting ? speed / 2 : speed);
-
-        return () => clearTimeout(timer);
-    }, [displayedText, isDeleting, currentTextIndex, texts, speed, pause]);
-
-    return (
-        <span className={className}>
-            {displayedText}
-            <span className={`inline-block w-[2px] h-[1em] bg-current align-middle ml-1 animate-pulse ${cursorClassName}`} />
-        </span>
-    );
+  return (
+    <span
+      className={`inline-block transition-all duration-400 ease-in-out ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+      } ${className}`}
+    >
+      {texts[index]}
+    </span>
+  );
 }
