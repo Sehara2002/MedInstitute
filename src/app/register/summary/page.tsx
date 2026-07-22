@@ -5,6 +5,7 @@ import Script from "next/script";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
+import Image from "next/image";
 
 function SummaryContent() {
   const params = useSearchParams();
@@ -86,6 +87,13 @@ function SummaryContent() {
                 >
                   {paying ? "Redirecting to payment..." : "Proceed to Payment"}
                 </button>
+              </div>
+
+              <div className="flex items-center justify-center gap-4 pt-6 mt-6 border-t border-gray-200">
+                <span className="text-xs text-gray-500 font-medium">We're powered with</span>
+                <Image src="/images/combanklogo.png" alt="Commercial Bank" width={150} height={24} className="object-contain" />
+                <Image src="/images/visalogo.png" alt="Visa" width={80} height={24} className="object-contain" />
+                <Image src="/images/mastercardlogo.png" alt="Mastercard" width={80} height={24} className="object-contain" />
               </div>
             </div>
           )}

@@ -17,7 +17,9 @@ export const store = {
     email: string;
     phone: string;
     course: string;
+    courseId?: string;
     amount: number;
+    userId?: string;
   }) {
     const reg = await prisma.registration.create({ data });
     console.log("[store] created in Neon:", reg.id);

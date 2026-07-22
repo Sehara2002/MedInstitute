@@ -110,8 +110,19 @@ export default async function CoursePage({ params }: PageProps) {
                                 <h3 className="text-xl font-bold text-gray-900 mb-4">Course Details</h3>
                                 <div className="space-y-4 mb-6">
                                     <div className="text-sm">
-                                        <span className="text-gray-500 block">Course Fee</span>
-                                        <span className="font-medium text-gray-900">{course.fee || "Contact for details"}</span>
+                                        <span className="text-gray-500 block mb-1">Course Fee</span>
+                                        {course.modePricing && course.modePricing.length > 0 ? (
+                                            <div className="space-y-1.5 mt-1">
+                                                {course.modePricing.map((opt, i) => (
+                                                    <div key={i} className="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2">
+                                                        <span className="text-sm font-medium text-gray-700">{opt.mode}</span>
+                                                        <span className="font-bold text-gray-900">{opt.fee}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <span className="font-medium text-gray-900">{course.fee || "Contact for details"}</span>
+                                        )}
                                     </div>
                                     <div className="text-sm">
                                         <span className="text-gray-500 block">Duration/Mode</span>
@@ -143,7 +154,6 @@ export default async function CoursePage({ params }: PageProps) {
                                         ))}
                                     </div>
                                 )}
-
                             </GlassCard>
                         </div>
                     </div>

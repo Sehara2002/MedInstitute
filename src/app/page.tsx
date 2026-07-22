@@ -7,6 +7,7 @@ import { TypewriterEffect } from "@/components/TypewriterEffect";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { SessionGallery } from "@/components/SessionGallery";
 import { testimonials } from "@/data/testimonials";
+import ExamPost from "@/data/images/Posts/exam_post3.jpeg";
 import Image from "next/image";
 
 export default function Home() {
@@ -62,10 +63,10 @@ export default function Home() {
 
               <div className="flex flex-wrap gap-4 mb-10">
                 <Link
-                  href="/courses/OCSE-AKT-Package"
+                  href="/exams"
                   className="group px-8 py-4 rounded-full bg-red-600 text-white font-semibold shadow-lg shadow-medical-green-600/30 hover:bg-medical-green-500 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2"
                 >
-                  VIEW OFFER
+                  Register to Exam
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
@@ -126,7 +127,7 @@ export default function Home() {
                   <div className="relative">
                     <span className="absolute inset-0 rounded-full bg-red-500 blur-md opacity-60 animate-pulse" />
                     <span className="relative flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wide shadow-lg ring-2 ring-white whitespace-nowrap">
-                      🔥 Limited Time Offer
+                      Limited Time Offer
                     </span>
                   </div>
                 </div>
@@ -134,20 +135,22 @@ export default function Home() {
                 {/* "Seats filling fast" ribbon — bottom-right */}
                 <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 z-20">
                   <span className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-medical-green-600 text-white text-[10px] sm:text-xs font-bold shadow-lg ring-2 ring-white whitespace-nowrap">
-                    ⏳ Seats Filling Fast
+                    Seats Filling Fast
                   </span>
                 </div>
 
                 {/* The poster itself */}
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/70">
-                  <Image
-                    src="/images/Promotion.jpeg"
-                    alt="Family Medicine Forum - MRCGP [INT] OSCE & AKT Training Program by Dr Malkanthi Galhena"
-                    width={520}
-                    height={674}
-                    priority
-                    className="w-full h-auto object-cover"
-                  />
+                  <Link href="/exams">
+                    <Image
+                      src={ExamPost}
+                      alt="Family Medicine Forum - MRCGP [INT] OSCE & AKT Training Program by Dr Malkanthi Galhena"
+                      width={520}
+                      height={674}
+                      priority
+                      className="w-full h-auto object-cover"
+                    />
+                    </Link>
                 </div>
               </div>
             </div>

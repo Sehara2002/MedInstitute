@@ -3,6 +3,7 @@ import { store } from "@/lib/store";
 import { courses } from "@/data/courses";
 import { exams } from "@/data/exams";
 import { parsePriceToNumber } from "@/lib/price";
+import { auth } from "@/auth";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -29,7 +30,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not determine a valid amount for this item" }, { status: 400 });
   }
 
-  const registration = await store.create({ firstName, lastName, email, phone, course, amount });
+  // Attach the logged-in student's account, if any — registration still works for guests without an account
+  const session = await auth();
+  const userId = session?.user ? (session.user as { id: string }).id : undefined;
+
+  const registration = await store.create({
+    firstName,
+    lastName,
+    email,
+    phone,
+    course,
+    courseId: found?.id || courseId,
+    amount,
+    userId,
+  });
+
   return NextResponse.json({ registration });
 }
 
