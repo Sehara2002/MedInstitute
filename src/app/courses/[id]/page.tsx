@@ -5,6 +5,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { Clock, GraduationCap, ArrowLeft, CheckCircle, Download } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 
 // For SSG, we can generate static params
 export async function generateStaticParams() {
@@ -102,6 +103,8 @@ export default async function CoursePage({ params }: PageProps) {
                                     </ul>
                                 </GlassCard>
                             )}
+
+
                         </div>
 
                         {/* Sidebar */}
@@ -154,6 +157,13 @@ export default async function CoursePage({ params }: PageProps) {
                                         ))}
                                     </div>
                                 )}
+
+                                <div className="flex items-center justify-center gap-4 pt-6 mt-6 border-t border-gray-200">
+                                    <span className="text-xs text-gray-500 font-medium">We're powered with</span>
+                                    <Image src="/images/combanklogo2.png" alt="Commercial Bank" width={150} height={24} className="object-contain" />
+                                    <Image src="/images/visalogo.png" alt="Visa" width={80} height={24} className="object-contain" />
+                                    <Image src="/images/mastercardlogo.png" alt="Mastercard" width={80} height={24} className="object-contain" />
+                                </div>
                             </GlassCard>
                         </div>
                     </div>
