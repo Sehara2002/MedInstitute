@@ -71,10 +71,10 @@ export default function Home() {
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
-                  href="/contact"
-                  className="px-8 py-4 rounded-full bg-white/60 backdrop-blur-md border border-white/70 text-gray-800 font-semibold hover:bg-white/90 hover:-translate-y-0.5 transition-all shadow-sm"
+                  href="/signup"
+                  className="px-8 py-4 rounded-full text-green-700 backdrop-blur-md border border-green-700/70 text-gray-800 font-semibold hover:bg-white/90 hover:-translate-y-0.5 transition-all shadow-sm"
                 >
-                  Contact Us
+                  Signup for Free
                 </Link>
               </div>
 
