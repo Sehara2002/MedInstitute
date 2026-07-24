@@ -2,10 +2,11 @@ import { courses } from "@/data/courses";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
-import { Clock, GraduationCap, ArrowLeft, CheckCircle, Download } from "lucide-react";
+import { Clock, GraduationCap, ArrowLeft, CheckCircle, Download, Video } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+
 
 // For SSG, we can generate static params
 export async function generateStaticParams() {
@@ -52,6 +53,10 @@ export default async function CoursePage({ params }: PageProps) {
                             <span className="inline-flex items-center rounded-full bg-white/60 px-3 py-1 text-sm font-medium text-gray-800 shadow-sm">
                                 <Clock className="h-4 w-4 mr-2 text-medical-blue-600" />
                                 {course.duration}
+                            </span>
+                            <span className="inline-flex items-center rounded-full bg-medical-green-600 px-3 py-1 text-sm font-bold text-white shadow-sm">
+                                <Video className="h-4 w-4 mr-2" />
+                                Recordings Available
                             </span>
                         </div>
                     </div>

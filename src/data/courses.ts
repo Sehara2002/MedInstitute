@@ -4,15 +4,14 @@ export interface Brochure {
 }
 
 export interface FreeVideo {
-    id: string;       // stable identifier, matches VideoView.videoId in the DB
+    id: string;
     title: string;
-    vimeoId: string;  // Vimeo video ID — replace these placeholders with real ones
-
+    vimeoId: string;
 }
 
 export interface ModeOption {
-    mode: string;   // e.g. "Online", "Physical"
-    fee: string;    // e.g. "LKR 35,000"
+    mode: string;
+    fee: string;
 }
 
 export interface Course {
@@ -28,10 +27,34 @@ export interface Course {
     targetAudience?: string[];
     mode?: string[];
     brochures?: Brochure[];
-    freeVideos?: FreeVideo[]; // NEW — up to 3 free preview videos per course
+    freeVideos?: FreeVideo[];
+    featured?: boolean; // NEW — marks a course for special promotion (e.g. the flyer spot)
 }
 
 export const courses: Course[] = [
+    {
+        id: "mrcgp-mock-exam-consultation-videos",
+        title: "MRCGP Int Model Mock Exam Consultation Videos",
+        description: "Examiner-guided mock exam videos by Dr. Malkanthi Galhena — an ideal representation of the original MRCGP Int OSCE exam, designed to identify your gaps before the real thing.",
+        duration: "Mock Exam",
+        level: "Golden Opportunity",
+        imageUrl: "bg-gradient-to-br from-amber-100 to-yellow-200",
+        featured: true,
+        curriculum: [
+            "Realistic OSCE stations and scenarios",
+            "Authentic exam setting",
+            "Detailed feedback from an experienced examiner",
+            "Identification of gaps in your consultations",
+            "Tips and strategies to improve performance",
+            "Build confidence and maximize your chances of success"
+        ],
+        fee: "LKR 10,000",
+        targetAudience: [
+            "Candidates preparing for the upcoming Chennai MRCGP Int OSCE exam",
+            "Doctors who want an examiner-guided mock exam before their real attempt"
+        ],
+        mode: ["Examiner-guided mock exam", "Consultation videos", "Detailed gap-analysis feedback"],
+    },
     {
         id: "pg-exams-learning-platform",
         title: "MD (SCREENING) & DFM Exam Preparation",
@@ -46,7 +69,7 @@ export const courses: Course[] = [
             "Investigation selection and interpretation",
             "Evidence-based management and prescribing",
             "Preventive care and health promotion",
-            "Women’s health, child health and elderly care",
+            "Women's health, child health and elderly care",
             "Mental health and psychosocial medicine",
             "Ethics, communication and professionalism",
             "MCQ, SBA, SEQ and practical examination techniques"
@@ -88,7 +111,6 @@ export const courses: Course[] = [
         brochures: [
             { label: "AKT Course Brochure", url: "/brochures/akt.pdf" },
             { label: "OSCE Course Brochure", url: "/brochures/osce.pdf" }
-            
         ],
     },
     {
@@ -122,7 +144,7 @@ export const courses: Course[] = [
 skills, clinical reasoning, examination technique, communication and safe patient management. The programme
 combines examiner-led teaching, realistic practice stations and personalised feedback to support confident exam
 performance.`,
-        duration:"5 Months",
+        duration: "5 Months",
         level: "Clinical Skills",
         imageUrl: "bg-gradient-to-br from-green-100 to-teal-200",
         curriculum: [

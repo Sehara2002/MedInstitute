@@ -146,8 +146,8 @@ export default function Home() {
                     frontSrc={ExamPost}
                     frontHref="/exams"
                     frontAlt="Family Medicine Forum - MRCGP INT OSCE Mock Exam"
-                    backSrc="/images/Promotion.jpeg"
-                    backHref="/courses/OCSE-AKT-Package"
+                    backSrc="/images/mock-exam-flyer.png"
+                    backHref="/courses/mrcgp-mock-exam-consultation-videos"
                     backAlt="Family Medicine Forum - MRCGP INT OSCE & AKT Training Program by Dr Malkanthi Galhena"
                     intervalMs={4000}
                     transitionMs={1400}
