@@ -21,9 +21,13 @@ export default function ExamsPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {exams.map((exam) => (
+                        {(exams.length!=0)? exams.map((exam) => (
                             <ExamCard key={exam.id} exam={exam} />
-                        ))}
+                        )): (
+                            <p className="text-red-500 text-center col-span-full text-6xl">
+                                No upcoming mock exams available at the moment.
+                            </p>
+                        )}
                     </div>
                 </div>
             </main>

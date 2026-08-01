@@ -143,7 +143,7 @@ export default function Home() {
                 {/* The flipping poster */}
                 <div className="relative rounded-2xl shadow-2xl ring-1 ring-white/70 overflow-visible">
                   <FlipCard
-                    frontSrc={ExamPost}
+                    frontSrc="/images/new_promotion.png"
                     frontHref="/exams"
                     frontAlt="Family Medicine Forum - MRCGP INT OSCE Mock Exam"
                     backSrc="/images/mock-exam-flyer.png"
