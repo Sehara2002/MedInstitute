@@ -20,7 +20,28 @@ export async function POST(req: NextRequest) {
 
   if (found) {
     course = found.title;
-    amount = parsePriceToNumber(found.fee) || 0;
+
+    if ("modePricing" in found && found.modePricing && found.modePricing.length > 0) {
+      // Validate the submitted amount against the course's actual allowed mode prices —
+      // don't blindly trust the client, but also don't overwrite with a single flat fee
+      const allowedAmounts = found.modePricing
+        .map((opt) => parsePriceToNumber(opt.fee))
+        .filter((n): n is number => n !== null);
+
+      if (typeof body.amount === "number" && allowedAmounts.includes(body.amount)) {
+        amount = body.amount;
+      } else {
+        // Fallback if something unexpected came through — use the first mode's price
+        amount = allowedAmounts[0] || 0;
+      }
+
+      // Keep the client's course label, which includes "(Online)"/"(Physical)"
+      if (body.course && typeof body.course === "string") {
+        course = body.course;
+      }
+    } else {
+      amount = parsePriceToNumber(found.fee) || 0;
+    }
   } else if (body.course && typeof body.amount === "number") {
     course = body.course;
     amount = body.amount;
@@ -30,7 +51,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not determine a valid amount for this item" }, { status: 400 });
   }
 
-  // Attach the logged-in student's account, if any — registration still works for guests without an account
   const session = await auth();
   const userId = session?.user ? (session.user as { id: string }).id : undefined;
 
