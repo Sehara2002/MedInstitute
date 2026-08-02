@@ -44,6 +44,7 @@ export default async function CourseVideosPage({ params }: PageProps) {
       initialWatchedIds={watchedVideoIds}
       trialExpiresAt={trialExpiresAt ? trialExpiresAt.toISOString() : null}
       isTrialExpired={isTrialExpired}
+      studentEmail={session!.user!.email || ""}
     />
   );
 }
