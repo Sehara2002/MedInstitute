@@ -64,10 +64,10 @@ export default function Home() {
 
               <div className="flex flex-wrap gap-4 mb-10">
                 <Link
-                  href="/exams"
+                  href="/courses/mrcgp-chennai-exam-2026"
                   className="group px-8 py-4 rounded-full bg-red-600 text-white font-semibold shadow-lg shadow-medical-green-600/30 hover:bg-medical-green-500 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2"
                 >
-                  Register to Exam
+                  Register to Webinar
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
