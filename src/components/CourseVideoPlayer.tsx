@@ -4,12 +4,14 @@ import Link from "next/link";
 import { Course } from "@/data/courses";
 import { GlassCard } from "@/components/GlassCard";
 import { PlayCircle, CheckCircle2, ArrowLeft, Lock, VideoOff, Clock, Sparkles } from "lucide-react";
+import { ProtectedVimeoPlayer } from "@/components/ProtectedVimeoPlayer";
 
 interface Props {
   course: Course;
   initialWatchedIds: string[];
   trialExpiresAt: string | null;
   isTrialExpired: boolean;
+  studentEmail: string;
 }
 
 export function CourseVideoPlayer({
@@ -17,6 +19,7 @@ export function CourseVideoPlayer({
   initialWatchedIds,
   trialExpiresAt,
   isTrialExpired,
+  studentEmail,
 }: Props) {
   const videos = course.freeVideos || [];
   const [watchedIds, setWatchedIds] = useState<string[]>(initialWatchedIds);
@@ -132,16 +135,12 @@ export function CourseVideoPlayer({
         <div className="lg:col-span-2">
           <GlassCard className="p-4" variant="panel">
             {activeVideo ? (
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
-                <iframe
-                  key={activeVideo.id}
-                  src={`https://player.vimeo.com/video/${activeVideo.vimeoId}`}
-                  className="absolute inset-0 w-full h-full"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                  onLoad={() => markWatched(activeVideo.id)}
-                />
-              </div>
+              <ProtectedVimeoPlayer
+                key={activeVideo.id}
+                vimeoId={activeVideo.vimeoId}
+                studentEmail={studentEmail}
+                onFirstPlay={() => markWatched(activeVideo.id)}
+              />
             ) : (
               <div className="aspect-video flex items-center justify-center text-gray-400">
                 Select a video to begin
@@ -180,7 +179,6 @@ export function CourseVideoPlayer({
             );
           })}
 
-          {/* Register prompt — shows once all free videos are watched, but doesn't block continued access during the trial */}
           {allWatched && (
             <GlassCard className="p-6 text-center bg-medical-green-50/60" variant="panel">
               <Sparkles className="h-8 w-8 text-medical-green-600 mx-auto mb-3" />

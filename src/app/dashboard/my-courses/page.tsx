@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { courses } from "@/data/courses";
 import { GlassCard } from "@/components/GlassCard";
 import Link from "next/link";
-import { BookOpen, Download } from "lucide-react";
+import { BookOpen, Download, PlayCircle } from "lucide-react";
 
 export default async function MyCoursesPage() {
   const session = await auth();
@@ -45,6 +45,17 @@ export default async function MyCoursesPage() {
                 <p className="text-sm text-gray-500 mb-4">
                   Enrolled {reg.paidAt ? new Date(reg.paidAt).toLocaleDateString() : ""}
                 </p>
+
+                {course?.fullVideos && course.fullVideos.length > 0 && (
+                  <Link
+                    href={`/dashboard/enrolled/${course.id}`}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-medical-green-600 text-white font-semibold hover:bg-medical-green-500 transition-colors mb-3"
+                  >
+                    <PlayCircle className="h-4 w-4" />
+                    Watch Course Videos
+                  </Link>
+                )}
+
                 {course?.brochures?.map((b, i) => (
                   <a
                     key={i}

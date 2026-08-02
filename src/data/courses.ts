@@ -28,10 +28,37 @@ export interface Course {
     mode?: string[];
     brochures?: Brochure[];
     freeVideos?: FreeVideo[];
-    featured?: boolean; // NEW — marks a course for special promotion (e.g. the flyer spot)
+    fullVideos?: FreeVideo[];       // NEW — full paid content, unlocked only for enrolled students
+    requiresAccount?: boolean;      // NEW — forces signup before registration (used for account-gated courses)
+    featured?: boolean;
+    flyerImage?: string;
+    urgent?: boolean;
 }
 
 export const courses: Course[] = [
+    {
+        id: "mrcgp-chennai-exam-2026",
+        title: "MRCGP (INT) Chennai Exam 2026 — Last-Moment Knowledge Refresher",
+        description: "Know your cases. Get your success with an experienced examiner. A last-moment OSCE case-summary discussion and knowledge refresher by Dr Malkanthi Galhena, live via Zoom.",
+        duration: "3rd & 4th August 2026, 4:00 PM SLST",
+        level: "Urgent — Live Session",
+        imageUrl: "bg-gradient-to-br from-sky-100 to-teal-200",
+        featured: true,
+        urgent: true,
+        flyerImage: "/images/new_promotion.png",
+        fee: "LKR 15,000",
+        curriculum: [
+            "Guaranteed OSCE case-scenario focus — 50 high-yield cases",
+            "Last-moment knowledge refresher — revise smarter, think like an examiner",
+            "OSCE case-summary discussion by Dr Malkanthi Galhena",
+            "Face every case with confidence"
+        ],
+        targetAudience: [
+            "Doctors sitting the MRCGP (Int) Chennai OSCE exam in 2026",
+            "Candidates wanting a last-moment, examiner-guided knowledge refresher"
+        ],
+        mode: ["Live online session via Zoom", "3rd & 4th August 2026", "4:00 PM Sri Lanka Standard Time"],
+    },
     {
         id: "mrcgp-mock-exam-consultation-videos",
         title: "MRCGP Int Model Mock Exam Consultation Videos",
@@ -40,6 +67,8 @@ export const courses: Course[] = [
         level: "Golden Opportunity",
         imageUrl: "bg-gradient-to-br from-amber-100 to-yellow-200",
         featured: true,
+        requiresAccount: true,
+        flyerImage: "/images/mock-exam-flyer.jpg",
         curriculum: [
             "Realistic OSCE stations and scenarios",
             "Authentic exam setting",
@@ -54,6 +83,19 @@ export const courses: Course[] = [
             "Doctors who want an examiner-guided mock exam before their real attempt"
         ],
         mode: ["Examiner-guided mock exam", "Consultation videos", "Detailed gap-analysis feedback"],
+        fullVideos: [
+            { id: "mock-full-1", title: "FACIAL RASH", vimeoId: "1212397524" },
+            { id: "mock-full-2", title: "COPD", vimeoId: "1212359285" },
+            { id: "mock-full-3", title: "URETERIC COLIC", vimeoId: "1212212758" },
+            { id: "mock-full-4", title: "STABLE ANGINA", vimeoId: "1212205079" },
+            { id: "mock-full-5", title: "TRIGEMINAL NEURALGIA", vimeoId: "1212202505" },
+            { id: "mock-full-6", title: "HIV WORRY", vimeoId: "1212200710" },
+            { id: "mock-full-7", title: "OSTEOARTHRITIS", vimeoId: "1212199997" },
+            { id: "mock-full-8", title: "CERVICAL SPONDYLOSIS", vimeoId: "1212199176" },
+            { id: "mock-full-9", title: "PAEDIATRIC CONSTIPATION", vimeoId: "1212198659" },
+            { id: "mock-full-10", title: "HYPOTHYROIDISM", vimeoId: "1212195636" },
+            { id: "mock-full-11", title: "STATIN INDUCED LIVER INJURY", vimeoId: "1212193011" },
+        ],
     },
     {
         id: "pg-exams-learning-platform",

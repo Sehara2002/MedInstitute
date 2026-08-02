@@ -6,7 +6,7 @@ import { Clock, GraduationCap, ArrowLeft, CheckCircle, Download, Video } from "l
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-
+import { RegisterButton } from "@/components/RegisterButton";
 
 // For SSG, we can generate static params
 export async function generateStaticParams() {
@@ -141,12 +141,12 @@ export default async function CoursePage({ params }: PageProps) {
                                         <span className="font-medium text-gray-900">{course.level}</span>
                                     </div>
                                 </div>
-                                <Link
-                                    href={`/register?id=${encodeURIComponent(course.id)}&amount=${encodeURIComponent(String(course.fee || ""))}`}
-                                    className="block w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors"
-                                >
-                                    Register / Inquire
-                                </Link>
+                                <RegisterButton
+                                    courseId={course.id}
+                                    fee={course.fee}
+                                    requiresAccount={course.requiresAccount}
+                                    courseTitle={course.title}
+                                />
                                 {course.brochures && course.brochures.length > 0 && (
                                     <div className="mt-3 space-y-2">
                                         {course.brochures.map((brochure, i) => (
@@ -163,11 +163,13 @@ export default async function CoursePage({ params }: PageProps) {
                                     </div>
                                 )}
 
-                                <div className="flex items-center justify-center gap-4 pt-6 mt-6 border-t border-gray-200">
-                                    <span className="text-xs text-gray-500 font-medium">We're powered with</span>
-                                    <Image src="/images/combanklogo2.png" alt="Commercial Bank" width={150} height={24} className="object-contain" />
-                                    <Image src="/images/visalogo.png" alt="Visa" width={80} height={24} className="object-contain" />
-                                    <Image src="/images/mastercardlogo.png" alt="Mastercard" width={80} height={24} className="object-contain" />
+                                <div className="pt-6 mt-6 border-t border-gray-200 text-center">
+                                    <p className="text-xs text-gray-500 font-medium mb-3">We're powered with</p>
+                                    <div className="flex items-center justify-center gap-4 flex-wrap">
+                                        <Image src="/images/combanklogo2.png" alt="Commercial Bank" width={110} height={28} className="object-contain" />
+                                        <Image src="/images/visalogo.png" alt="Visa" width={48} height={28} className="object-contain" />
+                                        <Image src="/images/mastercardlogo.png" alt="Mastercard" width={48} height={28} className="object-contain" />
+                                    </div>
                                 </div>
                             </GlassCard>
                         </div>

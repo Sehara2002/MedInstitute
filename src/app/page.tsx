@@ -144,7 +144,7 @@ export default function Home() {
                 <div className="relative rounded-2xl shadow-2xl ring-1 ring-white/70 overflow-visible">
                   <FlipCard
                     frontSrc="/images/new_promotion.png"
-                    frontHref="/exams"
+                    frontHref="/courses/mrcgp-chennai-exam-2026"
                     frontAlt="Family Medicine Forum - MRCGP INT OSCE Mock Exam"
                     backSrc="/images/mock-exam-flyer.png"
                     backHref="/courses/mrcgp-mock-exam-consultation-videos"
