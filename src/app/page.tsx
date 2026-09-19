@@ -143,11 +143,11 @@ export default function Home() {
                 {/* The flipping poster */}
                 <div className="relative rounded-2xl shadow-2xl ring-1 ring-white/70 overflow-visible">
                   <FlipCard
-                    frontSrc="/images/new_promotion.png"
-                    frontHref="/courses/mrcgp-chennai-exam-2026"
+                    frontSrc="/images/new-osce-flyer.jpeg"
+                    frontHref="/courses/mrcgp-int-osce-5-day-virtual-training-2026"
                     frontAlt="Family Medicine Forum - MRCGP INT OSCE Mock Exam"
-                    backSrc="/images/mock-exam-flyer.png"
-                    backHref="/courses/mrcgp-mock-exam-consultation-videos"
+                    backSrc="/images/new-osce-flyer.jpeg"
+                    backHref="/courses/mrcgp-int-osce-5-day-virtual-training-2026"
                     backAlt="Family Medicine Forum - MRCGP INT OSCE & AKT Training Program by Dr Malkanthi Galhena"
                     intervalMs={4000}
                     transitionMs={1400}

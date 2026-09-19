@@ -40,7 +40,7 @@ export default function CoursesPage() {
                                         {fc.urgent && (
                                             <div className="absolute -top-3 -right-3 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-600 text-white text-xs font-bold shadow-lg ring-2 ring-white animate-pulse">
                                                 <Zap className="h-3.5 w-3.5" />
-                                                Urgent — Tomorrow
+                                                Offer
                                             </div>
                                         )}
 
