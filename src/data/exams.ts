@@ -2,6 +2,7 @@ import { StaticImageData } from "next/image";
 import ExPost1 from "./images/Posts/exam_post1.png";
 import ExPost2 from "./images/Posts/exam_post2.png";
 import ExPost3 from "./images/Posts/exam_post3.jpeg";
+import ExPost4 from "./images/Posts/exam_post4.png";
 
 
 export interface Exam {
@@ -56,5 +57,18 @@ export const exams: Exam[] = [
     //     offer: "LIMITED SLOTS AVAILABLE!",
     //     image: ExPost3
     // }
+    {
+        id: "osce-mock-exam-colombo-oct-2026",
+        title: "MRCGP Int. OSCE Mock Exam",
+        description:
+            "14 most likely focused cases with marking grid-based assessment to identify your gaps for improvement. Get guidance from an experienced MRCGP Int. examiner.",
+        date: "17th OCTOBER 2026",
+        time: "01:00 PM ONWARDS",
+        loc: "Colombo, Sri Lanka",
+        fee: "LKR 30,000 per slot",
+        type: "Mock Exam",
+        offer: "16 SLOTS ONLY",
+        image: ExPost4
+    },
 
 ];

@@ -7,7 +7,7 @@ import { TypewriterEffect } from "@/components/TypewriterEffect";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { SessionGallery } from "@/components/SessionGallery";
 import { testimonials } from "@/data/testimonials";
-import ExamPost from "@/data/images/Posts/exam_post3.jpeg";
+import ExamPost from "@/data/images/Posts/exam_post4.png";
 import { FlipCard } from "@/components/FlipCard";
 import Image from "next/image";
 
@@ -143,8 +143,8 @@ export default function Home() {
                 {/* The flipping poster */}
                 <div className="relative rounded-2xl shadow-2xl ring-1 ring-white/70 overflow-visible">
                   <FlipCard
-                    frontSrc="/images/new-osce-flyer.jpeg"
-                    frontHref="/courses/mrcgp-int-osce-5-day-virtual-training-2026"
+                    frontSrc={ExamPost}
+                    frontHref="/exams"
                     frontAlt="Family Medicine Forum - MRCGP INT OSCE Mock Exam"
                     backSrc="/images/new-osce-flyer.jpeg"
                     backHref="/courses/mrcgp-int-osce-5-day-virtual-training-2026"
