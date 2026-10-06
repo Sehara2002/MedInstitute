@@ -3,6 +3,7 @@ import ExPost1 from "./images/Posts/exam_post1.png";
 import ExPost2 from "./images/Posts/exam_post2.png";
 import ExPost3 from "./images/Posts/exam_post3.jpeg";
 import ExPost4 from "./images/Posts/exam_post4.png";
+import ExPost5 from "./images/Posts/exam_post5.png";
 
 
 export interface Exam {
@@ -70,5 +71,17 @@ export const exams: Exam[] = [
     //     offer: "16 SLOTS ONLY",
     //     image: ExPost4
     // },
+    {
+        id: "mrcgp-int-osce-mock-exam-nov-2026",
+        title: "MRCGP INT. OSCE Mock Exam",
+        description:
+            "Ideal exam experience for confidence building with guidance from Dr. Malkanthi Galhena, a 12 years experienced MRCGP International Examiner. Includes marking grid aligned feedback, proven exam strategies, and expert examiner guidance.",
+        date: "14th NOVEMBER 2026",
+        loc: "Colombo, Sri Lanka",
+        fee: "LKR 30,000.00",
+        type: "Mock Exam",
+        offer: "SPECIAL SESSION FOR OVERSEAS CANDIDATES!",
+        image: ExPost5
+    }
 
 ];
