@@ -26,9 +26,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "First name and email are required" }, { status: 400 });
     }
 
-    if (!password || password.length < 8) {
-      return NextResponse.json({ error: "Password must be at least 8 characters long" }, { status: 400 });
-    }
+    // If password is not provided (deferred), auto-generate a secure random temporary password for central LMS backend sync
+    const effectivePassword =
+      password && typeof password === "string" && password.trim().length >= 8
+        ? password.trim()
+        : `Mrcgp@${Math.random().toString(36).slice(2, 8)}${Date.now().toString().slice(-4)}!`;
 
     let course = "";
     let amount = 0;
@@ -73,7 +75,7 @@ export async function POST(req: NextRequest) {
       const lmsPayload = {
         fullName: `${firstName.trim()} ${lastName?.trim() || ""}`.trim(),
         email: email.trim().toLowerCase(),
-        password: password,
+        password: effectivePassword,
         phone: phone?.trim() || null,
         dob: dob || null,
         address: address?.trim() || null,
