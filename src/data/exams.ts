@@ -12,9 +12,18 @@ export interface Exam {
     time?: string;
     loc?: string;
     fee: string;
+    rawPrice?: number;
+    currency?: string;
     type: 'Mock Exam' | 'Practice Session';
     offer?: string;
     image?: string | StaticImageData;
+    durationMins?: number;
+    totalMarks?: number;
+    passMarks?: number;
+    courseName?: string;
+    batchName?: string;
+    isLocked?: boolean;
+    isAdminCreated?: boolean;
 }
 
 export const exams: Exam[] = [

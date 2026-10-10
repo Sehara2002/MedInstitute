@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
 import { courses } from "@/data/courses";
 import { exams } from "@/data/exams";
+import { getMockExamById } from "@/lib/exams";
 import { parsePriceToNumber } from "@/lib/price";
 import { auth } from "@/auth";
 
