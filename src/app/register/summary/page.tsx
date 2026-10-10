@@ -1,18 +1,21 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Script from "next/script";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
 import Image from "next/image";
+import { Sparkles, CheckCircle2, CreditCard, ShieldCheck, ArrowRight, User, Mail, Phone, BookOpen, AlertCircle } from "lucide-react";
 
 function SummaryContent() {
+  const router = useRouter();
   const params = useSearchParams();
   const id = params.get("id");
   const [reg, setReg] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [simulating, setSimulating] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -23,6 +26,27 @@ function SummaryContent() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  // Simulated Test Mode Payment (Bypasses card gateway, marks student as paid and enlists them)
+  async function handleTestPay() {
+    if (!reg) return;
+    setSimulating(true);
+    try {
+      const res = await fetch(`/api/payment/verify?regId=${reg.id}&testMode=true`);
+      const data = await res.json();
+      if (res.ok && data?.isPaid) {
+        router.push(`/register/summary/result?regId=${reg.id}`);
+      } else {
+        alert(data?.error || "Could not complete simulated payment.");
+        setSimulating(false);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to simulate test payment.");
+      setSimulating(false);
+    }
+  }
+
+  // Real MPGS Payment Gateway Integration (Preserved for live launch)
   async function handlePay() {
     if (!reg) return;
     setPaying(true);
@@ -56,7 +80,7 @@ function SummaryContent() {
     }
   }
 
-  if (!id) return <p className="p-8">Missing registration id.</p>;
+  if (!id) return <p className="p-8 text-center text-slate-500">Missing registration id.</p>;
 
   return (
     <>
@@ -65,35 +89,150 @@ function SummaryContent() {
         data-error="errorCallback"
         data-cancel={`${process.env.NEXT_PUBLIC_BASE_URL}/register/summary?id=${id}`}
       />
-      <div className="w-full max-w-3xl">
-        <h1 className="text-3xl font-extrabold mb-4">Registration Summary</h1>
-        <p className="text-gray-600 mb-6">Review your details below and proceed to payment.</p>
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Order & Registration Summary
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+            Review your candidate details and finalize your enrollment
+          </p>
+        </div>
 
-        <GlassCard className="p-8 max-w-xl w-full mx-auto">
-          {loading && <p>Loading...</p>}
+        <GlassCard className="p-6 sm:p-8 w-full shadow-lg border border-slate-200/80 rounded-2xl bg-white/95 backdrop-blur-md">
+          {loading && (
+            <div className="py-12 flex flex-col items-center justify-center gap-3">
+              <div className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs text-slate-500 font-medium">Loading registration details...</p>
+            </div>
+          )}
+
           {reg && (
-            <div className="space-y-4">
-              <div className="text-sm text-gray-700"><span className="font-medium">Name:</span> {reg.firstName} {reg.lastName}</div>
-              <div className="text-sm text-gray-700"><span className="font-medium">Email:</span> {reg.email}</div>
-              <div className="text-sm text-gray-700"><span className="font-medium">Phone:</span> {reg.phone}</div>
-              <div className="text-sm text-gray-700"><span className="font-medium">Course:</span> {reg.course}</div>
-              <div className="text-sm text-gray-700"><span className="font-medium">Amount:</span> {reg.amount} {process.env.NEXT_PUBLIC_CURRENCY || "LKR"}</div>
-
-              <div className="mt-6">
-                <button
-                  onClick={handlePay}
-                  disabled={paying}
-                  className="w-full inline-block text-center glass-btn px-4 py-3 rounded-md disabled:opacity-50"
-                >
-                  {paying ? "Redirecting to payment..." : "Proceed to Payment"}
-                </button>
+            <div className="space-y-6">
+              {/* Testing Mode Banner */}
+              <div className="p-4 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 flex items-start gap-3">
+                <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800 shrink-0 mt-0.5">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div className="text-xs space-y-1">
+                  <div className="font-bold uppercase tracking-wider text-amber-900 flex items-center gap-2">
+                    <span>Testing Mode Active</span>
+                    <span className="px-2 py-0.2 rounded-full bg-amber-200/70 text-amber-900 text-[10px] font-bold">
+                      Payment Bypassed
+                    </span>
+                  </div>
+                  <p className="text-amber-800 leading-relaxed">
+                    Live bank card transactions are temporarily disabled for end-to-end testing. You can complete registration using the test simulation button below without entering payment credentials. The candidate will be enrolled in the LMS database.
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-center justify-center gap-4 pt-6 mt-6 border-t border-gray-200">
-                <span className="text-xs text-gray-500 font-medium">We're powered with</span>
-                <Image src="/images/combanklogo2.png" alt="Commercial Bank" width={150} height={24} className="object-contain" />
-                <Image src="/images/visalogo.png" alt="Visa" width={80} height={24} className="object-contain" />
-                <Image src="/images/mastercardlogo.png" alt="Mastercard" width={80} height={24} className="object-contain" />
+              {/* Registration Data Card */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                  Candidate Information
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-700">
+                  <div className="flex items-center gap-2">
+                    <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Candidate:</span>
+                      <span className="font-semibold text-slate-900">{reg.firstName} {reg.lastName}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Email:</span>
+                      <span className="font-semibold text-slate-900">{reg.email}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Phone:</span>
+                      <span className="font-semibold text-slate-900">{reg.phone || "Not specified"}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Program:</span>
+                      <span className="font-semibold text-slate-900">{reg.course}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Total Payable Card */}
+              <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-200/60 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-slate-700 block">Tuition Payable</span>
+                  <span className="text-[11px] text-slate-500">Processed in Sri Lankan Rupees</span>
+                </div>
+                <div className="text-xl sm:text-2xl font-black text-emerald-700">
+                  {typeof reg.amount === "number" ? `LKR ${reg.amount.toLocaleString()}` : reg.amount}
+                </div>
+              </div>
+
+              {/* Primary Action: Test Mode Completion */}
+              <div className="space-y-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handleTestPay}
+                  disabled={simulating || paying}
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-sm rounded-xl shadow-md transition disabled:opacity-50 cursor-pointer"
+                >
+                  {simulating ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Simulating Payment & Enrolling Candidate...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Complete Registration (Simulate Payment - Test Mode)</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+
+                {/* Live Payment Option (Preserved for future re-activation) */}
+                <div className="pt-3 border-t border-slate-200/60 space-y-2">
+                  <div className="flex items-center justify-between text-xs text-slate-500">
+                    <span className="text-[11px] font-medium">Mastercard Payment Gateway Services (MPGS)</span>
+                    <span className="text-[10px] font-bold text-amber-700 bg-amber-100/70 px-2 py-0.5 rounded border border-amber-200">
+                      Live Gateway Disabled in Testing
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handlePay}
+                    disabled={paying || simulating}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs rounded-xl transition border border-slate-200 opacity-60 cursor-not-allowed"
+                    title="Live card payment is bypassed during testing mode"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>Proceed to Live Card Gateway (MPGS Commercial Bank)</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Security & Partner Logos */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Commercial Bank MPGS Security Partner</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Image src="/images/combanklogo2.png" alt="Commercial Bank" width={110} height={18} className="object-contain" />
+                  <Image src="/images/visalogo.png" alt="Visa" width={50} height={16} className="object-contain" />
+                  <Image src="/images/mastercardlogo.png" alt="Mastercard" width={50} height={16} className="object-contain" />
+                </div>
               </div>
             </div>
           )}
@@ -107,8 +246,8 @@ export default function SummaryPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen flex items-center justify-center py-12 px-4">
-        <Suspense fallback={<p className="p-8">Loading...</p>}>
+      <main className="min-h-screen flex items-center justify-center py-12 px-4 bg-slate-50/60">
+        <Suspense fallback={<p className="p-8 text-center text-slate-500">Loading summary...</p>}>
           <SummaryContent />
         </Suspense>
       </main>

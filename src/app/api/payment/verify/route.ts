@@ -4,6 +4,7 @@ import { sendRegistrationConfirmation, sendPaymentNotification } from "@/lib/mai
 
 export async function GET(req: NextRequest) {
   const regId = req.nextUrl.searchParams.get("regId");
+  const testMode = req.nextUrl.searchParams.get("testMode");
   if (!regId) {
     return NextResponse.json({ error: "Missing regId" }, { status: 400 });
   }
@@ -12,6 +13,30 @@ export async function GET(req: NextRequest) {
   if (!registration) {
     return NextResponse.json({ error: "Registration not found" }, { status: 404 });
   }
+
+  // Bypass for testing mode
+  if (testMode === "true" || testMode === "1") {
+    const updatedRegistration = await store.update(regId, {
+      status: "paid",
+      orderId: registration.orderId || `TEST-ORDER-${Date.now()}`,
+      paidAt: new Date(),
+    });
+
+    try {
+      await sendRegistrationConfirmation(updatedRegistration);
+      await sendPaymentNotification(updatedRegistration);
+    } catch (err) {
+      console.warn("[mailer] Could not send test email notifications:", err);
+    }
+
+    return NextResponse.json({
+      status: "CAPTURED",
+      isPaid: true,
+      testMode: true,
+      registration: updatedRegistration,
+    });
+  }
+
   if (!registration.orderId) {
     return NextResponse.json({ error: "No payment attempt found for this registration" }, { status: 400 });
   }
