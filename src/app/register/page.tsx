@@ -60,8 +60,29 @@ function RegisterForm() {
           setAmountEditable(true);
         }
       }
+    } else {
+      // Support admin-created mock exams or external items passed via URL parameters
+      const titleFromParam = params.get("title") || params.get("course") || "";
+      const amountFromParam = params.get("amount") || "";
+
+      if (titleFromParam) {
+        setCourse(titleFromParam);
+      }
+
+      if (amountFromParam) {
+        const p = parsePriceToNumber(amountFromParam);
+        if (p !== null && p > 0) {
+          setAmount(p);
+          setAmountLabel(String(p));
+          setAmountEditable(false);
+        } else {
+          setAmount(0);
+          setAmountLabel(amountFromParam || "On Request");
+          setAmountEditable(true);
+        }
+      }
     }
-  }, [idParam]);
+  }, [idParam, params]);
 
   function handleModeSelect(mode: string, fee: string) {
     setSelectedMode(mode);
