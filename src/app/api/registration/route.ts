@@ -67,16 +67,18 @@ export async function POST(req: NextRequest) {
     }
 
     // Helper to map MedInstitute courses to central LMS backend course IDs
-    function resolveBackendCourseId(title: string, courseIdParam?: string): number | undefined {
+    function resolveBackendCourseId(title: string, courseIdParam?: string): number {
       const t = (title || "").toLowerCase();
       const c = (courseIdParam || "").toLowerCase();
 
-      if (t.includes("osce") || c.includes("osce")) return 84;
+      if (t.includes("chennai") || c.includes("chennai")) return 5;
       if (t.includes("mock") || c.includes("mock")) return 98;
-      if (t.includes("rca") || c.includes("rca")) return 4;
+      if (t.includes("package") || c.includes("package")) return 4;
+      if (t.includes("osce") || c.includes("osce")) return 84;
       if (t.includes("akt") || c.includes("akt")) return 3;
-      if (t.includes("prep") || c.includes("complete")) return 1;
-      return undefined;
+      if (t.includes("screening") || c.includes("dfm") || c.includes("pg-exams")) return 7;
+      if (t.includes("individual") || c.includes("individual")) return 8;
+      return 1;
     }
 
     // 1. Sync student to Central LMS Backend (PostgreSQL)
@@ -97,6 +99,7 @@ export async function POST(req: NextRequest) {
         country: country?.trim() || null,
         team,
         courseId: backendCourseId,
+        registrationSource: "SELF_REGISTERED",
       };
 
       console.log("[LMS Backend Sync] Sending registration to:", `${lmsBackendUrl}/students/register`, lmsPayload);
