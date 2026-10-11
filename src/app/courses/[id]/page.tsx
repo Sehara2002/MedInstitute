@@ -223,7 +223,7 @@ export default async function CoursePage({ params }: PageProps) {
 
                                 {course.acceptsOnlinePayment && (
                                     <div className="pt-6 mt-6 border-t border-gray-200 text-center">
-                                        <p className="text-xs text-gray-500 font-medium mb-3">We're powered with</p>
+                                        <p className="text-xs text-gray-500 font-medium mb-3">We&apos;re powered with</p>
                                         <div className="flex items-center justify-center gap-4 flex-wrap">
                                             <Image src="/images/combanklogo2.png" alt="Commercial Bank" width={110} height={28} className="object-contain" />
                                             <Image src="/images/visalogo.png" alt="Visa" width={48} height={28} className="object-contain" />

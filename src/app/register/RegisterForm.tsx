@@ -101,7 +101,7 @@ export function RegisterForm({ item }: Props) {
   return (
     <div className="w-full max-w-3xl">
       <h1 className="text-3xl md:text-4xl font-extrabold mb-6 text-gray-900">Registration</h1>
-      <p className="text-gray-600 mb-6">Complete the form below to register. We'll redirect you to the summary and payment.</p>
+      <p className="text-gray-600 mb-6">Complete the form below to register. We&apos;ll redirect you to the summary and payment.</p>
 
       <GlassCard className="p-8 max-w-xl w-full mx-auto">
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -183,7 +183,7 @@ export function RegisterForm({ item }: Props) {
           </div>
 
           <div className="flex items-center justify-center gap-4 pt-6 mt-6 border-t border-gray-200">
-            <span className="text-xs text-gray-500 font-medium">We're powered with</span>
+            <span className="text-xs text-gray-500 font-medium">We&apos;re powered with</span>
             <Image src="/images/combanklogo2.png" alt="Commercial Bank" width={150} height={24} className="object-contain" />
             <Image src="/images/visalogo.png" alt="Visa" width={80} height={24} className="object-contain" />
             <Image src="/images/mastercardlogo.png" alt="Mastercard" width={80} height={24} className="object-contain" />
