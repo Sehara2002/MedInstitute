@@ -200,7 +200,6 @@ export const UIDatePicker: React.FC<UIDatePickerProps> = ({
         },
       });
     }
-    inputRef.current?.focus();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,14 +218,22 @@ export const UIDatePicker: React.FC<UIDatePickerProps> = ({
     const parsed = parseISODate(formattedVal);
     if (parsed) {
       setViewDate(parsed);
+      if (formattedVal.length === 10) {
+        setIsOpen(false);
+        setIsYearPickerOpen(false);
+        setIsMonthPickerOpen(false);
+      }
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape") {
+    if (e.key === "Escape" || e.key === "Enter") {
       setIsOpen(false);
       setIsYearPickerOpen(false);
       setIsMonthPickerOpen(false);
+      if (e.key === "Enter") {
+        e.preventDefault();
+      }
     } else if (
       e.key === "Backspace" ||
       e.key === "Delete" ||
@@ -255,7 +262,9 @@ export const UIDatePicker: React.FC<UIDatePickerProps> = ({
       });
     }
     if (onClear) onClear();
-    inputRef.current?.focus();
+    setIsOpen(false);
+    setIsYearPickerOpen(false);
+    setIsMonthPickerOpen(false);
   };
 
   const isTodayDisabled = isDateDisabled(new Date());
@@ -365,8 +374,7 @@ export const UIDatePicker: React.FC<UIDatePickerProps> = ({
           tabIndex={-1}
           disabled={disabled}
           onClick={() => {
-            setIsOpen(!isOpen);
-            inputRef.current?.focus();
+            setIsOpen((prev) => !prev);
           }}
           className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer flex items-center justify-center p-0.5 z-10"
           title="Open Calendar"
@@ -399,6 +407,7 @@ export const UIDatePicker: React.FC<UIDatePickerProps> = ({
         {value && !disabled && (
           <button
             type="button"
+            tabIndex={-1}
             onClick={handleClear}
             className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors cursor-pointer"
             title="Clear date"

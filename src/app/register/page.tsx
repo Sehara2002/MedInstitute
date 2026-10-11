@@ -79,7 +79,7 @@ function RegisterForm() {
   const [amountLabel, setAmountLabel] = useState<string>("");
   const [amountEditable, setAmountEditable] = useState(false);
 
-  // Mode-pricing state — only used when the course/exam has modePricing
+  // Mode-pricing state — only used when the course has modePricing
   const [modeOptions, setModeOptions] = useState<{ mode: string; fee: string }[]>([]);
   const [selectedMode, setSelectedMode] = useState<string>("");
 
@@ -135,7 +135,7 @@ function RegisterForm() {
         }
       }
     } else {
-      // Support admin-created mock exams or external items passed via URL parameters
+      // Support external items passed via URL parameters
       const titleFromParam = params.get("title") || params.get("course") || "";
       const amountFromParam = params.get("amount") || "";
 
@@ -806,6 +806,8 @@ function RegisterForm() {
 
                   <div id="field-dob" className="relative z-30">
                     <UIDatePicker
+                      id="dob"
+                      name="dob"
                       label="Date of Birth"
                       required
                       max={maxDobDate}

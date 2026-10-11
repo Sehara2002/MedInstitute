@@ -24,8 +24,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "First name and email are required" }, { status: 400 });
     }
 
-  let course = "";
-  let amount = 0;
+    // If password is not provided (deferred), auto-generate a secure random temporary password for central LMS backend sync
+    const effectivePassword =
+      password && typeof password === "string" && password.trim().length >= 8
+        ? password.trim()
+        : `Mrcgp@${Math.random().toString(36).slice(2, 8)}${Date.now().toString().slice(-4)}!`;
+
+    let course = "";
+    let amount = 0;
 
   // Course registrations only; mock exams are booked through the LMS backend (/exams)
   const found = courses.find((c) => c.id === courseId);
