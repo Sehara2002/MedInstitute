@@ -3,7 +3,6 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { courses } from "@/data/courses";
 import { exams } from "@/data/exams";
-import { ALL_COUNTRIES } from "@/data/countries";
 import { parsePriceToNumber } from "@/lib/price";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -79,6 +78,9 @@ function RegisterForm() {
   const [amount, setAmount] = useState<number>(0);
   const [amountLabel, setAmountLabel] = useState<string>("");
   const [amountEditable, setAmountEditable] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Mode-pricing state — only used when the course/exam has modePricing
   const [modeOptions, setModeOptions] = useState<{ mode: string; fee: string }[]>([]);
   const [selectedMode, setSelectedMode] = useState<string>("");
 
@@ -105,9 +107,7 @@ function RegisterForm() {
   }, []);
 
   useEffect(() => {
-    const foundCourse = courses.find((c) => c.id === idParam);
-    const foundExam = exams.find((e) => e.id === idParam);
-    const found = foundCourse || foundExam;
+    const found = courses.find((c) => c.id === idParam);
 
     if (found) {
       setCourseItem(found);
@@ -136,6 +136,7 @@ function RegisterForm() {
         }
       }
     } else {
+      // Support admin-created mock exams or external items passed via URL parameters
       const titleFromParam = params.get("title") || params.get("course") || "";
       const amountFromParam = params.get("amount") || "";
 

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
 import { courses } from "@/data/courses";
-import { exams } from "@/data/exams";
-import { getMockExamById } from "@/lib/exams";
 import { parsePriceToNumber } from "@/lib/price";
 import { auth } from "@/auth";
 
@@ -26,16 +24,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "First name and email are required" }, { status: 400 });
     }
 
-    // If password is not provided (deferred), auto-generate a secure random temporary password for central LMS backend sync
-    const effectivePassword =
-      password && typeof password === "string" && password.trim().length >= 8
-        ? password.trim()
-        : `Mrcgp@${Math.random().toString(36).slice(2, 8)}${Date.now().toString().slice(-4)}!`;
+  let course = "";
+  let amount = 0;
 
-    let course = "";
-    let amount = 0;
-
-    const found = courses.find((c) => c.id === courseId) || exams.find((e) => e.id === courseId);
+  // Course registrations only; mock exams are booked through the LMS backend (/exams)
+  const found = courses.find((c) => c.id === courseId);
 
     if (found) {
       course = found.title;

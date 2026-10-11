@@ -2,17 +2,20 @@ import React from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ExamCard } from "@/components/ExamCard";
-import { getAllMockExams } from "@/lib/exams";
-import { auth } from "@/auth";
-import { Lock, ShieldAlert } from "lucide-react";
+import { getMockExams, MockExam } from "@/lib/mockExams";
+import { Ticket, ShieldAlert } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function ExamsPage() {
-  const session = await auth();
-  const userId = session?.user ? (session.user as { id: string }).id : undefined;
-
-  const exams = await getAllMockExams(userId);
+  let exams: MockExam[] = [];
+  let loadFailed = false;
+  try {
+    exams = await getMockExams();
+  } catch (err) {
+    console.error("[exams] Could not load mock exams from the LMS:", err);
+    loadFailed = true;
+  }
 
   return (
     <>
@@ -29,24 +32,24 @@ export default async function ExamsPage() {
             </p>
 
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-medical-green-200 text-medical-green-800 text-sm font-medium shadow-xs">
-              <Lock className="h-4 w-4 text-medical-green-600" />
-              <span>
-                Mock exams require registration & payment to unlock your official slot.
-              </span>
+              <Ticket className="h-4 w-4 text-medical-green-600" />
+              <span>Seats are limited. Book and pay online to receive your slot number by email.</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {exams.length > 0 ? (
-              exams.map((exam) => <ExamCard key={exam.id} exam={exam} />)
+              exams.map((exam) => <ExamCard key={exam.mockExamId} exam={exam} />)
             ) : (
               <div className="col-span-full text-center py-16 bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-100 p-8 max-w-xl mx-auto">
                 <ShieldAlert className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  No upcoming mock exams available at the moment
+                  {loadFailed ? "Mock exams could not be loaded right now" : "No upcoming mock exams available at the moment"}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Please check back soon or contact support for scheduled upcoming exam sessions.
+                  {loadFailed
+                    ? "Please refresh the page in a moment or contact us for upcoming exam sessions."
+                    : "Please check back soon or contact support for scheduled upcoming exam sessions."}
                 </p>
               </div>
             )}
