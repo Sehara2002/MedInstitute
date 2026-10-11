@@ -1,53 +1,68 @@
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
-import { courses } from "@/data/courses";
-import { parsePriceToNumber } from "@/lib/price";
+import { parseCourseId } from "@/data/courses";
+import { getCourse } from "@/lib/citech";
 import { auth } from "@/auth";
+
+type Priced = { course: string; courseId?: string; amount: number } | { error: string; status: number };
+
+/**
+ * Price a CITech course from the live catalogue. Only the option key comes
+ * from the client; the title and amount are always the catalogue's own.
+ */
+async function priceCitechCourse(courseId: string, feeKey: unknown): Promise<Priced> {
+  const lookup = await getCourse(courseId, { fresh: true });
+  if (lookup.status === "unavailable") {
+    return { error: "Course details are temporarily unavailable. Please try again shortly.", status: 503 };
+  }
+  if (lookup.status === "not_found") {
+    return { error: "This course is no longer open for registration", status: 404 };
+  }
+
+  const found = lookup.course;
+  if (found.isFree) {
+    return { error: "This is a free course and needs no registration here", status: 400 };
+  }
+  if (!found.acceptsOnlinePayment) {
+    return { error: "Online payment isn't available for this course. Please contact us to enroll.", status: 400 };
+  }
+
+  const fee = found.fees.length === 1 ? found.fees[0] : found.fees.find((f) => f.key === feeKey);
+  if (!fee) {
+    return { error: "Please select a valid mode of delivery", status: 400 };
+  }
+
+  return {
+    course: found.fees.length > 1 ? `${found.title} (${fee.label})` : found.title,
+    courseId: found.id,
+    amount: fee.amount,
+  };
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { firstName, lastName, email, phone, courseId } = body;
+  const { firstName, lastName, email, phone, courseId, feeKey } = body;
 
   if (!firstName?.trim() || !email?.trim()) {
     return NextResponse.json({ error: "First name and email are required" }, { status: 400 });
   }
 
-  let course = "";
-  let amount = 0;
+  let priced: Priced;
 
   // Course registrations only; mock exams are booked through the LMS backend (/exams)
-  const found = courses.find((c) => c.id === courseId);
-
-  if (found) {
-    course = found.title;
-
-    if ("modePricing" in found && found.modePricing && found.modePricing.length > 0) {
-      // Validate the submitted amount against the course's actual allowed mode prices —
-      // don't blindly trust the client, but also don't overwrite with a single flat fee
-      const allowedAmounts = found.modePricing
-        .map((opt) => parsePriceToNumber(opt.fee))
-        .filter((n): n is number => n !== null);
-
-      if (typeof body.amount === "number" && allowedAmounts.includes(body.amount)) {
-        amount = body.amount;
-      } else {
-        // Fallback if something unexpected came through — use the first mode's price
-        amount = allowedAmounts[0] || 0;
-      }
-
-      // Keep the client's course label, which includes "(Online)"/"(Physical)"
-      if (body.course && typeof body.course === "string") {
-        course = body.course;
-      }
-    } else {
-      amount = parsePriceToNumber(found.fee) || 0;
-    }
-  } else if (body.course && typeof body.amount === "number") {
-    course = body.course;
-    amount = body.amount;
+  if (typeof courseId === "string" && parseCourseId(courseId) !== null) {
+    priced = await priceCitechCourse(courseId, feeKey);
+  } else if (body.course && typeof body.course === "string" && typeof body.amount === "number") {
+    // A free-form payment: it is never linked to a course, so it cannot unlock course content
+    priced = { course: body.course, amount: body.amount };
+  } else {
+    priced = { course: "", amount: 0 };
   }
 
-  if (amount <= 0) {
+  if ("error" in priced) {
+    return NextResponse.json({ error: priced.error }, { status: priced.status });
+  }
+  if (!(priced.amount > 0)) {
     return NextResponse.json({ error: "Could not determine a valid amount for this item" }, { status: 400 });
   }
 
@@ -59,9 +74,9 @@ export async function POST(req: NextRequest) {
     lastName,
     email,
     phone,
-    course,
-    courseId: found?.id || courseId,
-    amount,
+    course: priced.course,
+    courseId: priced.courseId,
+    amount: priced.amount,
     userId,
   });
 

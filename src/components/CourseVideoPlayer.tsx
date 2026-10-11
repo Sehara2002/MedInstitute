@@ -7,7 +7,9 @@ import { PlayCircle, CheckCircle2, ArrowLeft, Lock, VideoOff, Clock, Sparkles } 
 import { ProtectedVimeoPlayer } from "@/components/ProtectedVimeoPlayer";
 
 interface Props {
-  course: Course;
+  course: Pick<Course, "id" | "title" | "freeVideos">;
+  /** Where "Register for Full Course" leads */
+  registerHref: string;
   initialWatchedIds: string[];
   trialExpiresAt: string | null;
   isTrialExpired: boolean;
@@ -16,12 +18,13 @@ interface Props {
 
 export function CourseVideoPlayer({
   course,
+  registerHref,
   initialWatchedIds,
   trialExpiresAt,
   isTrialExpired,
   studentEmail,
 }: Props) {
-  const videos = course.freeVideos || [];
+  const videos = course.freeVideos;
   const [watchedIds, setWatchedIds] = useState<string[]>(initialWatchedIds);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(videos[0]?.id || null);
   const [trialExpired, setTrialExpired] = useState(isTrialExpired);
@@ -72,7 +75,7 @@ export function CourseVideoPlayer({
             Check back soon, or register now to be notified when they're ready.
           </p>
           <Link
-            href={`/register?id=${encodeURIComponent(course.id)}&amount=${encodeURIComponent(String(course.fee || ""))}`}
+            href={registerHref}
             className="inline-block px-6 py-2.5 rounded-xl bg-medical-green-600 text-white font-semibold hover:bg-medical-green-500 transition-colors"
           >
             Register for Full Course
@@ -99,7 +102,7 @@ export function CourseVideoPlayer({
             Register now to get full, unlimited access to this course.
           </p>
           <Link
-            href={`/register?id=${encodeURIComponent(course.id)}&amount=${encodeURIComponent(String(course.fee || ""))}`}
+            href={registerHref}
             className="inline-block px-6 py-2.5 rounded-xl bg-medical-green-600 text-white font-semibold hover:bg-medical-green-500 transition-colors"
           >
             Register for Full Course
@@ -190,7 +193,7 @@ export function CourseVideoPlayer({
                   : "."}
               </p>
               <Link
-                href={`/register?id=${encodeURIComponent(course.id)}&amount=${encodeURIComponent(String(course.fee || ""))}`}
+                href={registerHref}
                 className="block w-full py-3 rounded-xl bg-medical-green-600 text-white font-semibold hover:bg-medical-green-500 transition-colors"
               >
                 Register for Full Course
