@@ -11,9 +11,15 @@ export function CourseCard({ course }: CourseCardProps) {
     return (
         <GlassCard className="flex flex-col overflow-visible group h-full relative">
             <div className={`relative h-28 w-full ${course.imageUrl} flex items-center justify-center p-4 rounded-t-2xl overflow-hidden`}>
-                <div className="bg-white/30 backdrop-blur-md rounded-full p-2.5">
-                    <GraduationCap className="h-6 w-6 text-white" />
-                </div>
+                {course.coverImageUrl ? (
+                    // Covers are redirects to short-lived signed URLs, so they bypass next/image
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={course.coverImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                ) : (
+                    <div className="bg-white/30 backdrop-blur-md rounded-full p-2.5">
+                        <GraduationCap className="h-6 w-6 text-white" />
+                    </div>
+                )}
             </div>
 
             {/* Recordings badge — straddles the image and content sections */}
@@ -33,6 +39,11 @@ export function CourseCard({ course }: CourseCardProps) {
                     <span className="inline-flex items-center rounded-full bg-medical-blue-50 px-2 py-0.5 text-[10px] font-medium text-medical-blue-700">
                         {course.level}
                     </span>
+                    {course.fees.length > 0 && (
+                        <span className="inline-flex items-center rounded-full bg-medical-green-50 px-2 py-0.5 text-[10px] font-semibold text-medical-green-700">
+                            {course.fees.length > 1 ? `From ${minFee(course).display}` : course.fees[0].display}
+                        </span>
+                    )}
                 </div>
                 <h3 className="text-sm font-bold text-gray-900 group-hover:text-medical-green-600 transition-colors mb-1.5 leading-snug text-center sm:text-left">
                     {course.title}
@@ -47,12 +58,14 @@ export function CourseCard({ course }: CourseCardProps) {
                         {course.duration}
                     </div>
                     <div className="flex items-center gap-2">
-                        <Link
-                            href={`/register?id=${encodeURIComponent(course.id)}&amount=${encodeURIComponent(String(course.fee || ""))}`}
-                            className="inline-flex items-center text-xs font-semibold text-white bg-medical-green-600 px-2.5 py-1 rounded-md shadow-sm hover:bg-medical-green-500 transition-colors"
-                        >
-                            Register
-                        </Link>
+                        {course.acceptsOnlinePayment && (
+                            <Link
+                                href={`/register?id=${encodeURIComponent(course.id)}`}
+                                className="inline-flex items-center text-xs font-semibold text-white bg-medical-green-600 px-2.5 py-1 rounded-md shadow-sm hover:bg-medical-green-500 transition-colors"
+                            >
+                                Register
+                            </Link>
+                        )}
                         <Link
                             href={`/courses/${course.id}`}
                             className="inline-flex items-center text-xs font-semibold text-medical-green-600 hover:text-medical-green-700 transition-colors"
@@ -64,4 +77,8 @@ export function CourseCard({ course }: CourseCardProps) {
             </div>
         </GlassCard>
     );
+}
+
+function minFee(course: Course) {
+    return course.fees.reduce((min, fee) => (fee.amount < min.amount ? fee : min));
 }

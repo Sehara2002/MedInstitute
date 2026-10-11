@@ -1,11 +1,12 @@
 import { auth } from "@/auth";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { courses } from "@/data/courses";
+import { findCourseContent, parseCourseId, toCourseId } from "@/data/courses";
+import { getCourse } from "@/lib/citech";
 import { CourseVideoPlayer } from "@/components/CourseVideoPlayer";
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const TRIAL_DAYS = 3;
@@ -15,8 +16,18 @@ export default async function CourseVideosPage({ params }: PageProps) {
   const session = await auth();
   const userId = (session!.user as { id: string }).id;
 
-  const course = courses.find((c) => c.id === id);
-  if (!course) {
+  const content = findCourseContent(id);
+  if (parseCourseId(id) === null) {
+    redirect(content?.citechCourseId !== undefined ? `/dashboard/courses/${toCourseId(content.citechCourseId)}` : "/dashboard");
+  }
+
+  const lookup = await getCourse(id);
+  if (lookup.status === "not_found") {
+    notFound();
+  }
+  const course = lookup.status === "found" ? lookup.course : null;
+  const title = course?.title ?? content?.title;
+  if (!title) {
     notFound();
   }
 
@@ -40,7 +51,8 @@ export default async function CourseVideosPage({ params }: PageProps) {
 
   return (
     <CourseVideoPlayer
-      course={course}
+      course={{ id, title, freeVideos: content?.freeVideos ?? [] }}
+      registerHref={course?.acceptsOnlinePayment ? `/register?id=${encodeURIComponent(id)}` : `/courses/${id}`}
       initialWatchedIds={watchedVideoIds}
       trialExpiresAt={trialExpiresAt ? trialExpiresAt.toISOString() : null}
       isTrialExpired={isTrialExpired}
