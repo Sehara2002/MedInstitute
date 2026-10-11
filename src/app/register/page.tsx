@@ -2,7 +2,6 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { courses } from "@/data/courses";
-import { exams } from "@/data/exams";
 import { parsePriceToNumber } from "@/lib/price";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
