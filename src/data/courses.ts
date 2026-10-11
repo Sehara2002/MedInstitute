@@ -37,66 +37,99 @@ export interface Course {
 
 export const courses: Course[] = [
     {
-        id: "mrcgp-chennai-exam-2026",
-        title: "MRCGP (INT) Chennai Exam 2026 — Last-Moment Knowledge Refresher",
-        description: "Know your cases. Get your success with an experienced examiner. A last-moment OSCE case-summary discussion and knowledge refresher by Dr Malkanthi Galhena, live via Zoom.",
-        duration: "3rd & 4th August 2026, 4:00 PM SLST",
-        level: "Urgent — Live Session",
+        id: "mrcgp-int-osce-5-day-virtual-training-2026",
+        title: "MRCGP (INT) OSCE — 5-Day Virtual Training",
+        description: "An intensive 5-day virtual OSCE training workshop led by Dr Malkanthi Galhena, an OSCE examiner with 12+ years of experience. The programme focuses on high-yield OSCE cases, live role-play, examiner-guided feedback, scoring tips, and common traps to avoid, helping doctors prepare confidently for the MRCGP (INT) OSCE November 2026 examination.",
+        duration: "21st–25th September 2026, 6:00 PM–9:00 PM IST",
+        level: "Intensive — Live Virtual Training",
         imageUrl: "bg-gradient-to-br from-sky-100 to-teal-200",
         featured: true,
         urgent: true,
-        flyerImage: "/images/new_promotion.png",
+        flyerImage: "/images/new-osce-flyer.jpeg",
         fee: "LKR 15,000",
         curriculum: [
-            "Guaranteed OSCE case-scenario focus — 50 high-yield cases",
-            "Last-moment knowledge refresher — revise smarter, think like an examiner",
-            "OSCE case-summary discussion by Dr Malkanthi Galhena",
-            "Face every case with confidence"
+            "100 high-yield OSCE cases discussion",
+            "Real OSCE case practice and scenario-based discussion",
+            "Live OSCE role-play and feedback",
+            "Expert examiner guidance from Dr Malkanthi Galhena",
+            "Insider scoring tips and common traps to avoid",
+            "Focused knowledge refresher and examiner-oriented preparation",
+            "Build confidence for the MRCGP (INT) OSCE examination"
         ],
         targetAudience: [
-            "Doctors sitting the MRCGP (Int) Chennai OSCE exam in 2026",
-            "Candidates wanting a last-moment, examiner-guided knowledge refresher"
+            "Doctors preparing for the MRCGP (INT) OSCE November 2026 examination",
+            "Candidates seeking intensive examiner-guided OSCE preparation",
+            "Doctors who want focused practice with high-yield OSCE cases"
         ],
-        mode: ["Live online session via Zoom", "3rd & 4th August 2026", "4:00 PM Sri Lanka Standard Time"],
+        mode: [
+            "Live virtual training",
+            "21st–25th September 2026",
+            "6:00 PM–9:00 PM IST",
+            "Online"
+        ],
+        
     },
-    {
-        id: "mrcgp-mock-exam-consultation-videos",
-        title: "MRCGP Int Model Mock Exam Consultation Videos",
-        description: "Examiner-guided mock exam videos by Dr. Malkanthi Galhena — an ideal representation of the original MRCGP Int OSCE exam, designed to identify your gaps before the real thing.",
-        duration: "Mock Exam",
-        level: "Golden Opportunity",
-        imageUrl: "bg-gradient-to-br from-amber-100 to-yellow-200",
-        featured: true,
-        requiresAccount: true,
-        flyerImage: "/images/mock-exam-flyer.jpg",
-        curriculum: [
-            "Realistic OSCE stations and scenarios",
-            "Authentic exam setting",
-            "Detailed feedback from an experienced examiner",
-            "Identification of gaps in your consultations",
-            "Tips and strategies to improve performance",
-            "Build confidence and maximize your chances of success"
-        ],
-        fee: "LKR 10,000",
-        targetAudience: [
-            "Candidates preparing for the upcoming Chennai MRCGP Int OSCE exam",
-            "Doctors who want an examiner-guided mock exam before their real attempt"
-        ],
-        mode: ["Examiner-guided mock exam", "Consultation videos", "Detailed gap-analysis feedback"],
-        fullVideos: [
-            { id: "mock-full-1", title: "FACIAL RASH", vimeoId: "1212397524" },
-            { id: "mock-full-2", title: "COPD", vimeoId: "1212359285" },
-            { id: "mock-full-3", title: "URETERIC COLIC", vimeoId: "1212212758" },
-            { id: "mock-full-4", title: "STABLE ANGINA", vimeoId: "1212205079" },
-            { id: "mock-full-5", title: "TRIGEMINAL NEURALGIA", vimeoId: "1212202505" },
-            { id: "mock-full-6", title: "HIV WORRY", vimeoId: "1212200710" },
-            { id: "mock-full-7", title: "OSTEOARTHRITIS", vimeoId: "1212199997" },
-            { id: "mock-full-8", title: "CERVICAL SPONDYLOSIS", vimeoId: "1212199176" },
-            { id: "mock-full-9", title: "PAEDIATRIC CONSTIPATION", vimeoId: "1212198659" },
-            { id: "mock-full-10", title: "HYPOTHYROIDISM", vimeoId: "1212195636" },
-            { id: "mock-full-11", title: "STATIN INDUCED LIVER INJURY", vimeoId: "1212193011" },
-        ],
-    },
+    // {
+    //     id: "mrcgp-chennai-exam-2026",
+    //     title: "MRCGP (INT) Chennai Exam 2026 — Last-Moment Knowledge Refresher",
+    //     description: "Know your cases. Get your success with an experienced examiner. A last-moment OSCE case-summary discussion and knowledge refresher by Dr Malkanthi Galhena, live via Zoom.",
+    //     duration: "3rd & 4th August 2026, 4:00 PM SLST",
+    //     level: "Urgent — Live Session",
+    //     imageUrl: "bg-gradient-to-br from-sky-100 to-teal-200",
+    //     featured: false,
+    //     urgent: false,
+    //     flyerImage: "/images/new_promotion.png",
+    //     fee: "LKR 15,000",
+    //     curriculum: [
+    //         "Guaranteed OSCE case-scenario focus — 50 high-yield cases",
+    //         "Last-moment knowledge refresher — revise smarter, think like an examiner",
+    //         "OSCE case-summary discussion by Dr Malkanthi Galhena",
+    //         "Face every case with confidence"
+    //     ],
+    //     targetAudience: [
+    //         "Doctors sitting the MRCGP (Int) Chennai OSCE exam in 2026",
+    //         "Candidates wanting a last-moment, examiner-guided knowledge refresher"
+    //     ],
+    //     mode: ["Live online session via Zoom", "3rd & 4th August 2026", "4:00 PM Sri Lanka Standard Time"],
+    // },
+    // {
+    //     id: "mrcgp-mock-exam-consultation-videos",
+    //     title: "MRCGP Int Model Mock Exam Consultation Videos",
+    //     description: "Examiner-guided mock exam videos by Dr. Malkanthi Galhena — an ideal representation of the original MRCGP Int OSCE exam, designed to identify your gaps before the real thing.",
+    //     duration: "Mock Exam",
+    //     level: "Golden Opportunity",
+    //     imageUrl: "bg-gradient-to-br from-amber-100 to-yellow-200",
+    //     featured: false,
+    //     requiresAccount: true,
+    //     flyerImage: "/images/mock-exam-flyer.png",
+    //     curriculum: [
+    //         "Realistic OSCE stations and scenarios",
+    //         "Authentic exam setting",
+    //         "Detailed feedback from an experienced examiner",
+    //         "Identification of gaps in your consultations",
+    //         "Tips and strategies to improve performance",
+    //         "Build confidence and maximize your chances of success"
+    //     ],
+    //     fee: "LKR 10,000",
+    //     targetAudience: [
+    //         "Candidates preparing for the upcoming Chennai MRCGP Int OSCE exam",
+    //         "Doctors who want an examiner-guided mock exam before their real attempt"
+    //     ],
+    //     mode: ["Examiner-guided mock exam", "Consultation videos", "Detailed gap-analysis feedback"],
+    //     fullVideos: [
+    //         { id: "mock-full-1", title: "FACIAL RASH", vimeoId: "1212397524" },
+    //         { id: "mock-full-2", title: "COPD", vimeoId: "1212359285" },
+    //         { id: "mock-full-3", title: "URETERIC COLIC", vimeoId: "1212212758" },
+    //         { id: "mock-full-4", title: "STABLE ANGINA", vimeoId: "1212205079" },
+    //         { id: "mock-full-5", title: "TRIGEMINAL NEURALGIA", vimeoId: "1212202505" },
+    //         { id: "mock-full-6", title: "HIV WORRY", vimeoId: "1212200710" },
+    //         { id: "mock-full-7", title: "OSTEOARTHRITIS", vimeoId: "1212199997" },
+    //         { id: "mock-full-8", title: "CERVICAL SPONDYLOSIS", vimeoId: "1212199176" },
+    //         { id: "mock-full-9", title: "PAEDIATRIC CONSTIPATION", vimeoId: "1212198659" },
+    //         { id: "mock-full-10", title: "HYPOTHYROIDISM", vimeoId: "1212195636" },
+    //         { id: "mock-full-11", title: "STATIN INDUCED LIVER INJURY", vimeoId: "1212193011" },
+    //     ],
+    // },
     {
         id: "pg-exams-learning-platform",
         title: "MD (SCREENING) & DFM Exam Preparation",
