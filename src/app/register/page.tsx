@@ -4,9 +4,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { parseCourseId } from "@/data/courses";
-import { exams } from "@/data/exams";
 import { getCourse } from "@/lib/citech";
-import { parsePriceToNumber } from "@/lib/price";
 import { RegisterForm, type RegisterItem } from "./RegisterForm";
 
 interface PageProps {
@@ -32,18 +30,7 @@ async function resolveItem(id: string): Promise<Resolved> {
     return { item: { id: course.id, title: course.title, options: course.fees } };
   }
 
-  const exam = exams.find((e) => e.id === id);
-  if (exam) {
-    const amount = parsePriceToNumber(exam.fee);
-    return {
-      item: {
-        id: exam.id,
-        title: exam.title,
-        options: amount !== null ? [{ key: "FEE", label: "Fee", display: exam.fee, amount }] : [],
-      },
-    };
-  }
-
+  // Mock exams are booked on their own pages (/exams)
   return { item: null };
 }
 

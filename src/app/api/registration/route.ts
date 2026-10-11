@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
 import { parseCourseId } from "@/data/courses";
-import { exams } from "@/data/exams";
 import { getCourse } from "@/lib/citech";
-import { parsePriceToNumber } from "@/lib/price";
 import { auth } from "@/auth";
 
 type Priced = { course: string; courseId?: string; amount: number } | { error: string; status: number };
@@ -51,18 +49,14 @@ export async function POST(req: NextRequest) {
 
   let priced: Priced;
 
+  // Course registrations only; mock exams are booked through the LMS backend (/exams)
   if (typeof courseId === "string" && parseCourseId(courseId) !== null) {
     priced = await priceCitechCourse(courseId, feeKey);
+  } else if (body.course && typeof body.course === "string" && typeof body.amount === "number") {
+    // A free-form payment: it is never linked to a course, so it cannot unlock course content
+    priced = { course: body.course, amount: body.amount };
   } else {
-    const found = exams.find((e) => e.id === courseId);
-    if (found) {
-      priced = { course: found.title, courseId: found.id, amount: parsePriceToNumber(found.fee) || 0 };
-    } else if (body.course && typeof body.course === "string" && typeof body.amount === "number") {
-      // A free-form payment: it is never linked to a course, so it cannot unlock course content
-      priced = { course: body.course, amount: body.amount };
-    } else {
-      priced = { course: "", amount: 0 };
-    }
+    priced = { course: "", amount: 0 };
   }
 
   if ("error" in priced) {
