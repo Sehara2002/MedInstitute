@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { UIDatePicker } from "@/components/common/UIDatePicker";
 import { UISelect } from "@/components/common/UISelect";
 import Image from "next/image";
+import { ALL_COUNTRIES } from "@/data/countries";
 import {
   User,
   Mail,
@@ -78,7 +79,6 @@ function RegisterForm() {
   const [amount, setAmount] = useState<number>(0);
   const [amountLabel, setAmountLabel] = useState<string>("");
   const [amountEditable, setAmountEditable] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   // Mode-pricing state — only used when the course/exam has modePricing
   const [modeOptions, setModeOptions] = useState<{ mode: string; fee: string }[]>([]);
