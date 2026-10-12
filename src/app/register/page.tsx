@@ -354,7 +354,14 @@ function RegisterForm() {
           router.push(`/register/summary?id=${data.registration.id}`);
         }, 800);
       } else {
-        setErrors({ form: data?.error || "Registration failed. Please check your information." });
+        const errorMsg = data?.error || "Registration failed. Please check your information.";
+        if (errorMsg.toLowerCase().includes("email") || res.status === 409) {
+          setErrors({ form: errorMsg, email: errorMsg });
+          changeStep(2);
+          setTimeout(() => focusField("email"), 150);
+        } else {
+          setErrors({ form: errorMsg });
+        }
       }
     } catch (err) {
       setLoading(false);

@@ -8,38 +8,156 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendRegistrationConfirmation(registration: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  course: string;
-  amount: number;
-  id: string;
-  orderId?: string | null;
+export async function sendStudentWelcomeEmail({
+  to,
+  fullName,
+  studentCode,
+  initialPassword,
+  courseName,
+}: {
+  to: string;
+  fullName: string;
+  studentCode: string;
+  initialPassword: string;
+  courseName?: string;
 }) {
-  const info = await transporter.sendMail({
-    from: `"MRCGP Fast Track" <${process.env.GMAIL_USER}>`,
-    to: registration.email,
-    subject: "Registration Confirmed — Payment Received",
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2>Registration Confirmed</h2>
-        <p>Dear ${registration.firstName} ${registration.lastName},</p>
-        <p>We've received your payment and your registration is confirmed.</p>
-        <table style="width:100%; border-collapse: collapse; margin: 16px 0;">
-          <tr><td style="padding:8px; border:1px solid #eee;"><strong>Registration ID</strong></td><td style="padding:8px; border:1px solid #eee;">${registration.id}</td></tr>
-          <tr><td style="padding:8px; border:1px solid #eee;"><strong>Course</strong></td><td style="padding:8px; border:1px solid #eee;">${registration.course}</td></tr>
-          <tr><td style="padding:8px; border:1px solid #eee;"><strong>Amount Paid</strong></td><td style="padding:8px; border:1px solid #eee;">LKR ${registration.amount.toLocaleString()}</td></tr>
-          ${registration.orderId ? `<tr><td style="padding:8px; border:1px solid #eee;"><strong>Order Reference</strong></td><td style="padding:8px; border:1px solid #eee;">${registration.orderId}</td></tr>` : ""}
+  const lmsUrl = process.env.NEXT_PUBLIC_LMS_FRONTEND_URL || "http://localhost:3000";
+  const queryParams = new URLSearchParams();
+  if (to) queryParams.set("email", to);
+  if (initialPassword) queryParams.set("initial", initialPassword);
+  const queryString = queryParams.toString();
+  const loginUrl = `${lmsUrl}/login${queryString ? `?${queryString}` : ""}`;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to MRCGP LMS</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f6fcf9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f6fcf9; padding: 40px 15px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container -->
+        <table role="presentation" width="100%" style="max-width: 580px; background-color: #ffffff; border-radius: 18px; border: 1px solid #e2ece7; box-shadow: 0 10px 25px -5px rgba(0, 108, 73, 0.08); overflow: hidden;" cellspacing="0" cellpadding="0">
+          
+          <!-- Header Banner -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #006c49 0%, #084c37 100%); padding: 32px 30px; text-align: center;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td align="center">
+                    <h1 style="color: #ffffff; font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">MRCGP LMS</h1>
+                    <p style="color: #d1fae5; font-size: 13px; margin: 6px 0 0 0; font-weight: 500;">Postgraduate Training & Assessment Portal</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Body Content -->
+          <tr>
+            <td style="padding: 36px 32px 28px 32px;">
+              <h2 style="color: #0f172a; font-size: 20px; font-weight: 600; margin: 0 0 14px 0;">Welcome, ${fullName}!</h2>
+              <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+                Your student account has been successfully created. You can now access your enrolled courses, clinical modules, mock exams, and resources.
+              </p>
+
+              <!-- Credentials Box -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; margin-bottom: 26px;">
+                <tr>
+                  <td style="padding: 20px 22px;">
+                    <div style="font-size: 12px; font-weight: 700; color: #006c49; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 14px;">
+                      Your Sign-In Credentials
+                    </div>
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="padding: 6px 0; color: #64748b; font-size: 13px; width: 130px; font-weight: 500;">Email:</td>
+                        <td style="padding: 6px 0; color: #0f172a; font-size: 14px; font-weight: 600; font-family: monospace;">${to}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 6px 0; color: #64748b; font-size: 13px; font-weight: 500;">Temporary Password:</td>
+                        <td style="padding: 6px 0; color: #006c49; font-size: 15px; font-weight: 700; font-family: monospace; background: #ffffff; padding: 4px 8px; border-radius: 6px; border: 1px dashed #86efac; display: inline-block;">${initialPassword}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 6px 0; color: #64748b; font-size: 13px; font-weight: 500;">Student ID:</td>
+                        <td style="padding: 6px 0; color: #334155; font-size: 13px; font-weight: 600;">${studentCode}</td>
+                      </tr>
+                      ${
+                        courseName
+                          ? `<tr>
+                        <td style="padding: 6px 0; color: #64748b; font-size: 13px; font-weight: 500;">Enrolled Course:</td>
+                        <td style="padding: 6px 0; color: #334155; font-size: 13px; font-weight: 600;">${courseName}</td>
+                      </tr>`
+                          : ""
+                      }
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA Button -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 28px;">
+                <tr>
+                  <td align="center">
+                    <a href="${loginUrl}" target="_blank" style="display: inline-block; background-color: #006c49; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 34px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 108, 73, 0.28); transition: background-color 0.2s ease;">
+                      Sign In to Student Portal
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Instructions / Security Notice -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; border-left: 3px solid #006c49; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 24px;">
+                <tr>
+                  <td>
+                    <p style="margin: 0; color: #475569; font-size: 12px; line-height: 1.5;">
+                      <strong>First-Time Sign-In:</strong> When you click the sign-in button above, you will be prompted to set your own permanent private password before accessing your student dashboard.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0;">
+                If you need assistance logging in, please contact your course administrator.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #fafbfc; border-top: 1px solid #e2ece7; padding: 20px 32px; text-align: center;">
+              <p style="color: #94a3b8; font-size: 11px; margin: 0; line-height: 1.4;">
+                &copy; ${new Date().getFullYear()} MRCGP LMS Platform. All rights reserved.<br>
+                This email was sent to ${to} for LMS account registration.
+              </p>
+            </td>
+          </tr>
+
         </table>
-        <p>Please keep this email for your records.</p>
-        <p>Thank you,<br/>MRCGP Fast Track</p>
-      </div>
-    `,
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+
+  const info = await transporter.sendMail({
+    from: `"MRCGP LMS" <${process.env.GMAIL_USER}>`,
+    to,
+    subject: "Welcome to MRCGP LMS - Your Student Portal Access Details",
+    html: htmlContent,
   });
 
-  console.log("[mailer] Confirmation sent to payee:", info.messageId);
+  console.log("[mailer] Student credentials welcome email sent to payee:", info.messageId);
   return info;
+}
+
+// Deprecated: kept as empty stub to prevent any older code from sending the unwanted receipt email
+export async function sendRegistrationConfirmation(_registration?: unknown) {
+  return null;
 }
 
 export async function sendPaymentNotification(registration: {

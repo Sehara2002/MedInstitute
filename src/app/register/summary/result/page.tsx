@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
-import { CheckCircle2, AlertTriangle, ArrowRight, Home, Sparkles, BookOpen, ShieldCheck } from "lucide-react";
+import { CheckCircle2, AlertTriangle, ArrowRight, Home, Sparkles, BookOpen, ShieldCheck, Mail } from "lucide-react";
 
 function ResultContent() {
   const params = useSearchParams();
@@ -13,6 +13,7 @@ function ResultContent() {
   const [status, setStatus] = useState<"checking" | "paid" | "failed" | "error">("checking");
   const [registration, setRegistration] = useState<any>(null);
   const [isTestMode, setIsTestMode] = useState(false);
+  const [alreadyExists, setAlreadyExists] = useState(false);
 
   useEffect(() => {
     if (!regId) {
@@ -24,6 +25,7 @@ function ResultContent() {
       .then((d) => {
         setRegistration(d.registration);
         setIsTestMode(!!d.testMode || d.registration?.orderId?.startsWith("TEST-"));
+        setAlreadyExists(Boolean(d.alreadyExists));
         setStatus(d.isPaid ? "paid" : "failed");
       })
       .catch(() => setStatus("error"));
@@ -59,23 +61,47 @@ function ResultContent() {
           </div>
 
           {registration && (
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-left space-y-2 text-xs">
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-400">Candidate:</span>
-                <span className="font-bold text-slate-900">{registration.firstName} {registration.lastName}</span>
+            <div className="space-y-3">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-left space-y-2 text-xs">
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-400">Candidate:</span>
+                  <span className="font-bold text-slate-900">{registration.firstName} {registration.lastName}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-400">Email:</span>
+                  <span className="font-bold text-slate-900">{registration.email}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-400">Status:</span>
+                  <span className="font-bold text-emerald-700 uppercase tracking-wider">Active / Confirmed</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-400">Reference:</span>
+                  <span className="font-mono font-medium text-slate-600">{registration.orderId || registration.id}</span>
+                </div>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-400">Email:</span>
-                <span className="font-bold text-slate-900">{registration.email}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-400">Status:</span>
-                <span className="font-bold text-emerald-700 uppercase tracking-wider">Active / Confirmed</span>
-              </div>
-              <div className="flex justify-between py-1">
-                <span className="text-slate-400">Reference:</span>
-                <span className="font-mono font-medium text-slate-600">{registration.orderId || registration.id}</span>
-              </div>
+
+              {alreadyExists ? (
+                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200/80 text-left space-y-1.5 text-xs text-amber-950">
+                  <div className="flex items-center gap-2 font-bold text-amber-800">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>Account Already Exists</span>
+                  </div>
+                  <p className="text-[11px] text-amber-800/90 leading-relaxed">
+                    An account with <strong>{registration.email}</strong> is already registered in the MRCGP LMS. No new credentials email was dispatched. Please use your existing portal password to sign in.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200/80 text-left space-y-1.5 text-xs text-emerald-950">
+                  <div className="flex items-center gap-2 font-bold text-emerald-800">
+                    <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Portal Credentials Sent via Email</span>
+                  </div>
+                  <p className="text-[11px] text-emerald-800/80 leading-relaxed">
+                    Your sign-in username, temporary access password, and portal activation link have been sent directly to <strong>{registration.email}</strong>. For your security, credentials are not displayed on screen. Please check your inbox to sign in to the student portal and set your permanent password.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -88,14 +114,16 @@ function ResultContent() {
               <span>Back to Home</span>
             </Link>
 
-            <Link
-              href="/courses"
+            <a
+              href={`${process.env.NEXT_PUBLIC_LMS_FRONTEND_URL || "http://localhost:3000"}/login`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition cursor-pointer"
             >
-              <BookOpen className="w-4 h-4" />
-              <span>Explore More Courses</span>
+              <ShieldCheck className="w-4 h-4" />
+              <span>Go to LMS Portal</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       )}
