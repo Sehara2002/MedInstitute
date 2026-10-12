@@ -43,7 +43,22 @@ export const store = {
     console.log("[store] get:", id, "| found:", !!reg);
     return reg;
   },
-  async update(id: string, patch: Partial<{ status: string; orderId: string; paidAt: Date }>) {
+  async update(
+    id: string,
+    patch: Partial<{
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      course: string;
+      courseId: string | null;
+      amount: number;
+      status: string;
+      orderId: string | null;
+      paidAt: Date | null;
+      userId: string | null;
+    }>
+  ) {
     const reg = await prisma.registration.update({ where: { id }, data: patch });
     console.log("[store] updated:", id, "| status:", reg.status);
     return reg;

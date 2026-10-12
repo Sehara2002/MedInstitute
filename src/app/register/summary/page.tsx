@@ -22,9 +22,15 @@ function SummaryContent() {
     setLoading(true);
     fetch(`/api/registration?id=${id}`)
       .then((r) => r.json())
-      .then((d) => setReg(d.registration))
+      .then((d) => {
+        if (d?.registration?.status === "paid") {
+          router.replace(`/register/summary/result?regId=${id}`);
+          return;
+        }
+        setReg(d?.registration);
+      })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, router]);
 
   // Simulated Test Mode Payment (Bypasses card gateway, marks student as paid and enlists them)
   async function handleTestPay() {

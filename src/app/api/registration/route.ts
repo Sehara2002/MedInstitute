@@ -3,11 +3,13 @@ import { store } from "@/lib/store";
 import { courses } from "@/data/courses";
 import { parsePriceToNumber } from "@/lib/price";
 import { auth } from "@/auth";
+import { sendPayLaterEmail } from "@/lib/mailer";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
+      id: existingRegId,
       firstName,
       lastName,
       email,
@@ -18,6 +20,7 @@ export async function POST(req: NextRequest) {
       password,
       courseId,
       mode,
+      sendPayLater = true,
     } = body;
 
     if (!firstName?.trim() || !email?.trim()) {
@@ -112,16 +115,54 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     const userId = session?.user ? (session.user as { id: string }).id : undefined;
 
-    const registration = await store.create({
-      firstName: firstName.trim(),
-      lastName: lastName?.trim() || "",
-      email: email.trim().toLowerCase(),
-      phone: phone?.trim() || "",
-      course,
-      courseId: found?.id || courseId,
-      amount,
-      userId,
-    });
+    let registration: any = null;
+    if (existingRegId && typeof existingRegId === "string") {
+      try {
+        const existing = await store.get(existingRegId);
+        if (existing && existing.status !== "paid") {
+          registration = await store.update(existingRegId, {
+            firstName: firstName.trim(),
+            lastName: lastName?.trim() || "",
+            email: email.trim().toLowerCase(),
+            phone: phone?.trim() || "",
+            course,
+            courseId: found?.id || courseId,
+            amount,
+            userId: userId || null,
+          });
+        }
+      } catch (updateErr) {
+        console.warn("[Registration API] Could not update existing registration, will create new:", updateErr);
+      }
+    }
+
+    if (!registration) {
+      registration = await store.create({
+        firstName: firstName.trim(),
+        lastName: lastName?.trim() || "",
+        email: email.trim().toLowerCase(),
+        phone: phone?.trim() || "",
+        course,
+        courseId: found?.id || courseId,
+        amount,
+        userId,
+      });
+    }
+
+    // 4. Send Pay Later email matching requested template
+    if (sendPayLater && registration) {
+      try {
+        await sendPayLaterEmail({
+          to: registration.email,
+          fullName: `${registration.firstName} ${registration.lastName}`.trim(),
+          courseName: registration.course,
+          amount: registration.amount,
+          registrationId: registration.id,
+        });
+      } catch (mailErr) {
+        console.error("[Registration API] Failed to send pay later email:", mailErr);
+      }
+    }
 
     return NextResponse.json({
       registration,

@@ -71,6 +71,8 @@ function RegisterForm() {
   const router = useRouter();
   const params = useSearchParams();
   const idParam = params.get("id") || "";
+  const regIdParam = params.get("regId") || "";
+  const stepParam = params.get("step") || "";
 
   // Course & Mode Selection
   const [course, setCourse] = useState("");
@@ -97,6 +99,8 @@ function RegisterForm() {
   const [errors, setErrors] = useState<{ [k: string]: string }>({});
   const [successId, setSuccessId] = useState<string | null>(null);
   const [step, setStep] = useState(1);
+  const [savedRegistrationId, setSavedRegistrationId] = useState<string | null>(regIdParam || null);
+  const [savingStep2, setSavingStep2] = useState(false);
 
   // Maximum date for DOB (must be at least 18 years old)
   const maxDobDate = useMemo(() => {
@@ -104,6 +108,28 @@ function RegisterForm() {
     d.setFullYear(d.getFullYear() - 18);
     return d.toISOString().split("T")[0];
   }, []);
+
+  // Pre-load registration if regId is in URL (e.g. returning to pay later)
+  useEffect(() => {
+    if (!regIdParam) return;
+    fetch(`/api/registration?id=${regIdParam}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.registration) {
+          const r = d.registration;
+          if (r.firstName) setFirstName(r.firstName);
+          if (r.lastName) setLastName(r.lastName);
+          if (r.email) setEmail(r.email);
+          if (r.phone) setPhone(r.phone);
+          if (r.course) setCourse(r.course);
+          if (r.amount) setAmount(r.amount);
+          if (stepParam === "3") {
+            setStep(3);
+          }
+        }
+      })
+      .catch((err) => console.warn("Could not load registration for regId:", err));
+  }, [regIdParam, stepParam]);
 
   useEffect(() => {
     const found = courses.find((c) => c.id === idParam);
@@ -281,7 +307,7 @@ function RegisterForm() {
     }, 0);
   }
 
-  function handleNext() {
+  async function handleNext() {
     const errs = computeErrors();
     const keys = STEP_FIELDS[step];
     const stepErrs: { [k: string]: string } = {};
@@ -294,6 +320,58 @@ function RegisterForm() {
       focusField(firstInvalid);
       return;
     }
+
+    if (step === 2) {
+      // In-between Process 2 and Process 3: Save draft on VPS and send Pay Later email
+      setSavingStep2(true);
+      try {
+        const courseLabel = selectedMode ? `${course} (${selectedMode})` : course;
+        const payload = {
+          id: savedRegistrationId || undefined,
+          firstName,
+          lastName,
+          email,
+          phone,
+          dob,
+          country,
+          address,
+          courseId: idParam,
+          course: courseLabel,
+          amount,
+          mode: selectedMode,
+          sendPayLater: true,
+        };
+
+        const res = await fetch("/api/registration", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        setSavingStep2(false);
+
+        if (res.status === 409) {
+          const errorMsg = data?.error || "An account with this email already exists.";
+          setErrors({ form: errorMsg, email: errorMsg });
+          focusField("email");
+          return;
+        }
+
+        if (data?.registration?.id) {
+          setSavedRegistrationId(data.registration.id);
+          changeStep(3);
+        } else {
+          const errorMsg = data?.error || "Could not save candidate details. Please review your information.";
+          setErrors({ form: errorMsg });
+        }
+      } catch (err) {
+        setSavingStep2(false);
+        setErrors({ form: "Network error saving details. Please try again." });
+      }
+      return;
+    }
+
     changeStep(Math.min(step + 1, 3));
   }
 
@@ -305,7 +383,7 @@ function RegisterForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (step < 3) {
-      handleNext();
+      await handleNext();
       return;
     }
     const errs = validate();
@@ -326,6 +404,7 @@ function RegisterForm() {
       const courseLabel = selectedMode ? `${course} (${selectedMode})` : course;
 
       const payload = {
+        id: savedRegistrationId || undefined,
         firstName,
         lastName,
         email,
@@ -337,6 +416,7 @@ function RegisterForm() {
         course: courseLabel,
         amount,
         mode: selectedMode,
+        sendPayLater: false, // Already sent at Step 2
       };
 
       const res = await fetch("/api/registration", {
@@ -352,7 +432,7 @@ function RegisterForm() {
         setSuccessId(data.registration.id);
         setTimeout(() => {
           router.push(`/register/summary?id=${data.registration.id}`);
-        }, 800);
+        }, 500);
       } else {
         const errorMsg = data?.error || "Registration failed. Please check your information.";
         if (errorMsg.toLowerCase().includes("email") || res.status === 409) {
@@ -1024,11 +1104,20 @@ function RegisterForm() {
                   key="next"
                   type="button"
                   onClick={handleNext}
-                  disabled={!courseItem}
+                  disabled={!courseItem || savingStep2}
                   className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition disabled:opacity-60 cursor-pointer"
                 >
-                  <span>{step === 1 ? "Next: Candidate Information" : "Next: Review & Payment"}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  {savingStep2 ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Saving & Sending Details...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{step === 1 ? "Next: Candidate Information" : "Next: Review & Payment"}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
               )}
 

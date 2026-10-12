@@ -155,6 +155,131 @@ export async function sendStudentWelcomeEmail({
   return info;
 }
 
+export async function sendPayLaterEmail({
+  to,
+  fullName,
+  courseName,
+  amount,
+  registrationId,
+  payUrl,
+}: {
+  to: string;
+  fullName: string;
+  courseName: string;
+  amount: number;
+  registrationId: string;
+  payUrl?: string;
+}) {
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.WEBSITE_URL ||
+    "http://localhost:3001";
+  const finalPayUrl = payUrl || `${siteUrl}/register/summary?id=${registrationId}`;
+
+  const formattedAmount =
+    typeof amount === "number"
+      ? amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      : `${amount}`;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Registration Received</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 40px 15px;">
+    <tr>
+      <td align="center">
+        <!-- Main Card Container -->
+        <table role="presentation" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); overflow: hidden;" cellspacing="0" cellpadding="0">
+          
+          <!-- Forest Green Header Banner -->
+          <tr>
+            <td style="background-color: #055838; padding: 32px 24px; text-align: center;">
+              <h1 style="color: #ffffff; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: -0.3px;">MRCGP Fast Track</h1>
+              <p style="color: #d1fae5; font-size: 13px; font-weight: 600; margin: 6px 0 0 0;">Course Registration Received</p>
+            </td>
+          </tr>
+
+          <!-- Body Content -->
+          <tr>
+            <td style="padding: 32px 28px;">
+              <h2 style="font-size: 17px; font-weight: 700; color: #1e293b; margin: 0 0 14px 0;">Dear ${fullName},</h2>
+              
+              <p style="font-size: 13.5px; line-height: 1.6; color: #475569; margin: 0 0 22px 0;">
+                Your registration for <strong style="color: #0f172a;">${courseName}</strong> was successful. Seats are limited and are given in the order payments are received, so please complete your payment to secure your slot.
+              </p>
+
+              <!-- Registration Box -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 14px; padding: 18px 20px; margin-bottom: 26px;">
+                <tr>
+                  <td>
+                    <p style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.8px; margin: 0 0 12px 0;">YOUR REGISTRATION</p>
+                    
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="padding: 5px 0; font-size: 13px; color: #64748b; width: 110px;">Course</td>
+                        <td style="padding: 5px 0; font-size: 13px; font-weight: 700; color: #0f172a;">${courseName}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 0; font-size: 13px; color: #64748b;">Amount due</td>
+                        <td style="padding: 5px 0; font-size: 14px; font-weight: 800; color: #0f172a;">LKR ${formattedAmount}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 0; font-size: 13px; color: #64748b;">Reference</td>
+                        <td style="padding: 5px 0; font-size: 11.5px; font-family: 'SFMono-Regular', Consolas, Menlo, monospace; color: #334155; font-weight: 600;">${registrationId}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Centered Pay Now CTA -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 24px;">
+                <tr>
+                  <td align="center">
+                    <a href="${finalPayUrl}" style="display: inline-block; background-color: #055838; color: #ffffff; font-size: 15px; font-weight: 700; padding: 13px 44px; border-radius: 8px; text-decoration: none; box-shadow: 0 3px 8px rgba(5, 88, 56, 0.25);">Pay Now</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="font-size: 12px; line-height: 1.55; color: #64748b; margin: 0; text-align: left;">
+                Once your payment is confirmed you will receive a second email with your LMS login credentials. If you have already paid, please ignore this message.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Light Gray Footer -->
+          <tr>
+            <td style="background-color: #f8fafc; border-top: 1px solid #edf2f7; padding: 16px 20px; text-align: center;">
+              <p style="font-size: 11px; color: #94a3b8; margin: 0;">
+                This is an automated message. Reply to this email if you have any questions.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+
+  const info = await transporter.sendMail({
+    from: `"MRCGP Fast Track" <${process.env.GMAIL_USER}>`,
+    to,
+    subject: `Registration Received — ${courseName} (MRCGP Fast Track)`,
+    html: htmlContent,
+  });
+
+  console.log("[mailer] Pay Later / Registration email sent:", info.messageId, "to:", to);
+  return info;
+}
+
 // Deprecated: kept as empty stub to prevent any older code from sending the unwanted receipt email
 export async function sendRegistrationConfirmation(_registration?: unknown) {
   return null;
