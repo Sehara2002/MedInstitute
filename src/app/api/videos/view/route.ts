@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { findCourseContent } from "@/data/courses";
 
 const TRIAL_DAYS = 3;
 
@@ -13,8 +14,14 @@ export async function POST(req: Request) {
   const userId = (session.user as { id: string }).id;
   const { courseId, videoId } = await req.json();
 
-  if (!courseId || !videoId) {
+  if (typeof courseId !== "string" || typeof videoId !== "string" || !courseId || !videoId) {
     return NextResponse.json({ error: "courseId and videoId are required" }, { status: 400 });
+  }
+
+  // Only the course's own free preview videos are tracked
+  const isPreview = findCourseContent(courseId)?.freeVideos?.some((v) => v.id === videoId);
+  if (!isPreview) {
+    return NextResponse.json({ error: "Unknown preview video" }, { status: 400 });
   }
 
   const existingViews = await prisma.videoView.findMany({
