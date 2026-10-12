@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
+import { repriceRegistration } from "@/lib/coursePrice";
 
 export async function POST(req: NextRequest) {
   const { registrationId } = await req.json();
@@ -7,12 +8,36 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing registrationId" }, { status: 400 });
   }
 
-  const registration = await store.get(registrationId);
+  let registration = await store.get(registrationId);
   if (!registration) {
     return NextResponse.json({ error: "Registration not found" }, { status: 404 });
   }
   if (registration.status === "paid") {
     return NextResponse.json({ error: "Already paid" }, { status: 400 });
+  }
+
+  // The price is checked again right before payment: a limited-time offer may have ended
+  // (or started) since the student registered. Starting payment is what keeps an offer price,
+  // so a student coming back after the offer ended pays the current price, and is told so first.
+  const priced = await repriceRegistration(registration);
+  if (priced && "error" in priced) {
+    return NextResponse.json({ error: priced.error }, { status: priced.status });
+  }
+  if (priced && Math.abs(priced.amount - registration.amount) >= 0.005) {
+    const previousAmount = registration.amount;
+    registration = await store.update(registration.id, { amount: priced.amount, course: priced.course });
+    const cheaper = priced.amount < previousAmount;
+    return NextResponse.json(
+      {
+        error: cheaper
+          ? "Good news: a lower price now applies to this course. Please review the new amount and continue."
+          : "The limited-time offer for this course has ended, so the current price applies. Please review the new amount before paying.",
+        priceChanged: true,
+        previousAmount,
+        registration,
+      },
+      { status: 409 }
+    );
   }
 
   const auth = Buffer.from(

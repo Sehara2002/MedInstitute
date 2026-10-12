@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Course } from "@/data/courses";
+import { OfferCountdown } from "@/components/OfferCountdown";
 import { UIDatePicker } from "@/components/common/UIDatePicker";
 import { UISelect } from "@/components/common/UISelect";
 import Image from "next/image";
@@ -150,9 +151,16 @@ export function RegisterForm({ courseItem }: Props) {
     setAmountLabel(opt.fee);
   }
 
+  // The course's own currency (online payment is only offered when it is the gateway's currency)
+  const currency = courseItem?.currencyCode || process.env.NEXT_PUBLIC_CURRENCY || "LKR";
   const amountDisplay = useMemo(() => {
-    return amount > 0 ? `${process.env.NEXT_PUBLIC_CURRENCY || "LKR"} ${amount.toLocaleString()}` : amountLabel || "0";
-  }, [amount, amountLabel]);
+    return amount > 0 ? `${currency} ${amount.toLocaleString()}` : amountLabel || "0";
+  }, [amount, amountLabel, currency]);
+
+  // The usual price, shown struck through while a limited-time offer lowers the chosen option
+  const selectedFee = courseItem?.fees.find((f) => f.key === selectedFeeKey);
+  const originalDisplay =
+    selectedFee?.originalDisplay && selectedFee.amount === amount ? selectedFee.originalDisplay : null;
 
   function computeErrors() {
     const e: { [k: string]: string } = {};
@@ -590,6 +598,22 @@ export function RegisterForm({ courseItem }: Props) {
                 </div>
               )}
 
+              {/* Limited-time offer */}
+              {courseItem?.offer && (
+                <div className="relative isolate overflow-hidden rounded-2xl bg-gradient-to-br from-rose-50 via-white to-amber-50 p-4 ring-1 ring-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <span aria-hidden="true" className="absolute -top-6 -right-6 -z-10 h-20 w-20 rounded-full bg-rose-200/60 blur-xl" />
+                  <div>
+                    <span className="text-xs font-bold text-rose-700 block">
+                      {courseItem.offer.label || "Limited-time offer"} is on
+                    </span>
+                    <span className="text-[11px] text-slate-600">
+                      Complete your registration and start your payment before the offer ends to keep the offer price.
+                    </span>
+                  </div>
+                  <OfferCountdown endsAt={courseItem.offer.endsAt} className="self-start sm:self-center shrink-0" />
+                </div>
+              )}
+
               {/* Target Audience */}
               {courseItem?.targetAudience && courseItem.targetAudience.length > 0 && (
                 <div className="space-y-2.5 pt-2 border-t border-slate-100">
@@ -659,8 +683,13 @@ export function RegisterForm({ courseItem }: Props) {
                               className="accent-emerald-600 w-4 h-4 cursor-pointer"
                             />
                             <div>
-                              <span className="text-xs font-bold text-slate-900 block">
+                              <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                                 {opt.mode} Attendance
+                                {courseItem?.fees.find((f) => f.key === opt.key)?.originalAmount !== undefined && (
+                                  <span className="rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+                                    Offer price
+                                  </span>
+                                )}
                               </span>
                               <span className="text-[11px] text-slate-500">
                                 {opt.mode.toLowerCase().includes("online")
@@ -1022,7 +1051,14 @@ export function RegisterForm({ courseItem }: Props) {
               {step === 3 && (
                 <div>
                   <span className="text-xs font-semibold text-slate-500 block">Total Payable Now</span>
-                  <span className="text-xl font-black text-emerald-700">{amountDisplay}</span>
+                  <span className="flex items-baseline gap-2">
+                    {originalDisplay && (
+                      <span className="text-sm font-semibold text-slate-400 line-through">{originalDisplay}</span>
+                    )}
+                    <span className={`text-xl font-black ${originalDisplay ? "text-rose-600" : "text-emerald-700"}`}>
+                      {amountDisplay}
+                    </span>
+                  </span>
                 </div>
               )}
             </div>
