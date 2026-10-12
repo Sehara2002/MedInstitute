@@ -12,8 +12,6 @@ import { courseContent, toCourseId, parseCourseId, type Course, type CourseFee }
 const DEFAULT_LMS_URL = "https://lms.mrcgpfasttrack.com";
 const DEFAULT_GATEWAY_CURRENCY = "LKR";
 const REQUEST_TIMEOUT_MS = 8000;
-/** How long catalogue pages may show cached course data */
-const CATALOGUE_REVALIDATE_SECONDS = 300;
 
 const FORMAT_LABELS: Record<string, string> = { ONLINE: "Online", PHYSICAL: "Physical" };
 const MODE_LABELS: Record<string, string> = { GROUP: "Group", INDIVIDUAL: "Individual" };
@@ -31,11 +29,6 @@ export type CourseLookup =
     | { status: "found"; course: Course }
     | { status: "not_found" }
     | { status: "unavailable" };
-
-interface FetchOptions {
-    /** Skip every cache; use wherever a price is charged */
-    fresh?: boolean;
-}
 
 /** Shape of one course in the CITech public catalogue response */
 interface PublicCourse {
@@ -167,7 +160,11 @@ function toCourse(course: PublicCourse, apiUrl: string, lmsUrl: string | null): 
 
 type FetchResult = { status: "ok"; data: unknown } | { status: "not_found" } | { status: "unavailable" };
 
-async function fetchCatalogue(path: string, { fresh = false }: FetchOptions): Promise<FetchResult> {
+/**
+ * Always a live read: a course added or changed in the LMS shows up on the next
+ * page load, and an outage shows as unavailable rather than as stale courses.
+ */
+async function fetchCatalogue(path: string): Promise<FetchResult> {
     const apiUrl = readBaseUrl("CITECH_API_URL");
     if (!apiUrl) {
         console.error("[citech] CITECH_API_URL is not configured");
@@ -179,7 +176,7 @@ async function fetchCatalogue(path: string, { fresh = false }: FetchOptions): Pr
             headers: { Accept: "application/json" },
             redirect: "error",
             signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-            ...(fresh ? { cache: "no-store" as const } : { next: { revalidate: CATALOGUE_REVALIDATE_SECONDS } }),
+            cache: "no-store",
         });
         if (res.status === 404) return { status: "not_found" };
         if (!res.ok) {
@@ -202,8 +199,8 @@ async function fetchCatalogue(path: string, { fresh = false }: FetchOptions): Pr
  * Every active CITech course, newest first, or null when the catalogue cannot
  * be reached. Malformed entries are skipped rather than failing the page.
  */
-export async function listCourses(options: FetchOptions = {}): Promise<Course[] | null> {
-    const result = await fetchCatalogue("/api/public/courses", options);
+export async function listCourses(): Promise<Course[] | null> {
+    const result = await fetchCatalogue("/api/public/courses");
     if (result.status !== "ok" || !Array.isArray(result.data)) return null;
 
     const apiUrl = readBaseUrl("CITECH_API_URL")!;
@@ -216,11 +213,11 @@ export async function listCourses(options: FetchOptions = {}): Promise<Course[] 
 }
 
 /** One active CITech course by its "citech-<id>" course id */
-export async function getCourse(courseId: string, options: FetchOptions = {}): Promise<CourseLookup> {
+export async function getCourse(courseId: string): Promise<CourseLookup> {
     const citechCourseId = parseCourseId(courseId);
     if (citechCourseId === null) return { status: "not_found" };
 
-    const result = await fetchCatalogue(`/api/public/courses/${citechCourseId}`, options);
+    const result = await fetchCatalogue(`/api/public/courses/${citechCourseId}`);
     if (result.status !== "ok") return result;
     if (!isPublicCourse(result.data) || result.data.courseId !== citechCourseId) {
         console.error(`[citech] course ${citechCourseId} returned an unexpected body`);
