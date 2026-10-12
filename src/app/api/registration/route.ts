@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       address,
       password,
       courseId,
-      mode,
+      feeKey,
       sendPayLater = true,
     } = body;
 
@@ -68,41 +68,28 @@ export async function POST(req: NextRequest) {
         ? password.trim()
         : `Mrcgp@${Math.random().toString(36).slice(2, 8)}${Date.now().toString().slice(-4)}!`;
 
-    let course = "";
-    let amount = 0;
     let lmsStudentCode: string | null = null;
 
-  // Course registrations only; mock exams are booked through the LMS backend (/exams)
-  const found = courses.find((c) => c.id === courseId);
+    let priced: Priced;
 
-    if (found) {
-      course = found.title;
-
-      if ("modePricing" in found && found.modePricing && found.modePricing.length > 0) {
-        const allowedAmounts = found.modePricing
-          .map((opt) => parsePriceToNumber(opt.fee))
-          .filter((n): n is number => n !== null);
-
-        if (typeof body.amount === "number" && allowedAmounts.includes(body.amount)) {
-          amount = body.amount;
-        } else {
-          amount = allowedAmounts[0] || 0;
-        }
-
-        if (body.course && typeof body.course === "string") {
-          course = body.course;
-        }
-      } else {
-        amount = parsePriceToNumber(found.fee) || 0;
-      }
-    } else if (body.course && typeof body.amount === "number") {
-      course = body.course;
-      amount = body.amount;
+    // Course registrations only; mock exams are booked through the LMS backend (/exams)
+    if (typeof courseId === "string" && parseCourseId(courseId) !== null) {
+      priced = await priceCitechCourse(courseId, feeKey);
+    } else if (body.course && typeof body.course === "string" && typeof body.amount === "number") {
+      // A free-form payment: it is never linked to a course, so it cannot unlock course content
+      priced = { course: body.course, amount: body.amount };
+    } else {
+      priced = { course: "", amount: 0 };
     }
 
-    if (amount <= 0) {
+    if ("error" in priced) {
+      return NextResponse.json({ error: priced.error }, { status: priced.status });
+    }
+    if (!(priced.amount > 0)) {
       return NextResponse.json({ error: "Could not determine a valid amount for this item" }, { status: 400 });
     }
+
+    const { course, amount } = priced;
 
     // Helper to map MedInstitute courses to central LMS backend course IDs
     function resolveBackendCourseId(title: string, courseIdParam?: string): number {
@@ -161,7 +148,7 @@ export async function POST(req: NextRequest) {
             email: email.trim().toLowerCase(),
             phone: phone?.trim() || "",
             course,
-            courseId: found?.id || courseId,
+            courseId: priced.courseId,
             amount,
             userId: userId || null,
           });
@@ -178,7 +165,7 @@ export async function POST(req: NextRequest) {
         email: email.trim().toLowerCase(),
         phone: phone?.trim() || "",
         course,
-        courseId: found?.id || courseId,
+        courseId: priced.courseId,
         amount,
         userId,
       });
