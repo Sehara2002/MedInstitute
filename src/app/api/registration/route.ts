@@ -12,7 +12,7 @@ type Priced = { course: string; courseId?: string; amount: number } | { error: s
  * from the client; the title and amount are always the catalogue's own.
  */
 async function priceCitechCourse(courseId: string, feeKey: unknown): Promise<Priced> {
-  const lookup = await getCourse(courseId, { fresh: true });
+  const lookup = await getCourse(courseId);
   if (lookup.status === "unavailable") {
     return { error: "Course details are temporarily unavailable. Please try again shortly.", status: 503 };
   }
