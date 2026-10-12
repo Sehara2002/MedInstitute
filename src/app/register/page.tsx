@@ -955,24 +955,6 @@ function RegisterForm() {
             </div>
 
             <div className="p-6 space-y-6">
-              {/* Testing Mode Banner */}
-              <div className="p-4 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 flex items-start gap-3">
-                <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800 shrink-0 mt-0.5">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <div className="text-xs space-y-0.5">
-                  <div className="font-bold uppercase tracking-wider text-amber-900 flex items-center gap-2">
-                    <span>Testing Mode Active</span>
-                    <span className="px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900 text-[10px] font-bold">
-                      Payment Bypassed
-                    </span>
-                  </div>
-                  <p className="text-amber-800 leading-relaxed">
-                    Live card payments are temporarily bypassed for testing. You can proceed without entering credit card details to complete enrollment and test LMS backend synchronization.
-                  </p>
-                </div>
-              </div>
-
               {/* Registration Summary Card */}
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
@@ -1136,7 +1118,7 @@ function RegisterForm() {
                   ) : (
                     <>
                       <CreditCard className="w-4 h-4" />
-                      <span>Proceed to Payment (Testing Mode)</span>
+                      <span>Proceed to Payment</span>
                     </>
                   )}
                 </button>

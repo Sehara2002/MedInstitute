@@ -93,7 +93,7 @@ function SummaryContent() {
       <Script
         src={`${process.env.NEXT_PUBLIC_MPGS_GATEWAY_URL}/static/checkout/checkout.min.js`}
         data-error="errorCallback"
-        data-cancel={`${process.env.NEXT_PUBLIC_BASE_URL}/register/summary?id=${id}`}
+        data-cancel={`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001"}/register/summary?id=${id}`}
       />
       <div className="w-full max-w-2xl mx-auto">
         <div className="text-center mb-6">
@@ -115,24 +115,6 @@ function SummaryContent() {
 
           {reg && (
             <div className="space-y-6">
-              {/* Testing Mode Banner */}
-              <div className="p-4 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 flex items-start gap-3">
-                <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800 shrink-0 mt-0.5">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <div className="text-xs space-y-1">
-                  <div className="font-bold uppercase tracking-wider text-amber-900 flex items-center gap-2">
-                    <span>Testing Mode Active</span>
-                    <span className="px-2 py-0.2 rounded-full bg-amber-200/70 text-amber-900 text-[10px] font-bold">
-                      Payment Bypassed
-                    </span>
-                  </div>
-                  <p className="text-amber-800 leading-relaxed">
-                    Live bank card transactions are temporarily disabled for end-to-end testing. You can complete registration using the test simulation button below without entering payment credentials. The candidate will be enrolled in the LMS database.
-                  </p>
-                </div>
-              </div>
-
               {/* Registration Data Card */}
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-3">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
@@ -184,48 +166,27 @@ function SummaryContent() {
                 </div>
               </div>
 
-              {/* Primary Action: Test Mode Completion */}
+              {/* Primary Action: Live Card Payment */}
               <div className="space-y-3 pt-2">
                 <button
                   type="button"
-                  onClick={handleTestPay}
-                  disabled={simulating || paying}
+                  onClick={handlePay}
+                  disabled={paying || simulating}
                   className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-sm rounded-xl shadow-md transition disabled:opacity-50 cursor-pointer"
                 >
-                  {simulating ? (
+                  {paying ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Simulating Payment & Enrolling Candidate...</span>
+                      <span>Redirecting to Payment Gateway...</span>
                     </>
                   ) : (
                     <>
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Complete Registration (Simulate Payment - Test Mode)</span>
+                      <CreditCard className="w-4 h-4" />
+                      <span>Proceed to Payment</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
-
-                {/* Live Payment Option (Preserved for future re-activation) */}
-                <div className="pt-3 border-t border-slate-200/60 space-y-2">
-                  <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span className="text-[11px] font-medium">Mastercard Payment Gateway Services (MPGS)</span>
-                    <span className="text-[10px] font-bold text-amber-700 bg-amber-100/70 px-2 py-0.5 rounded border border-amber-200">
-                      Live Gateway Disabled in Testing
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handlePay}
-                    disabled={paying || simulating}
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs rounded-xl transition border border-slate-200 opacity-60 cursor-not-allowed"
-                    title="Live card payment is bypassed during testing mode"
-                  >
-                    <CreditCard className="w-3.5 h-3.5" />
-                    <span>Proceed to Live Card Gateway (MPGS Commercial Bank)</span>
-                  </button>
-                </div>
               </div>
 
               {/* Security & Partner Logos */}

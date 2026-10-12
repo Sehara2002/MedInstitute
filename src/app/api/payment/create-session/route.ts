@@ -22,20 +22,26 @@ export async function POST(req: NextRequest) {
   const orderId = `REG${registration.id.slice(0, 8)}T${Date.now().toString().slice(-10)}`;
   const url = `${process.env.MPGS_GATEWAY_URL}/api/rest/version/${process.env.MPGS_API_VERSION}/merchant/${process.env.MPGS_MERCHANT_ID}/session`;
 
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.WEBSITE_URL ||
+    "http://localhost:3001";
+
   const requestBody = {
     apiOperation: "INITIATE_CHECKOUT",
     interaction: {
       operation: "PURCHASE",
       merchant: {
         name: "MRCGP Fast Track",
-        url: process.env.NEXT_PUBLIC_BASE_URL,
+        url: baseUrl,
       },
       displayControl: {
         billingAddress: "HIDE",
         customerEmail: "MANDATORY",
         shipping: "HIDE",
       },
-      returnUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/register/summary/result?regId=${registration.id}`,
+      returnUrl: `${baseUrl}/register/summary/result?regId=${registration.id}`,
     },
     order: {
       id: orderId,
