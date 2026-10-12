@@ -18,6 +18,23 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Course catalogue (CITech LMS)
+
+Courses are not edited here: they are read from the CITech LMS public catalogue
+(`GET /api/public/courses`) and refreshed every 5 minutes. Free LMS courses are
+shown as offers and joined on the LMS; paid courses are registered and paid for
+here, priced from the live catalogue at registration time.
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `CITECH_API_URL` | yes | Base URL of the CITech LMS API (https; `http://localhost` allowed for development) |
+| `CITECH_LMS_URL` | no | Base URL of the CITech LMS website, where free courses are joined. Defaults to `https://lms.mrcgpfasttrack.com` |
+| `MPGS_CURRENCY` | no | Payment gateway currency (default `LKR`). Only courses priced in this currency can be paid online; others show "Contact Us to Enroll" |
+
+Videos and brochures are this site's own content, kept in `src/data/courses.ts`.
+To attach them to a CITech course, set that entry's `citechCourseId`. Students who
+paid under the entry's `legacyId` keep their access.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

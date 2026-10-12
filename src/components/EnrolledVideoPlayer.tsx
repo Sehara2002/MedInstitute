@@ -7,13 +7,13 @@ import { PlayCircle, ArrowLeft, ShieldAlert } from "lucide-react";
 import { ProtectedVimeoPlayer } from "@/components/ProtectedVimeoPlayer";
 
 interface Props {
-  course: Course;
+  course: Pick<Course, "title" | "fullVideos">;
   studentEmail: string;
   studentName: string;
 }
 
 export function EnrolledVideoPlayer({ course, studentEmail, studentName }: Props) {
-  const videos = course.fullVideos || [];
+  const videos = course.fullVideos;
   const [activeId, setActiveId] = useState<string | null>(videos[0]?.id || null);
   const activeVideo = videos.find((v) => v.id === activeId);
 

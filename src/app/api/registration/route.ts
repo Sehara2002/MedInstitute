@@ -1,9 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
-import { courses } from "@/data/courses";
-import { parsePriceToNumber } from "@/lib/price";
+import { parseCourseId } from "@/data/courses";
+import { getCourse } from "@/lib/citech";
 import { auth } from "@/auth";
 import { sendPayLaterEmail } from "@/lib/mailer";
+
+type Priced = { course: string; courseId?: string; amount: number } | { error: string; status: number };
+
+/**
+ * Price a CITech course from the live catalogue. Only the option key comes
+ * from the client; the title and amount are always the catalogue's own.
+ */
+async function priceCitechCourse(courseId: string, feeKey: unknown): Promise<Priced> {
+  const lookup = await getCourse(courseId, { fresh: true });
+  if (lookup.status === "unavailable") {
+    return { error: "Course details are temporarily unavailable. Please try again shortly.", status: 503 };
+  }
+  if (lookup.status === "not_found") {
+    return { error: "This course is no longer open for registration", status: 404 };
+  }
+
+  const found = lookup.course;
+  if (found.isFree) {
+    return { error: "This is a free course and needs no registration here", status: 400 };
+  }
+  if (!found.acceptsOnlinePayment) {
+    return { error: "Online payment isn't available for this course. Please contact us to enroll.", status: 400 };
+  }
+
+  const fee = found.fees.length === 1 ? found.fees[0] : found.fees.find((f) => f.key === feeKey);
+  if (!fee) {
+    return { error: "Please select a valid mode of delivery", status: 400 };
+  }
+
+  return {
+    course: found.fees.length > 1 ? `${found.title} (${fee.label})` : found.title,
+    courseId: found.id,
+    amount: fee.amount,
+  };
+}
 
 export async function POST(req: NextRequest) {
   try {

@@ -165,22 +165,13 @@ function RegisterForm() {
       const titleFromParam = params.get("title") || params.get("course") || "";
       const amountFromParam = params.get("amount") || "";
 
-      if (titleFromParam) {
-        setCourse(titleFromParam);
-      }
+type Resolved = { item: RegisterItem | null } | { notice: string };
 
-      if (amountFromParam) {
-        const p = parsePriceToNumber(amountFromParam);
-        if (p !== null && p > 0) {
-          setAmount(p);
-          setAmountLabel(String(p));
-          setAmountEditable(false);
-        } else {
-          setAmount(0);
-          setAmountLabel(amountFromParam || "On Request");
-          setAmountEditable(true);
-        }
-      }
+async function resolveItem(id: string): Promise<Resolved> {
+  if (parseCourseId(id) !== null) {
+    const lookup = await getCourse(id);
+    if (lookup.status === "unavailable") {
+      return { notice: "Registration for this course is temporarily unavailable. Please try again in a few minutes." };
     }
   }, [idParam, params]);
 
@@ -447,6 +438,7 @@ function RegisterForm() {
       setLoading(false);
       setErrors({ form: "Network error. Please try again." });
     }
+    return { item: { id: course.id, title: course.title, options: course.fees } };
   }
 
   return (
@@ -1145,7 +1137,10 @@ function RegisterForm() {
   );
 }
 
-export default function RegisterPage() {
+export default async function RegisterPage({ searchParams }: PageProps) {
+  const { id } = await searchParams;
+  const resolved = await resolveItem(typeof id === "string" ? id : "");
+
   return (
     <>
       <Navbar />
