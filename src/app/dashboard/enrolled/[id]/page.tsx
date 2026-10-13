@@ -1,7 +1,7 @@
 
 import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { listPaidCourses } from "@/lib/paidCourses";
 import { accessCourseIds, findCourseContent, parseCourseId, toCourseId } from "@/data/courses";
 import { EnrolledVideoPlayer } from "@/components/EnrolledVideoPlayer";
 
@@ -21,9 +21,8 @@ export default async function EnrolledCoursePage({ params }: PageProps) {
     redirect(`/dashboard/enrolled/${toCourseId(content.citechCourseId)}`);
   }
 
-  const paidRegistration = await prisma.registration.findFirst({
-    where: { userId, courseId: { in: accessCourseIds(id) }, status: "paid" },
-  });
+  const accessIds = accessCourseIds(id);
+  const paidRegistration = (await listPaidCourses(userId)).find((r) => r.courseId !== null && accessIds.includes(r.courseId));
 
   if (!paidRegistration) {
     if (parseCourseId(id) !== null) {

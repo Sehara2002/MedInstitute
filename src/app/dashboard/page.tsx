@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
 import { accessCourseIds } from "@/data/courses";
 import { listCourses } from "@/lib/citech";
+import { listPaidCourses } from "@/lib/paidCourses";
+import { listVideoViews } from "@/lib/websiteUsers";
 import { GlassCard } from "@/components/GlassCard";
 import { OfferCard } from "@/components/OfferCard";
 import Link from "next/link";
@@ -12,8 +13,8 @@ export default async function DashboardPage() {
   const userId = (session!.user as { id: string }).id;
 
   const [views, paidRegistrations, catalogue] = await Promise.all([
-    prisma.videoView.findMany({ where: { userId }, select: { courseId: true, videoId: true } }),
-    prisma.registration.findMany({ where: { userId, status: "paid" } }),
+    listVideoViews(userId),
+    listPaidCourses(userId),
     listCourses(),
   ]);
 

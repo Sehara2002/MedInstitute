@@ -2,7 +2,8 @@ import React from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ExamCard } from "@/components/ExamCard";
-import { getMockExams, MockExam } from "@/lib/mockExams";
+import type { MockExam } from "@/lib/mockExams";
+import { getMockExams } from "@/lib/mockExams.server";
 import { Ticket, ShieldAlert } from "lucide-react";
 
 export const dynamic = "force-dynamic";

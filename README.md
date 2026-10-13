@@ -18,18 +18,38 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Course catalogue (CITech LMS)
+## LMS integration
 
-Courses are not edited here: they are read from the CITech LMS public catalogue
-(`GET /api/public/courses`) and refreshed every 5 minutes. Free LMS courses are
-shown as offers and joined on the LMS; paid courses are registered and paid for
-here, priced from the live catalogue at registration time.
+Everything that belongs to the LMS goes through the LMS backend's API; this site
+never connects to the LMS database.
+
+- **Courses** are read live from `GET /public/courses`. Free courses link to the
+  LMS's own join page (the backend supplies the link).
+- **Course registration and payment** are handled by the backend
+  (`/public/course-registrations`): it prices the course (offer price while one
+  runs), starts the Commercial Bank checkout, verifies the payment, creates or
+  links the student's LMS account, enrolls them and sends the emails.
+- **Mock exams** are read and booked through the same backend. Browser code calls
+  this site's `/api/lms/public/...` pass-through, so the backend address stays server-only.
+- **Dashboard access** to paid course videos combines the backend's paid
+  registrations with older registrations copied from this site's former
+  database (both read with `WEBSITE_API_KEY`).
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `CITECH_API_URL` | yes | Base URL of the CITech LMS API (https; `http://localhost` allowed for development) |
-| `CITECH_LMS_URL` | no | Base URL of the CITech LMS website, where free courses are joined. Defaults to `https://lms.mrcgpfasttrack.com` |
-| `MPGS_CURRENCY` | no | Payment gateway currency (default `LKR`). Only courses priced in this currency can be paid online; others show "Contact Us to Enroll" |
+| `LMS_BACKEND_URL` | yes | The LMS backend API, including `/api`, e.g. `https://lms.citech.live/api` (https; `http://localhost` allowed for development) |
+| `WEBSITE_API_KEY` | yes | Shared secret; must equal `WEBSITE_API_KEY` on the backend. Lets the dashboard read which courses an account has paid for |
+| `MPGS_CURRENCY` | no | Currency online payment is taken in (default `LKR`). Courses priced in another currency show "Contact Us to Enroll" |
+
+This site has **no database of its own**. Website accounts (email/password and
+Google sign-in), preview-video views and pre-LMS paid registrations are stored in
+the LMS database and reached through the backend's `/website/users` routes
+(`WEBSITE_API_KEY`). Sessions are JWTs (`AUTH_SECRET`). `GOOGLE_*` and `GMAIL_*`
+(sign-up welcome emails) are unchanged. See `.env.example`.
+
+Moving from the former website database: run `scripts/migrate_website_db.js` in
+the backend once (it copies accounts, Google links, video views and old
+registrations, keeping their ids), then remove `DATABASE_URL` from this site.
 
 Videos and brochures are this site's own content, kept in `src/data/courses.ts`.
 To attach them to a CITech course, set that entry's `citechCourseId`. Students who

@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { notFound, redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { listVideoViews } from "@/lib/websiteUsers";
 import { findCourseContent, parseCourseId, toCourseId } from "@/data/courses";
 import { getCourse } from "@/lib/citech";
 import { CourseVideoPlayer } from "@/components/CourseVideoPlayer";
@@ -31,14 +31,10 @@ export default async function CourseVideosPage({ params }: PageProps) {
     notFound();
   }
 
-  const views = await prisma.videoView.findMany({
-    where: { userId, courseId: id },
-    select: { videoId: true, viewedAt: true },
-    orderBy: { viewedAt: "asc" },
-  });
+  const views = await listVideoViews(userId, id);
 
   const watchedVideoIds = views.map((v) => v.videoId);
-  const trialStartedAt = views[0]?.viewedAt || null;
+  const trialStartedAt = views[0]?.viewedAt ? new Date(views[0].viewedAt) : null;
 
   let trialExpiresAt: Date | null = null;
   let isTrialExpired = false;

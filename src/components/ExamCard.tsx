@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Calendar, Clock, ArrowRight, MapPin, Users } from "lucide-react";
 import { GlassCard } from "@/components/GlassCard";
-import { MockExam, formatExamDate, formatExamTime, formatFee, posterSrc } from "@/lib/mockExams";
+import { MockExam, formatExamDate, formatExamTime, formatFee } from "@/lib/mockExams";
+import { posterSrc } from "@/lib/mockExams.server";
 
 interface ExamCardProps {
   exam: MockExam;

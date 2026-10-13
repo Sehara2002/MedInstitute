@@ -3,9 +3,13 @@
  * candidates book a numbered seat here. Booking, payment (Commercial Bank MPGS)
  * and the confirmation email are all handled by the backend; this site only
  * shows the exams and walks the candidate through the steps.
+ *
+ * Browser code reaches the backend through this site's /api/lms proxy, so the
+ * backend address (LMS_BACKEND_URL) stays a server-only setting. Server-side
+ * reads live in mockExams.server.ts.
  */
 
-export const LMS_API_URL = (process.env.NEXT_PUBLIC_LMS_API_URL || "http://localhost:5000/api").replace(/\/$/, "");
+import { showGatewayPaymentPage } from "@/lib/gatewayCheckout";
 
 /** The venue's time zone, used for every date and time shown */
 const EXAM_TIMEZONE = "Asia/Colombo";
@@ -61,10 +65,10 @@ export class MockExamApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit & { next?: { revalidate?: number } }): Promise<T> {
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${LMS_API_URL}${path}`, {
+    res = await fetch(`/api/lms${path}`, {
       ...init,
       headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
     });
@@ -76,17 +80,6 @@ async function request<T>(path: string, init?: RequestInit & { next?: { revalida
     throw new MockExamApiError(json?.message || "Something went wrong. Please try again.", res.status);
   }
   return json.data as T;
-}
-
-// ── Reads (server components) ─────────────────────────────────────────────
-
-/** Published, upcoming mock exams, soonest first */
-export function getMockExams(): Promise<MockExam[]> {
-  return request<MockExam[]>("/public/mock-exams", { cache: "no-store" });
-}
-
-export function getMockExam(mockExamId: number | string): Promise<MockExam> {
-  return request<MockExam>(`/public/mock-exams/${encodeURIComponent(String(mockExamId))}`, { cache: "no-store" });
 }
 
 // ── Booking steps (browser) ───────────────────────────────────────────────
@@ -117,11 +110,6 @@ export function verifyBooking(reference: string): Promise<MockExamBooking> {
 
 // ── Display ───────────────────────────────────────────────────────────────
 
-export function posterSrc(exam: { posterUrl: string | null }): string | null {
-  if (!exam.posterUrl) return null;
-  return `${LMS_API_URL.replace(/\/api$/, "")}${exam.posterUrl}`;
-}
-
 export function formatExamDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", {
     timeZone: EXAM_TIMEZONE,
@@ -141,42 +129,8 @@ export function formatFee(amount: number, currencyCode: string): string {
   return `${currencyCode} ${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// ── MPGS hosted checkout ──────────────────────────────────────────────────
-
-declare global {
-  interface Window {
-    Checkout?: {
-      configure: (config: { session: { id: string }; version?: string }) => void;
-      showPaymentPage: () => void;
-    };
-  }
-}
-
-const loadedScripts = new Map<string, Promise<void>>();
-
-function loadScript(src: string): Promise<void> {
-  const existing = loadedScripts.get(src);
-  if (existing) return existing;
-  const promise = new Promise<void>((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => {
-      loadedScripts.delete(src);
-      reject(new Error("Could not load the payment page. Please check your connection and try again."));
-    };
-    document.head.appendChild(script);
-  });
-  loadedScripts.set(src, promise);
-  return promise;
-}
-
 /** Start payment for a booking and hand over to the bank's payment page */
 export async function payForBooking(reference: string): Promise<void> {
   const checkout = await startCheckout(reference, `${window.location.origin}/exams/booking/result`);
-  await loadScript(checkout.checkoutScriptUrl);
-  if (!window.Checkout) throw new Error("The payment page could not be started. Please try again.");
-  window.Checkout.configure({ session: { id: checkout.sessionId }, version: "100" });
-  window.Checkout.showPaymentPage();
+  await showGatewayPaymentPage(checkout.checkoutScriptUrl, checkout.sessionId);
 }

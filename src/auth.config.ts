@@ -10,8 +10,8 @@ export const authConfig: NextAuthConfig = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
     // Credentials provider is listed here so middleware recognizes the route,
-    // but its `authorize` function (which needs Prisma/bcrypt) is only defined
-    // in the full config below — middleware never actually calls authorize().
+    // but its `authorize` function (which calls the LMS backend) is only defined
+    // in src/auth.ts — middleware never actually calls authorize().
     Credentials({
       name: "credentials",
       credentials: {

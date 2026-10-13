@@ -12,7 +12,6 @@ function ResultContent() {
   const regId = params.get("regId");
   const [status, setStatus] = useState<"checking" | "paid" | "failed" | "error">("checking");
   const [registration, setRegistration] = useState<any>(null);
-  const [isTestMode, setIsTestMode] = useState(false);
   const [alreadyExists, setAlreadyExists] = useState(false);
 
   useEffect(() => {
@@ -24,7 +23,6 @@ function ResultContent() {
       .then((r) => r.json())
       .then((d) => {
         setRegistration(d.registration);
-        setIsTestMode(!!d.testMode || d.registration?.orderId?.startsWith("TEST-"));
         setAlreadyExists(Boolean(d.alreadyExists));
         setStatus(d.isPaid ? "paid" : "failed");
       })
@@ -49,7 +47,7 @@ function ResultContent() {
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200/70 mb-3">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Enrollment Confirmed {isTestMode ? "(Testing Mode)" : ""}</span>
+              <span>Enrollment Confirmed</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -115,7 +113,7 @@ function ResultContent() {
             </Link>
 
             <a
-              href={`${process.env.NEXT_PUBLIC_LMS_FRONTEND_URL || "http://localhost:3000"}/login`}
+              href={registration?.lmsLoginUrl || "/"}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition cursor-pointer"

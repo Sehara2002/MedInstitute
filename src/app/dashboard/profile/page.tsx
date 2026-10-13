@@ -1,17 +1,14 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/websiteUsers";
 import { ProfileForm } from "@/components/ProfileForm";
 
 export default async function ProfilePage() {
   const session = await auth();
   const userId = (session!.user as { id: string }).id;
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { id: true, name: true, email: true, image: true, passwordHash: true },
-  });
+  const user = await getUser(userId);
 
-  const hasPassword = !!user?.passwordHash;
+  const hasPassword = !!user?.hasPassword;
 
   return (
     <div className="max-w-2xl">

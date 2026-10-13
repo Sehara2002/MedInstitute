@@ -1,17 +1,15 @@
-// Server-side client for the CITech LMS public course catalogue
-// (GET /api/public/courses). The catalogue is read without credentials, and
-// every field is validated here, so nothing from the remote is trusted as-is.
+// The LMS public course catalogue (GET /public/courses on the LMS backend),
+// read through src/lib/lms.ts (LMS_BACKEND_URL). Every field is validated here,
+// so nothing from the remote is trusted as-is.
 //
 // Environment:
-//   NEXT_PUBLIC_LMS_API_URL  base URL of the CITech LMS API (required)
-//   CITECH_LMS_URL  base URL of the CITech LMS website, where free courses are joined
-//   MPGS_CURRENCY   the payment gateway's currency (shared with the payment routes)
+//   LMS_BACKEND_URL  the LMS backend API (see src/lib/lms.ts)
+//   MPGS_CURRENCY    optional: the currency online payment is taken in (default LKR)
 
 import { courseContent, toCourseId, parseCourseId, type Course, type CourseFee } from "@/data/courses";
+import { lmsFetch, lmsOrigin } from "@/lib/lms";
 
-const DEFAULT_LMS_URL = "https://lms.mrcgpfasttrack.com";
 const DEFAULT_GATEWAY_CURRENCY = "LKR";
-const REQUEST_TIMEOUT_MS = 8000;
 
 const FORMAT_LABELS: Record<string, string> = { ONLINE: "Online", PHYSICAL: "Physical" };
 const MODE_LABELS: Record<string, string> = { GROUP: "Group", INDIVIDUAL: "Individual" };
@@ -45,6 +43,8 @@ interface PublicCourse {
     isFeatured?: boolean;
     currencyCode: string | null;
     coverImageKey: string | null;
+    /** Where a free course is joined in the LMS; absent on older catalogues */
+    joinUrl?: string | null;
     modules: { moduleName: string; moduleOrder: number }[];
     /** The running limited-time offer; absent on older catalogues */
     offer?: { label: string | null; startsAt: string; endsAt: string } | null;
@@ -54,29 +54,6 @@ interface PublicCourse {
      * (both absent on older catalogues)
      */
     deliveryOptions: { format: string; mode: string; price: number; originalPrice?: number; offerPrice?: number | null }[];
-}
-
-/**
- * A configured base URL, or null when it is missing or unsafe: only http(s),
- * no embedded credentials, and https unless it points at this machine.
- */
-function readBaseUrl(name: string, fallback?: string): string | null {
-    const raw = process.env[name]?.trim() || fallback;
-    if (!raw) return null;
-
-    let url: URL;
-    try {
-        url = new URL(raw);
-    } catch {
-        console.error(`[citech] ${name} is not a valid URL`);
-        return null;
-    }
-    const isLocal = url.hostname === "localhost" || url.hostname === "127.0.0.1";
-    if (url.username || url.password || !(url.protocol === "https:" || (url.protocol === "http:" && isLocal))) {
-        console.error(`[citech] ${name} must be an https URL without credentials`);
-        return null;
-    }
-    return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
 }
 
 function gatewayCurrency(): string {
@@ -97,6 +74,17 @@ function isPositiveInteger(value: unknown): value is number {
 
 function isIsoDate(value: unknown): value is string {
     return isString(value) && !Number.isNaN(Date.parse(value));
+}
+
+/** Only http(s) links are ever rendered as a link */
+function isHttpsUrl(value: unknown): value is string {
+    if (!isString(value)) return false;
+    try {
+        const url = new URL(value);
+        return url.protocol === "https:" || (url.protocol === "http:" && url.hostname === "localhost");
+    } catch {
+        return false;
+    }
 }
 
 function isOptionalNumber(value: unknown): boolean {
@@ -126,6 +114,7 @@ function isPublicCourse(value: unknown): value is PublicCourse {
         (c.isFeatured === undefined || typeof c.isFeatured === "boolean") &&
         (c.currencyCode === null || isString(c.currencyCode)) &&
         (c.coverImageKey === null || isString(c.coverImageKey)) &&
+        (c.joinUrl === undefined || c.joinUrl === null || isHttpsUrl(c.joinUrl)) &&
         Array.isArray(c.modules) &&
         c.modules.every((m) => m && isString(m.moduleName)) &&
         isOffer(c.offer) &&
@@ -180,7 +169,7 @@ function toFees(course: PublicCourse, currencyCode: string | null, offerRunning:
         });
 }
 
-function toCourse(course: PublicCourse, apiUrl: string, lmsUrl: string | null): Course {
+function toCourse(course: PublicCourse, backendOrigin: string): Course {
     const currencyCode = course.currencyCode?.trim().toUpperCase() || null;
     const offer = runningOffer(course);
     const fees = toFees(course, currencyCode, offer !== null);
@@ -206,10 +195,10 @@ function toCourse(course: PublicCourse, apiUrl: string, lmsUrl: string | null): 
         targetAudience: course.whoCanApply,
         mode: course.deliveryModes.length > 0 ? course.deliveryModes : formats,
         coverImageUrl: course.coverImageKey
-            ? `${apiUrl}/api/public/courses/${course.courseId}/cover?v=${encodeURIComponent(course.coverImageKey)}`
+            ? `${backendOrigin}/api/public/courses/${course.courseId}/cover?v=${encodeURIComponent(course.coverImageKey)}`
             : null,
         imageUrl: FALLBACK_GRADIENTS[course.courseId % FALLBACK_GRADIENTS.length],
-        lmsUrl: course.isFree && lmsUrl ? `${lmsUrl}/free-courses/${course.courseId}` : null,
+        lmsUrl: course.isFree ? course.joinUrl ?? null : null,
         brochures: content?.brochures ?? [],
         freeVideos: content?.freeVideos ?? [],
         fullVideos: content?.fullVideos ?? [],
@@ -217,74 +206,41 @@ function toCourse(course: PublicCourse, apiUrl: string, lmsUrl: string | null): 
     };
 }
 
-type FetchResult = { status: "ok"; data: unknown } | { status: "not_found" } | { status: "unavailable" };
-
 /**
- * Always a live read: a course added or changed in the LMS shows up on the next
- * page load, and an outage shows as unavailable rather than as stale courses.
- */
-async function fetchCatalogue(path: string): Promise<FetchResult> {
-    const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL");
-    if (!apiUrl) {
-        console.error("[citech] NEXT_PUBLIC_LMS_API_URL is not configured");
-        return { status: "unavailable" };
-    }
-
-    try {
-        const res = await fetch(`${apiUrl}${path}`, {
-            headers: { Accept: "application/json" },
-            redirect: "error",
-            signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-            cache: "no-store",
-        });
-        if (res.status === 404) return { status: "not_found" };
-        if (!res.ok) {
-            console.error(`[citech] ${path} answered ${res.status}`);
-            return { status: "unavailable" };
-        }
-        const body: unknown = await res.json();
-        if (!body || typeof body !== "object" || (body as { success?: unknown }).success !== true) {
-            console.error(`[citech] ${path} returned an unexpected body`);
-            return { status: "unavailable" };
-        }
-        return { status: "ok", data: (body as { data?: unknown }).data };
-    } catch (err) {
-        console.error(`[citech] ${path} failed:`, err instanceof Error ? err.message : err);
-        return { status: "unavailable" };
-    }
-}
-
-/**
- * Every active CITech course, newest first, or null when the catalogue cannot
- * be reached. Malformed entries are skipped rather than failing the page.
+ * Every active course, newest first, or null when the catalogue cannot be
+ * reached. Always a live read, so a course added in the LMS shows up on the
+ * next page load. Malformed entries are skipped rather than failing the page.
  */
 export async function listCourses(): Promise<Course[] | null> {
-    const result = await fetchCatalogue("/public/courses");
-    if (result.status !== "ok" || !Array.isArray(result.data)) return null;
+    const result = await lmsFetch<unknown>("/public/courses");
+    const origin = lmsOrigin();
+    if (result.status !== "ok" || !Array.isArray(result.data) || !origin) {
+        if (result.status === "error") console.error(`[citech] /public/courses answered ${result.httpStatus}`);
+        return null;
+    }
 
-    const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL")!;
-    const lmsUrl = readBaseUrl("LMS_BACKEND_URL", DEFAULT_LMS_URL);
     const valid = result.data.filter(isPublicCourse);
     if (valid.length < result.data.length) {
         console.error(`[citech] skipped ${result.data.length - valid.length} malformed course(s)`);
     }
-    console.log(`[citech] found ${valid.length} active course(s) in the catalogue: ${valid.map((c) => c.courseId).join(", ")}`);
-    return valid.map((c) => toCourse(c, apiUrl, lmsUrl));
+    return valid.map((c) => toCourse(c, origin));
 }
 
-/** One active CITech course by its "citech-<id>" course id */
+/** One active course by its "citech-<id>" course id */
 export async function getCourse(courseId: string): Promise<CourseLookup> {
     const citechCourseId = parseCourseId(courseId);
     if (citechCourseId === null) return { status: "not_found" };
 
-    const result = await fetchCatalogue(`/public/courses/${citechCourseId}`);
-    if (result.status !== "ok") return result;
-    if (!isPublicCourse(result.data) || result.data.courseId !== citechCourseId) {
+    const result = await lmsFetch<unknown>(`/public/courses/${citechCourseId}`);
+    if (result.status === "unavailable") return { status: "unavailable" };
+    if (result.status === "error") {
+        if (result.httpStatus === 404 || result.httpStatus === 400) return { status: "not_found" };
+        return { status: "unavailable" };
+    }
+    const origin = lmsOrigin();
+    if (!origin || !isPublicCourse(result.data) || result.data.courseId !== citechCourseId) {
         console.error(`[citech] course ${citechCourseId} returned an unexpected body`);
         return { status: "unavailable" };
     }
-
-    const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL")!;
-    const lmsUrl = readBaseUrl("LMS_BACKEND_URL", DEFAULT_LMS_URL);
-    return { status: "found", course: toCourse(result.data, apiUrl, lmsUrl) };
+    return { status: "found", course: toCourse(result.data, origin) };
 }
