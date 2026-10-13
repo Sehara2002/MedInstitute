@@ -32,8 +32,8 @@ never connects to the LMS database.
 - **Mock exams** are read and booked through the same backend. Browser code calls
   this site's `/api/lms/public/...` pass-through, so the backend address stays server-only.
 - **Dashboard access** to paid course videos combines the backend's paid
-  registrations (read with `WEBSITE_API_KEY`) with older registrations still in
-  this site's own database.
+  registrations with older registrations copied from this site's former
+  database (both read with `WEBSITE_API_KEY`).
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
@@ -41,8 +41,15 @@ never connects to the LMS database.
 | `WEBSITE_API_KEY` | yes | Shared secret; must equal `WEBSITE_API_KEY` on the backend. Lets the dashboard read which courses an account has paid for |
 | `MPGS_CURRENCY` | no | Currency online payment is taken in (default `LKR`). Courses priced in another currency show "Contact Us to Enroll" |
 
-`DATABASE_URL` (this site's own accounts and video views), `AUTH_SECRET`, `GOOGLE_*`
-and `GMAIL_*` (website sign-up emails) are unchanged.
+This site has **no database of its own**. Website accounts (email/password and
+Google sign-in), preview-video views and pre-LMS paid registrations are stored in
+the LMS database and reached through the backend's `/website/users` routes
+(`WEBSITE_API_KEY`). Sessions are JWTs (`AUTH_SECRET`). `GOOGLE_*` and `GMAIL_*`
+(sign-up welcome emails) are unchanged. See `.env.example`.
+
+Moving from the former website database: run `scripts/migrate_website_db.js` in
+the backend once (it copies accounts, Google links, video views and old
+registrations, keeping their ids), then remove `DATABASE_URL` from this site.
 
 Videos and brochures are this site's own content, kept in `src/data/courses.ts`.
 To attach them to a CITech course, set that entry's `citechCourseId`. Students who
