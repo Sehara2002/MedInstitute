@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { listPaidCourses } from "@/lib/paidCourses";
 import { findCourseContent } from "@/data/courses";
 import { GlassCard } from "@/components/GlassCard";
 import Link from "next/link";
@@ -9,10 +9,7 @@ export default async function MyCoursesPage() {
   const session = await auth();
   const userId = (session!.user as { id: string }).id;
 
-  const paidRegistrations = await prisma.registration.findMany({
-    where: { userId, status: "paid" },
-    orderBy: { paidAt: "desc" },
-  });
+  const paidRegistrations = await listPaidCourses(userId);
 
   return (
     <div>
@@ -39,7 +36,7 @@ export default async function MyCoursesPage() {
             // The registration keeps the course name it was paid under
             const content = reg.courseId ? findCourseContent(reg.courseId) : undefined;
             return (
-              <GlassCard key={reg.id} className="p-6" variant="panel">
+              <GlassCard key={reg.key} className="p-6" variant="panel">
                 <h3 className="text-lg font-bold text-gray-900 mb-2">
                   {reg.course}
                 </h3>

@@ -1,10 +1,10 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Script from "next/script";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
+import { showGatewayPaymentPage } from "@/lib/gatewayCheckout";
 import Image from "next/image";
 import { Sparkles, CheckCircle2, CreditCard, ShieldCheck, ArrowRight, User, Mail, Phone, BookOpen, AlertCircle } from "lucide-react";
 
@@ -15,7 +15,6 @@ function SummaryContent() {
   const [reg, setReg] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);
-  const [simulating, setSimulating] = useState(false);
   /** Set when the price was re-checked before payment and had changed (e.g. the offer ended) */
   const [priceNotice, setPriceNotice] = useState<{ message: string; previousAmount: number } | null>(null);
 
@@ -34,27 +33,7 @@ function SummaryContent() {
       .finally(() => setLoading(false));
   }, [id, router]);
 
-  // Simulated Test Mode Payment (Bypasses card gateway, marks student as paid and enlists them)
-  async function handleTestPay() {
-    if (!reg) return;
-    setSimulating(true);
-    try {
-      const res = await fetch(`/api/payment/verify?regId=${reg.id}&testMode=true`);
-      const data = await res.json();
-      if (res.ok && data?.isPaid) {
-        router.push(`/register/summary/result?regId=${reg.id}`);
-      } else {
-        alert(data?.error || "Could not complete simulated payment.");
-        setSimulating(false);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Failed to simulate test payment.");
-      setSimulating(false);
-    }
-  }
-
-  // Real MPGS Payment Gateway Integration (Preserved for live launch)
+  // Commercial Bank (MPGS) payment: the LMS backend creates the session
   async function handlePay() {
     if (!reg) return;
     setPaying(true);
@@ -66,8 +45,6 @@ function SummaryContent() {
       });
       const data = await res.json();
 
-      console.log("[create-session] response:", data);
-
       // The price changed since registering: show the new amount and let the student continue
       if (res.status === 409 && data?.priceChanged && data?.registration) {
         setReg(data.registration);
@@ -76,22 +53,16 @@ function SummaryContent() {
         return;
       }
 
-      if (!data?.session?.id) {
+      if (!data?.session?.id || !data?.checkoutScriptUrl) {
         alert(data?.error || "Could not start payment. Please try again.");
         setPaying(false);
         return;
       }
 
-      // @ts-ignore
-      Checkout.configure({
-        session: { id: data.session.id },
-        version: "100",
-      });
-      // @ts-ignore
-      Checkout.showPaymentPage();
+      await showGatewayPaymentPage(data.checkoutScriptUrl, data.session.id);
     } catch (err) {
       console.error(err);
-      alert("Payment could not be started.");
+      alert(err instanceof Error ? err.message : "Payment could not be started.");
       setPaying(false);
     }
   }
@@ -100,11 +71,6 @@ function SummaryContent() {
 
   return (
     <>
-      <Script
-        src={`${process.env.NEXT_PUBLIC_MPGS_GATEWAY_URL}/static/checkout/checkout.min.js`}
-        data-error="errorCallback"
-        data-cancel={`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001"}/register/summary?id=${id}`}
-      />
       <div className="w-full max-w-2xl mx-auto">
         <div className="text-center mb-6">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -197,7 +163,7 @@ function SummaryContent() {
                 <button
                   type="button"
                   onClick={handlePay}
-                  disabled={paying || simulating}
+                  disabled={paying}
                   className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-sm rounded-xl shadow-md transition disabled:opacity-50 cursor-pointer"
                 >
                   {paying ? (

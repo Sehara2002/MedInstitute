@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
-import { getMockExam, MockExam, MockExamApiError } from "@/lib/mockExams";
+import { MockExamApiError, type MockExam } from "@/lib/mockExams";
+import { getMockExam } from "@/lib/mockExams.server";
 import { ExamRegisterForm } from "./ExamRegisterForm";
 
 export const dynamic = "force-dynamic";
