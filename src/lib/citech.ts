@@ -41,10 +41,19 @@ interface PublicCourse {
     whoCanApply: string[];
     durationWeeks: number;
     isFree: boolean;
+    /** Absent on catalogues from before featured courses existed */
+    isFeatured?: boolean;
     currencyCode: string | null;
     coverImageKey: string | null;
     modules: { moduleName: string; moduleOrder: number }[];
-    deliveryOptions: { format: string; mode: string; price: number }[];
+    /** The running limited-time offer; absent on older catalogues */
+    offer?: { label: string | null; startsAt: string; endsAt: string } | null;
+    /**
+     * price         - what a student registering now pays (the offer price while one runs)
+     * originalPrice - the usual price; offerPrice - set only while an offer lowers this option
+     * (both absent on older catalogues)
+     */
+    deliveryOptions: { format: string; mode: string; price: number; originalPrice?: number; offerPrice?: number | null }[];
 }
 
 /**
@@ -86,6 +95,21 @@ function isPositiveInteger(value: unknown): value is number {
     return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
 }
 
+function isIsoDate(value: unknown): value is string {
+    return isString(value) && !Number.isNaN(Date.parse(value));
+}
+
+function isOptionalNumber(value: unknown): boolean {
+    return value === undefined || value === null || (typeof value === "number" && Number.isFinite(value));
+}
+
+function isOffer(value: unknown): boolean {
+    if (value === undefined || value === null) return true;
+    if (typeof value !== "object") return false;
+    const o = value as Record<string, unknown>;
+    return (o.label === null || isString(o.label)) && isIsoDate(o.startsAt) && isIsoDate(o.endsAt);
+}
+
 function isPublicCourse(value: unknown): value is PublicCourse {
     if (!value || typeof value !== "object") return false;
     const c = value as Record<string, unknown>;
@@ -99,13 +123,32 @@ function isPublicCourse(value: unknown): value is PublicCourse {
         isStringList(c.whoCanApply) &&
         isPositiveInteger(c.durationWeeks) &&
         typeof c.isFree === "boolean" &&
+        (c.isFeatured === undefined || typeof c.isFeatured === "boolean") &&
         (c.currencyCode === null || isString(c.currencyCode)) &&
         (c.coverImageKey === null || isString(c.coverImageKey)) &&
         Array.isArray(c.modules) &&
         c.modules.every((m) => m && isString(m.moduleName)) &&
+        isOffer(c.offer) &&
         Array.isArray(c.deliveryOptions) &&
-        c.deliveryOptions.every((o) => o && isString(o.format) && isString(o.mode) && typeof o.price === "number")
+        c.deliveryOptions.every(
+            (o) =>
+                o &&
+                isString(o.format) &&
+                isString(o.mode) &&
+                typeof o.price === "number" &&
+                isOptionalNumber(o.originalPrice) &&
+                isOptionalNumber(o.offerPrice)
+        )
     );
+}
+
+/** The offer, only while it is actually running (guards against a clock skew or a stale response) */
+function runningOffer(course: PublicCourse, now: number = Date.now()): { label: string | null; endsAt: string } | null {
+    if (!course.offer || course.isFree) return null;
+    const ends = Date.parse(course.offer.endsAt);
+    if (!(ends > now)) return null;
+    const label = course.offer.label?.trim() || null;
+    return { label, endsAt: new Date(ends).toISOString() };
 }
 
 function formatMoney(amount: number, currencyCode: string | null): string {
@@ -113,21 +156,34 @@ function formatMoney(amount: number, currencyCode: string | null): string {
     return currencyCode ? `${currencyCode} ${value}` : value;
 }
 
-function toFees(course: PublicCourse, currencyCode: string | null): CourseFee[] {
+/**
+ * The fee of each option. `amount` is always the catalogue's `price` (what to charge now);
+ * the usual price is kept alongside only while a running offer really lowers it.
+ */
+function toFees(course: PublicCourse, currencyCode: string | null, offerRunning: boolean): CourseFee[] {
     if (course.isFree) return [];
     return course.deliveryOptions
         .filter((o) => FORMAT_LABELS[o.format] && MODE_LABELS[o.mode] && Number.isFinite(o.price) && o.price > 0)
-        .map((o) => ({
-            key: `${o.format}_${o.mode}`,
-            label: `${FORMAT_LABELS[o.format]} · ${MODE_LABELS[o.mode]}`,
-            amount: o.price,
-            display: formatMoney(o.price, currencyCode),
-        }));
+        .map((o) => {
+            const fee: CourseFee = {
+                key: `${o.format}_${o.mode}`,
+                label: `${FORMAT_LABELS[o.format]} · ${MODE_LABELS[o.mode]}`,
+                amount: o.price,
+                display: formatMoney(o.price, currencyCode),
+            };
+            const original = o.originalPrice;
+            if (offerRunning && typeof o.offerPrice === "number" && typeof original === "number" && original > o.price) {
+                fee.originalAmount = original;
+                fee.originalDisplay = formatMoney(original, currencyCode);
+            }
+            return fee;
+        });
 }
 
 function toCourse(course: PublicCourse, apiUrl: string, lmsUrl: string | null): Course {
     const currencyCode = course.currencyCode?.trim().toUpperCase() || null;
-    const fees = toFees(course, currencyCode);
+    const offer = runningOffer(course);
+    const fees = toFees(course, currencyCode, offer !== null);
     const content = courseContent.find((c) => c.citechCourseId === course.courseId);
     const formats = [...new Set(fees.map((f) => f.key.split("_")[0]))].map((f) => FORMAT_LABELS[f]);
 
@@ -140,6 +196,9 @@ function toCourse(course: PublicCourse, apiUrl: string, lmsUrl: string | null): 
         level: course.level || (course.isFree ? "Free Course" : "Course"),
         instructor: course.instructor,
         isFree: course.isFree,
+        isFeatured: course.isFeatured === true,
+        // Shown only when it actually lowers at least one fee
+        offer: offer && fees.some((f) => f.originalAmount !== undefined) ? offer : null,
         currencyCode,
         fees,
         acceptsOnlinePayment: !course.isFree && fees.length > 0 && currencyCode === gatewayCurrency(),

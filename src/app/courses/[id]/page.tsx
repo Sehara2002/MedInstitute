@@ -3,11 +3,14 @@ import { getCourse } from "@/lib/citech";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
-import { Clock, GraduationCap, ArrowLeft, CheckCircle, Download, Video, Gift, ExternalLink } from "lucide-react";
+import { Clock, GraduationCap, ArrowLeft, CheckCircle, Download, Video, Gift, ExternalLink, Star, Flame } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { RegisterButton } from "@/components/RegisterButton";
+import { OfferCountdown } from "@/components/OfferCountdown";
+import { CourseCoverImage } from "@/components/CourseCoverImage";
+import { savingPercent } from "@/lib/fees";
 
 interface PageProps {
     params: Promise<{
@@ -56,11 +59,17 @@ export default async function CoursePage({ params }: PageProps) {
             <Navbar />
             <main className="min-h-screen">
                 {/* Course Header */}
-                <div className={`relative py-24 ${course.imageUrl}`}>
+                <div className={`relative overflow-hidden py-24 ${course.imageUrl}`}>
                     {course.coverImageUrl && (
+                        // Decorative blurred backdrop only; the full cover is shown uncropped below.
                         // Covers are redirects to short-lived signed URLs, so they bypass next/image
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={course.coverImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                        <img
+                            src={course.coverImageUrl}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl"
+                        />
                     )}
                     <div className="absolute inset-0 bg-white/40 backdrop-blur-sm" />
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -76,6 +85,18 @@ export default async function CoursePage({ params }: PageProps) {
                                 <span className="inline-flex items-center rounded-full bg-gradient-to-r from-red-500 to-orange-500 px-3 py-1 text-sm font-bold text-white shadow-sm">
                                     <Gift className="h-4 w-4 mr-2" />
                                     Free Offer
+                                </span>
+                            )}
+                            {course.isFeatured && (
+                                <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 px-3 py-1 text-sm font-bold text-amber-950 shadow-sm">
+                                    <Star className="h-4 w-4 mr-2 fill-amber-900/80" aria-hidden="true" />
+                                    Featured
+                                </span>
+                            )}
+                            {course.offer && (
+                                <span className="inline-flex items-center rounded-full bg-gradient-to-r from-rose-500 to-orange-400 px-3 py-1 text-sm font-bold text-white shadow-sm">
+                                    <Flame className="h-4 w-4 mr-2" aria-hidden="true" />
+                                    {course.offer.label || "Limited-Time Offer"}
                                 </span>
                             )}
                             <span className="inline-flex items-center rounded-full bg-white/60 px-3 py-1 text-sm font-medium text-gray-800 shadow-sm">
@@ -98,6 +119,15 @@ export default async function CoursePage({ params }: PageProps) {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Main Content */}
                         <div className="lg:col-span-2 space-y-8">
+                            {course.coverImageUrl && (
+                                <CourseCoverImage
+                                    src={course.coverImageUrl}
+                                    alt={`${course.title} cover`}
+                                    eager
+                                    className="w-full aspect-video rounded-[1.75rem] shadow-lg ring-1 ring-white/60"
+                                    fallbackClassName={course.imageUrl}
+                                />
+                            )}
                             <GlassCard className="p-8" variant="panel">
                                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Program Overview</h2>
                                 <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
@@ -153,22 +183,57 @@ export default async function CoursePage({ params }: PageProps) {
                         <div className="space-y-6">
                             <GlassCard className="p-6">
                                 <h3 className="text-xl font-bold text-gray-900 mb-4">Course Details</h3>
+                                {course.offer && (
+                                    <div className="relative isolate mb-5 overflow-hidden rounded-2xl bg-gradient-to-br from-rose-50 via-white to-amber-50 p-4 ring-1 ring-rose-200">
+                                        <span aria-hidden="true" className="absolute -top-6 -right-6 -z-10 h-20 w-20 rounded-full bg-rose-200/60 blur-xl" />
+                                        <p className="flex items-center gap-1.5 text-sm font-bold text-rose-700">
+                                            <Flame className="h-4 w-4" aria-hidden="true" />
+                                            {course.offer.label || "Limited-time offer"}
+                                        </p>
+                                        <p className="mt-1 text-xs text-gray-600">
+                                            Start your payment before the offer ends to keep the offer price.
+                                        </p>
+                                        <OfferCountdown endsAt={course.offer.endsAt} className="mt-2.5" />
+                                    </div>
+                                )}
                                 <div className="space-y-4 mb-6">
                                     <div className="text-sm">
                                         <span className="text-gray-500 block mb-1">Course Fee</span>
                                         {course.isFree ? (
                                             <span className="font-bold text-medical-green-700">Free</span>
-                                        ) : course.fees.length > 1 ? (
+                                        ) : course.fees.length > 0 ? (
                                             <div className="space-y-1.5 mt-1">
-                                                {course.fees.map((fee) => (
-                                                    <div key={fee.key} className="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2">
-                                                        <span className="text-sm font-medium text-gray-700">{fee.label}</span>
-                                                        <span className="font-bold text-gray-900">{fee.display}</span>
-                                                    </div>
-                                                ))}
+                                                {course.fees.map((fee) => {
+                                                    const saving = savingPercent(fee);
+                                                    return (
+                                                        <div
+                                                            key={fee.key}
+                                                            className={`flex items-center justify-between gap-2 rounded-xl px-3 py-2 ${
+                                                                saving !== null ? "bg-rose-50/80 ring-1 ring-rose-100" : "bg-white/60"
+                                                            }`}
+                                                        >
+                                                            <span className="text-sm font-medium text-gray-700">
+                                                                {course.fees.length > 1 ? fee.label : "Tuition"}
+                                                            </span>
+                                                            <span className="flex items-center gap-2 text-right">
+                                                                {saving !== null && fee.originalDisplay && (
+                                                                    <span className="text-xs text-gray-400 line-through">{fee.originalDisplay}</span>
+                                                                )}
+                                                                <span className={`font-bold ${saving !== null ? "text-rose-600" : "text-gray-900"}`}>
+                                                                    {fee.display}
+                                                                </span>
+                                                                {saving !== null && (
+                                                                    <span className="rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                                                                        -{saving}%
+                                                                    </span>
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                         ) : (
-                                            <span className="font-medium text-gray-900">{course.fees[0]?.display || "Contact for details"}</span>
+                                            <span className="font-medium text-gray-900">Contact for details</span>
                                         )}
                                     </div>
                                     <div className="text-sm">

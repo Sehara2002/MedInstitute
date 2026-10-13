@@ -1,4 +1,4 @@
-// The course catalogue (names, descriptions, prices, offers) comes from the
+// The course catalogue (names, descriptions, prices, featured flag and limited-time offers) comes from the
 // CITech LMS — see src/lib/citech.ts. This file holds only what CITech does
 // not: the institute's own videos and brochures, attached to CITech courses.
 
@@ -18,8 +18,20 @@ export interface CourseFee {
     /** Stable option key such as "ONLINE_GROUP"; the register form sends it back */
     key: string;
     label: string;
+    /** What a student registering now pays: the offer price while a limited-time offer runs */
     amount: number;
     display: string;
+    /** The usual price, set only while an offer lowers this option */
+    originalAmount?: number;
+    originalDisplay?: string;
+}
+
+/** A running limited-time offer on a course */
+export interface CourseOffer {
+    /** Public name such as "Early Bird", if the institute gave it one */
+    label: string | null;
+    /** ISO time when the offer stops; payment must be started before then */
+    endsAt: string;
 }
 
 export interface Course {
@@ -33,6 +45,10 @@ export interface Course {
     instructor: string | null;
     /** Free CITech courses are shown as offers and joined on the LMS */
     isFree: boolean;
+    /** Highlighted by the institute at the top of the course list */
+    isFeatured: boolean;
+    /** The running limited-time offer, or null */
+    offer: CourseOffer | null;
     currencyCode: string | null;
     fees: CourseFee[];
     /** Paid, priced, and in the payment gateway's currency */

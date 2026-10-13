@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Gift, Clock } from "lucide-react";
 import { Course } from "@/data/courses";
+import { CourseCoverImage } from "@/components/CourseCoverImage";
 
 interface OfferCardProps {
     course: Course;
@@ -13,12 +14,14 @@ export function OfferCard({ course }: OfferCardProps) {
             href={`/courses/${course.id}`}
             className="group relative block rounded-2xl overflow-hidden shadow-xl ring-4 ring-amber-300/70 hover:ring-amber-400 transition-all bg-white"
         >
-            <div className={`relative h-44 w-full ${course.imageUrl}`}>
-                {course.coverImageUrl && (
-                    // Covers are redirects to short-lived signed URLs, so they bypass next/image
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={course.coverImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-                )}
+            {/* 16:9 frame: the cover is shown whole, never cropped */}
+            <div className="relative aspect-video w-full">
+                <CourseCoverImage
+                    src={course.coverImageUrl}
+                    alt={`${course.title} cover`}
+                    className="absolute inset-0"
+                    fallbackClassName={course.imageUrl}
+                />
                 <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold uppercase tracking-wide shadow-lg ring-2 ring-white">
                     <Gift className="h-3.5 w-3.5" />
                     Free Offer
