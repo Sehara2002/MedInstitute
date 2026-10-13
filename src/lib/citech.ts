@@ -3,7 +3,7 @@
 // every field is validated here, so nothing from the remote is trusted as-is.
 //
 // Environment:
-//   CITECH_API_URL  base URL of the CITech LMS API (required)
+//   NEXT_PUBLIC_LMS_API_URL  base URL of the CITech LMS API (required)
 //   CITECH_LMS_URL  base URL of the CITech LMS website, where free courses are joined
 //   MPGS_CURRENCY   the payment gateway's currency (shared with the payment routes)
 
@@ -224,9 +224,9 @@ type FetchResult = { status: "ok"; data: unknown } | { status: "not_found" } | {
  * page load, and an outage shows as unavailable rather than as stale courses.
  */
 async function fetchCatalogue(path: string): Promise<FetchResult> {
-    const apiUrl = readBaseUrl("CITECH_API_URL");
+    const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL");
     if (!apiUrl) {
-        console.error("[citech] CITECH_API_URL is not configured");
+        console.error("[citech] NEXT_PUBLIC_LMS_API_URL is not configured");
         return { status: "unavailable" };
     }
 
@@ -262,7 +262,7 @@ export async function listCourses(): Promise<Course[] | null> {
     const result = await fetchCatalogue("/api/public/courses");
     if (result.status !== "ok" || !Array.isArray(result.data)) return null;
 
-    const apiUrl = readBaseUrl("CITECH_API_URL")!;
+    const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL")!;
     const lmsUrl = readBaseUrl("CITECH_LMS_URL", DEFAULT_LMS_URL);
     const valid = result.data.filter(isPublicCourse);
     if (valid.length < result.data.length) {
@@ -283,7 +283,7 @@ export async function getCourse(courseId: string): Promise<CourseLookup> {
         return { status: "unavailable" };
     }
 
-    const apiUrl = readBaseUrl("CITECH_API_URL")!;
+    const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL")!;
     const lmsUrl = readBaseUrl("CITECH_LMS_URL", DEFAULT_LMS_URL);
     return { status: "found", course: toCourse(result.data, apiUrl, lmsUrl) };
 }
