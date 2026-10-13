@@ -1,3 +1,4 @@
+
 import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
 import { listPaidCourses } from "@/lib/paidCourses";
