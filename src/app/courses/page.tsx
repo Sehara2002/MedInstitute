@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Gift, Sparkles } from "lucide-react";
+import { Gift } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CourseCard } from "@/components/CourseCard";
+import { CourseHighlightSection } from "@/components/CourseHighlightSection";
 import { OfferCard } from "@/components/OfferCard";
 import { GlassCard } from "@/components/GlassCard";
 import { listCourses } from "@/lib/citech";
-import { isHighlighted } from "@/lib/fees";
 
 // Rendered on every visit so courses added or changed in the LMS appear at once
 // (and a build that cannot reach CITech never freezes the page as static)
@@ -15,12 +15,16 @@ export const dynamic = "force-dynamic";
 export default async function CoursesPage() {
     const courses = await listCourses();
     const offers = courses?.filter((c) => c.isFree) ?? [];
-    // Featured courses and running limited-time offers get their own band; the catalogue
-    // already lists featured courses first. Offers first within the band, as they expire.
-    const highlighted = (courses?.filter(isHighlighted) ?? []).sort(
-        (a, b) => Number(b.offer !== null) - Number(a.offer !== null)
-    );
-    const paidCourses = courses?.filter((c) => !c.isFree && !isHighlighted(c)) ?? [];
+    // Limited-time offers and featured courses are separate promotions with separate bands.
+    // A course that is both is shown once, under offers (the offer runs out), still wearing
+    // its Featured pill. Offers ending soonest come first.
+    const paid = courses?.filter((c) => !c.isFree) ?? [];
+    const offerCourses = paid
+        .filter((c) => c.offer !== null)
+        .sort((a, b) => Date.parse(a.offer!.endsAt) - Date.parse(b.offer!.endsAt));
+    const featuredCourses = paid.filter((c) => c.isFeatured && c.offer === null);
+    const paidCourses = paid.filter((c) => !c.isFeatured && c.offer === null);
+    const highlightedCount = offerCourses.length + featuredCourses.length;
 
     return (
         <>
@@ -47,30 +51,8 @@ export default async function CoursesPage() {
                         </GlassCard>
                     ) : (
                         <>
-                        {highlighted.length > 0 && (
-                            <section aria-labelledby="highlighted-heading" className="relative isolate mb-14">
-                                {/* Soft bubble backdrop for the band */}
-                                <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[2.5rem]">
-                                    <span className="absolute -top-10 left-10 h-48 w-48 rounded-full bg-rose-200/50 blur-3xl" />
-                                    <span className="absolute -bottom-12 right-16 h-56 w-56 rounded-full bg-amber-200/50 blur-3xl" />
-                                    <span className="absolute top-1/3 right-1/3 h-32 w-32 rounded-full bg-medical-green-200/40 blur-3xl" />
-                                </div>
-                                <div className="rounded-[2.5rem] border border-white/60 bg-white/30 p-6 sm:p-8 backdrop-blur-sm">
-                                    <h2 id="highlighted-heading" className="flex items-center gap-2 text-xl font-bold text-gray-900 mb-1">
-                                        <Sparkles className="h-5 w-5 text-amber-500" aria-hidden="true" />
-                                        Featured &amp; Limited-Time Offers
-                                    </h2>
-                                    <p className="text-sm text-gray-600 mb-6">
-                                        Hand-picked programmes and special prices. Offer prices apply when you start your payment before the offer ends.
-                                    </p>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        {highlighted.map((course) => (
-                                            <CourseCard key={course.id} course={course} />
-                                        ))}
-                                    </div>
-                                </div>
-                            </section>
-                        )}
+                        <CourseHighlightSection kind="offers" courses={offerCourses} />
+                        <CourseHighlightSection kind="featured" courses={featuredCourses} />
                         <div className={`grid grid-cols-1 gap-10 items-start ${offers.length > 0 ? "lg:grid-cols-[400px_minmax(0,1fr)]" : ""}`}>
                             {/* Offers — free courses from the LMS, sticky on desktop, newest first */}
                             {offers.length > 0 && (
@@ -92,7 +74,7 @@ export default async function CoursesPage() {
                                         <CourseCard key={course.id} course={course} />
                                     ))}
                                 </div>
-                            ) : highlighted.length === 0 ? (
+                            ) : highlightedCount === 0 ? (
                                 <p className="text-center text-gray-600">New courses are coming soon.</p>
                             ) : null}
                         </div>

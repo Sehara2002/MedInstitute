@@ -17,8 +17,3 @@ export function bestSaving(course: Pick<Course, "fees">): number | null {
     const savings = course.fees.map(savingPercent).filter((s): s is number => s !== null);
     return savings.length > 0 ? Math.max(...savings) : null;
 }
-
-/** Whether a course belongs in the highlighted band: featured, or on a running offer */
-export function isHighlighted(course: Pick<Course, "isFeatured" | "offer" | "isFree">): boolean {
-    return !course.isFree && (course.isFeatured || course.offer !== null);
-}

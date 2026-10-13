@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Clock, GraduationCap, ArrowRight, Video, Star, Flame } from "lucide-react";
+import { Clock, ArrowRight, Video, Star, Flame } from "lucide-react";
 import { GlassCard } from "@/components/GlassCard";
+import { CourseCoverImage } from "@/components/CourseCoverImage";
 import { OfferCountdown } from "@/components/OfferCountdown";
 import { Course } from "@/data/courses";
 import { bestSaving, cheapestFee, savingPercent } from "@/lib/fees";
@@ -46,18 +47,14 @@ export function CourseCard({ course }: CourseCardProps) {
                     !onOffer && course.isFeatured && "ring-2 ring-amber-300/80"
                 )}
             >
-                <div
-                    className={`relative h-28 w-full ${course.imageUrl} flex items-center justify-center p-4 rounded-t-[1.75rem] overflow-hidden`}
-                >
-                    {course.coverImageUrl ? (
-                        // Covers are redirects to short-lived signed URLs, so they bypass next/image
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={course.coverImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-                    ) : (
-                        <div className="bg-white/30 backdrop-blur-md rounded-full p-2.5">
-                            <GraduationCap className="h-6 w-6 text-white" />
-                        </div>
-                    )}
+                {/* 16:9 frame: the cover is shown whole, never cropped */}
+                <div className="relative aspect-video w-full rounded-t-[1.75rem] overflow-hidden">
+                    <CourseCoverImage
+                        src={course.coverImageUrl}
+                        alt={`${course.title} cover`}
+                        className="absolute inset-0"
+                        fallbackClassName={course.imageUrl}
+                    />
 
                     {/* Promotion pills, floating over the cover */}
                     {highlighted && (
@@ -79,18 +76,18 @@ export function CourseCard({ course }: CourseCardProps) {
                     {onOffer && course.offer && (
                         <OfferCountdown endsAt={course.offer.endsAt} className="absolute bottom-2.5 right-2.5" />
                     )}
-                </div>
 
-                {/* Saving bubble — straddles the cover and the content */}
-                {saving !== null && (
-                    <div
-                        className="absolute right-3 top-20 z-20 flex h-14 w-14 rotate-6 flex-col items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-orange-400 text-white shadow-lg ring-4 ring-white motion-safe:animate-float-slow"
-                        aria-label={`Save up to ${saving}%`}
-                    >
-                        <span className="text-[9px] font-semibold uppercase leading-none">{course.fees.length > 1 ? "Up to" : "Save"}</span>
-                        <span className="text-base font-black leading-tight">{saving}%</span>
-                    </div>
-                )}
+                    {/* Saving bubble, in the cover's top-right corner (pills are top-left, countdown bottom-right) */}
+                    {saving !== null && (
+                        <div
+                            className="absolute right-3 top-5 z-20 flex h-14 w-14 rotate-6 flex-col items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-orange-400 text-white shadow-lg ring-4 ring-white motion-safe:animate-float-slow"
+                            aria-label={`Save up to ${saving}%`}
+                        >
+                            <span className="text-[9px] font-semibold uppercase leading-none">{course.fees.length > 1 ? "Up to" : "Save"}</span>
+                            <span className="text-base font-black leading-tight">{saving}%</span>
+                        </div>
+                    )}
+                </div>
 
                 {/* Recordings badge — straddles the image and content sections */}
                 <div className="relative z-10 flex justify-center -mt-4">

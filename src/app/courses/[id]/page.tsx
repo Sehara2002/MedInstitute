@@ -9,6 +9,7 @@ import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { RegisterButton } from "@/components/RegisterButton";
 import { OfferCountdown } from "@/components/OfferCountdown";
+import { CourseCoverImage } from "@/components/CourseCoverImage";
 import { savingPercent } from "@/lib/fees";
 
 interface PageProps {
@@ -58,11 +59,17 @@ export default async function CoursePage({ params }: PageProps) {
             <Navbar />
             <main className="min-h-screen">
                 {/* Course Header */}
-                <div className={`relative py-24 ${course.imageUrl}`}>
+                <div className={`relative overflow-hidden py-24 ${course.imageUrl}`}>
                     {course.coverImageUrl && (
+                        // Decorative blurred backdrop only; the full cover is shown uncropped below.
                         // Covers are redirects to short-lived signed URLs, so they bypass next/image
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={course.coverImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                        <img
+                            src={course.coverImageUrl}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl"
+                        />
                     )}
                     <div className="absolute inset-0 bg-white/40 backdrop-blur-sm" />
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -112,6 +119,15 @@ export default async function CoursePage({ params }: PageProps) {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Main Content */}
                         <div className="lg:col-span-2 space-y-8">
+                            {course.coverImageUrl && (
+                                <CourseCoverImage
+                                    src={course.coverImageUrl}
+                                    alt={`${course.title} cover`}
+                                    eager
+                                    className="w-full aspect-video rounded-[1.75rem] shadow-lg ring-1 ring-white/60"
+                                    fallbackClassName={course.imageUrl}
+                                />
+                            )}
                             <GlassCard className="p-8" variant="panel">
                                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Program Overview</h2>
                                 <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
