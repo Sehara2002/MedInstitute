@@ -7,9 +7,9 @@ import { OfferCard } from "@/components/OfferCard";
 import { GlassCard } from "@/components/GlassCard";
 import { listCourses } from "@/lib/citech";
 
-// Declared here, not only on the catalogue fetch: a build that cannot reach
-// CITech makes no fetch, and the page would otherwise be frozen as static
-export const revalidate = 300;
+// Rendered on every visit so courses added or changed in the LMS appear at once
+// (and a build that cannot reach CITech never freezes the page as static)
+export const dynamic = "force-dynamic";
 
 export default async function CoursesPage() {
     const courses = await listCourses();

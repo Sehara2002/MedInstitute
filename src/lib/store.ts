@@ -5,22 +5,20 @@ declare global {
   var __prismaStore: PrismaClient | undefined;
 }
 
-const vpsDatabaseUrl =
-  process.env.VPS_DATABASE_URL ||
-  "postgresql://mrcgp_app:mrcgplmsCitech@54.36.82.177:5432/mrcgp_lms?schema=public";
+// Registrations live in the LMS database, reached through VPS_DATABASE_URL.
+// Never write database credentials in the code. The client is created on first
+// use so that building the site does not need the database.
+function db(): PrismaClient {
+  if (globalThis.__prismaStore) return globalThis.__prismaStore;
 
-const prisma =
-  globalThis.__prismaStore ??
-  new PrismaClient({
-    datasources: {
-      db: {
-        url: vpsDatabaseUrl,
-      },
-    },
-  });
+  const url = process.env.VPS_DATABASE_URL;
+  if (!url) {
+    throw new Error("VPS_DATABASE_URL is not set; course registrations cannot be saved");
+  }
 
-if (process.env.NODE_ENV !== "production") {
-  globalThis.__prismaStore = prisma;
+  const client = new PrismaClient({ datasources: { db: { url } } });
+  globalThis.__prismaStore = client;
+  return client;
 }
 
 export const store = {
@@ -34,12 +32,12 @@ export const store = {
     amount: number;
     userId?: string;
   }) {
-    const reg = await prisma.registration.create({ data });
-    console.log("[store] created in VPS:", reg.id);
+    const reg = await db().registration.create({ data });
+    console.log("[store] created:", reg.id);
     return reg;
   },
   async get(id: string) {
-    const reg = await prisma.registration.findUnique({ where: { id } });
+    const reg = await db().registration.findUnique({ where: { id } });
     console.log("[store] get:", id, "| found:", !!reg);
     return reg;
   },
@@ -59,12 +57,12 @@ export const store = {
       userId: string | null;
     }>
   ) {
-    const reg = await prisma.registration.update({ where: { id }, data: patch });
+    const reg = await db().registration.update({ where: { id }, data: patch });
     console.log("[store] updated:", id, "| status:", reg.status);
     return reg;
   },
   async findPaidByEmail(email: string) {
-    return prisma.registration.findFirst({
+    return db().registration.findFirst({
       where: {
         email: email.trim().toLowerCase(),
         status: "paid",
