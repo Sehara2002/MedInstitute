@@ -3,6 +3,7 @@ import { Gift } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CourseCard } from "@/components/CourseCard";
+import { CourseHighlightSection } from "@/components/CourseHighlightSection";
 import { OfferCard } from "@/components/OfferCard";
 import { GlassCard } from "@/components/GlassCard";
 import { listCourses } from "@/lib/citech";
@@ -14,7 +15,16 @@ export const dynamic = "force-dynamic";
 export default async function CoursesPage() {
     const courses = await listCourses();
     const offers = courses?.filter((c) => c.isFree) ?? [];
-    const paidCourses = courses?.filter((c) => !c.isFree) ?? [];
+    // Limited-time offers and featured courses are separate promotions with separate bands.
+    // A course that is both is shown once, under offers (the offer runs out), still wearing
+    // its Featured pill. Offers ending soonest come first.
+    const paid = courses?.filter((c) => !c.isFree) ?? [];
+    const offerCourses = paid
+        .filter((c) => c.offer !== null)
+        .sort((a, b) => Date.parse(a.offer!.endsAt) - Date.parse(b.offer!.endsAt));
+    const featuredCourses = paid.filter((c) => c.isFeatured && c.offer === null);
+    const paidCourses = paid.filter((c) => !c.isFeatured && c.offer === null);
+    const highlightedCount = offerCourses.length + featuredCourses.length;
 
     return (
         <>
@@ -40,13 +50,16 @@ export default async function CoursesPage() {
                             </Link>
                         </GlassCard>
                     ) : (
+                        <>
+                        <CourseHighlightSection kind="offers" courses={offerCourses} />
+                        <CourseHighlightSection kind="featured" courses={featuredCourses} />
                         <div className={`grid grid-cols-1 gap-10 items-start ${offers.length > 0 ? "lg:grid-cols-[400px_minmax(0,1fr)]" : ""}`}>
                             {/* Offers — free courses from the LMS, sticky on desktop, newest first */}
                             {offers.length > 0 && (
                                 <div className="lg:sticky lg:top-24 space-y-6">
                                     <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
                                         <Gift className="h-5 w-5 text-red-500" />
-                                        Offers
+                                        Free Courses
                                     </h2>
                                     {offers.map((offer) => (
                                         <OfferCard key={offer.id} course={offer} />
@@ -61,10 +74,11 @@ export default async function CoursesPage() {
                                         <CourseCard key={course.id} course={course} />
                                     ))}
                                 </div>
-                            ) : (
+                            ) : highlightedCount === 0 ? (
                                 <p className="text-center text-gray-600">New courses are coming soon.</p>
-                            )}
+                            ) : null}
                         </div>
+                        </>
                     )}
                 </div>
             </main>

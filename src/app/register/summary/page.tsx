@@ -16,6 +16,8 @@ function SummaryContent() {
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);
   const [simulating, setSimulating] = useState(false);
+  /** Set when the price was re-checked before payment and had changed (e.g. the offer ended) */
+  const [priceNotice, setPriceNotice] = useState<{ message: string; previousAmount: number } | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -65,6 +67,14 @@ function SummaryContent() {
       const data = await res.json();
 
       console.log("[create-session] response:", data);
+
+      // The price changed since registering: show the new amount and let the student continue
+      if (res.status === 409 && data?.priceChanged && data?.registration) {
+        setReg(data.registration);
+        setPriceNotice({ message: data.error, previousAmount: data.previousAmount });
+        setPaying(false);
+        return;
+      }
 
       if (!data?.session?.id) {
         alert(data?.error || "Could not start payment. Please try again.");
@@ -154,6 +164,22 @@ function SummaryContent() {
                   </div>
                 </div>
               </div>
+
+              {priceNotice && (
+                <div
+                  role="alert"
+                  className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5 text-xs text-amber-900"
+                >
+                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold block">{priceNotice.message}</span>
+                    <span className="text-amber-800">
+                      Previous amount: LKR {priceNotice.previousAmount.toLocaleString()} · New amount: LKR{" "}
+                      {Number(reg.amount).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* Total Payable Card */}
               <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-200/60 flex items-center justify-between">
