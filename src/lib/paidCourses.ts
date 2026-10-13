@@ -1,13 +1,13 @@
 // Which courses a website account has paid for, to unlock its videos and files.
 //
-// Two sources, merged:
-//   - registrations paid through the LMS backend (current), read with the shared
-//     WEBSITE_API_KEY because they are private to the account;
-//   - older registrations kept in this site's own database from before payments
-//     moved to the LMS, so earlier students keep their access.
+// Two sources, merged, both read from the LMS backend with WEBSITE_API_KEY
+// because they are private to the account:
+//   - course registrations paid through the backend (current);
+//   - older registrations from before payments moved to the LMS (copied from
+//     this site's former database), so earlier students keep their access.
 
-import { prisma } from "@/lib/prisma";
 import { lmsFetch } from "@/lib/lms";
+import { listLegacyPaidRegistrations } from "@/lib/websiteUsers";
 import { toRegistration, type BackendRegistration } from "@/lib/registrations";
 
 export interface PaidCourse {
@@ -21,7 +21,7 @@ export interface PaidCourse {
 
 export async function listPaidCourses(websiteUserId: string): Promise<PaidCourse[]> {
   const [legacy, current] = await Promise.all([
-    prisma.registration.findMany({ where: { userId: websiteUserId, status: "paid" }, orderBy: { paidAt: "desc" } }),
+    listLegacyPaidRegistrations(websiteUserId),
     lmsFetch<BackendRegistration[]>(`/website/course-registrations?websiteUserId=${encodeURIComponent(websiteUserId)}`, {
       websiteKey: true,
     }),
@@ -38,7 +38,13 @@ export async function listPaidCourses(websiteUserId: string): Promise<PaidCourse
     console.error("[paidCourses] could not read paid registrations from the LMS; showing older ones only");
   }
 
-  const fromWebsite: PaidCourse[] = legacy.map((r) => ({ key: r.id, courseId: r.courseId, course: r.course, paidAt: r.paidAt }));
+  if (legacy.status !== "ok") {
+    console.error("[paidCourses] could not read older paid registrations from the LMS");
+  }
+  const fromWebsite: PaidCourse[] =
+    legacy.status === "ok"
+      ? legacy.data.map((r) => ({ key: r.id, courseId: r.courseId, course: r.course, paidAt: r.paidAt ? new Date(r.paidAt) : null }))
+      : [];
 
   return [...fromLms, ...fromWebsite].sort((a, b) => (b.paidAt?.getTime() ?? 0) - (a.paidAt?.getTime() ?? 0));
 }
