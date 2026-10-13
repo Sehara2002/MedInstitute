@@ -3,13 +3,14 @@
 // every field is validated here, so nothing from the remote is trusted as-is.
 //
 // Environment:
-//   NEXT_PUBLIC_LMS_API_URL  base URL of the CITech LMS API (required)
-//   CITECH_LMS_URL  base URL of the CITech LMS website, where free courses are joined
-//   MPGS_CURRENCY   the payment gateway's currency (shared with the payment routes)
+//   NEXT_PUBLIC_LMS_API_URL  the LMS backend API, including /api (required),
+//                            e.g. https://lms.citech.live/api. Course covers are
+//                            served from it, and free courses link to the LMS page
+//                            the backend gives as `joinUrl`.
+//   MPGS_CURRENCY            the payment gateway's currency (shared with the payment routes)
 
 import { courseContent, toCourseId, parseCourseId, type Course, type CourseFee } from "@/data/courses";
 
-const DEFAULT_LMS_URL = "https://lms.mrcgpfasttrack.com";
 const DEFAULT_GATEWAY_CURRENCY = "LKR";
 const REQUEST_TIMEOUT_MS = 8000;
 
@@ -45,6 +46,8 @@ interface PublicCourse {
     isFeatured?: boolean;
     currencyCode: string | null;
     coverImageKey: string | null;
+    /** Where a free course is joined in the LMS (set by the backend); absent on older catalogues */
+    joinUrl?: string | null;
     modules: { moduleName: string; moduleOrder: number }[];
     /** The running limited-time offer; absent on older catalogues */
     offer?: { label: string | null; startsAt: string; endsAt: string } | null;
@@ -99,6 +102,17 @@ function isIsoDate(value: unknown): value is string {
     return isString(value) && !Number.isNaN(Date.parse(value));
 }
 
+/** Only http(s) links are ever rendered as a link */
+function isWebUrl(value: unknown): value is string {
+    if (!isString(value)) return false;
+    try {
+        const url = new URL(value);
+        return url.protocol === "https:" || (url.protocol === "http:" && url.hostname === "localhost");
+    } catch {
+        return false;
+    }
+}
+
 function isOptionalNumber(value: unknown): boolean {
     return value === undefined || value === null || (typeof value === "number" && Number.isFinite(value));
 }
@@ -126,6 +140,7 @@ function isPublicCourse(value: unknown): value is PublicCourse {
         (c.isFeatured === undefined || typeof c.isFeatured === "boolean") &&
         (c.currencyCode === null || isString(c.currencyCode)) &&
         (c.coverImageKey === null || isString(c.coverImageKey)) &&
+        (c.joinUrl === undefined || c.joinUrl === null || isWebUrl(c.joinUrl)) &&
         Array.isArray(c.modules) &&
         c.modules.every((m) => m && isString(m.moduleName)) &&
         isOffer(c.offer) &&
@@ -180,7 +195,7 @@ function toFees(course: PublicCourse, currencyCode: string | null, offerRunning:
         });
 }
 
-function toCourse(course: PublicCourse, apiUrl: string, lmsUrl: string | null): Course {
+function toCourse(course: PublicCourse, apiUrl: string): Course {
     const currencyCode = course.currencyCode?.trim().toUpperCase() || null;
     const offer = runningOffer(course);
     const fees = toFees(course, currencyCode, offer !== null);
@@ -206,10 +221,11 @@ function toCourse(course: PublicCourse, apiUrl: string, lmsUrl: string | null): 
         targetAudience: course.whoCanApply,
         mode: course.deliveryModes.length > 0 ? course.deliveryModes : formats,
         coverImageUrl: course.coverImageKey
-            ? `${apiUrl}/api/public/courses/${course.courseId}/cover?v=${encodeURIComponent(course.coverImageKey)}`
+            ? `${apiUrl}/public/courses/${course.courseId}/cover?v=${encodeURIComponent(course.coverImageKey)}`
             : null,
         imageUrl: FALLBACK_GRADIENTS[course.courseId % FALLBACK_GRADIENTS.length],
-        lmsUrl: course.isFree && lmsUrl ? `${lmsUrl}/free-courses/${course.courseId}` : null,
+        // The LMS's free-course page; the backend knows the LMS address
+        lmsUrl: course.isFree ? course.joinUrl ?? null : null,
         brochures: content?.brochures ?? [],
         freeVideos: content?.freeVideos ?? [],
         fullVideos: content?.fullVideos ?? [],
@@ -263,13 +279,12 @@ export async function listCourses(): Promise<Course[] | null> {
     if (result.status !== "ok" || !Array.isArray(result.data)) return null;
 
     const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL")!;
-    const lmsUrl = readBaseUrl("LMS_BACKEND_URL", DEFAULT_LMS_URL);
     const valid = result.data.filter(isPublicCourse);
     if (valid.length < result.data.length) {
         console.error(`[citech] skipped ${result.data.length - valid.length} malformed course(s)`);
     }
     console.log(`[citech] found ${valid.length} active course(s) in the catalogue: ${valid.map((c) => c.courseId).join(", ")}`);
-    return valid.map((c) => toCourse(c, apiUrl, lmsUrl));
+    return valid.map((c) => toCourse(c, apiUrl));
 }
 
 /** One active CITech course by its "citech-<id>" course id */
@@ -285,6 +300,5 @@ export async function getCourse(courseId: string): Promise<CourseLookup> {
     }
 
     const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL")!;
-    const lmsUrl = readBaseUrl("LMS_BACKEND_URL", DEFAULT_LMS_URL);
-    return { status: "found", course: toCourse(result.data, apiUrl, lmsUrl) };
+    return { status: "found", course: toCourse(result.data, apiUrl) };
 }
