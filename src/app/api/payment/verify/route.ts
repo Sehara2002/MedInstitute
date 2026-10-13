@@ -3,7 +3,7 @@ import { store } from "@/lib/store";
 import { sendStudentWelcomeEmail, sendPaymentNotification } from "@/lib/mailer";
 
 async function dispatchLmsCredentials(registration: any) {
-  const lmsBackendUrl = process.env.LMS_BACKEND_URL || "http://localhost:5000/api";
+  const lmsBackendUrl = process.env.NEXT_PUBLIC_LMS_API_URL || "http://localhost:5000/api";
   try {
     const lmsRes = await fetch(`${lmsBackendUrl}/students/complete-payment-credentials`, {
       method: "POST",

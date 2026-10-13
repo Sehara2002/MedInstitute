@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Verify if candidate email already exists in Central LMS Backend (PostgreSQL)
-    const lmsBackendUrl = process.env.LMS_BACKEND_URL || "http://localhost:5000/api";
+    const lmsBackendUrl = process.env.NEXT_PUBLIC_LMS_API_URL || "http://localhost:5000/api";
     try {
       const checkRes = await fetch(`${lmsBackendUrl}/students/check-email?email=${encodeURIComponent(normalizedEmail)}`);
       if (checkRes.ok) {
