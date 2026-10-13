@@ -259,15 +259,16 @@ async function fetchCatalogue(path: string): Promise<FetchResult> {
  * be reached. Malformed entries are skipped rather than failing the page.
  */
 export async function listCourses(): Promise<Course[] | null> {
-    const result = await fetchCatalogue("/api/public/courses");
+    const result = await fetchCatalogue("/public/courses");
     if (result.status !== "ok" || !Array.isArray(result.data)) return null;
 
     const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL")!;
-    const lmsUrl = readBaseUrl("CITECH_LMS_URL", DEFAULT_LMS_URL);
+    const lmsUrl = readBaseUrl("LMS_BACKEND_URL", DEFAULT_LMS_URL);
     const valid = result.data.filter(isPublicCourse);
     if (valid.length < result.data.length) {
         console.error(`[citech] skipped ${result.data.length - valid.length} malformed course(s)`);
     }
+    console.log(`[citech] found ${valid.length} active course(s) in the catalogue: ${valid.map((c) => c.courseId).join(", ")}`);
     return valid.map((c) => toCourse(c, apiUrl, lmsUrl));
 }
 
@@ -276,7 +277,7 @@ export async function getCourse(courseId: string): Promise<CourseLookup> {
     const citechCourseId = parseCourseId(courseId);
     if (citechCourseId === null) return { status: "not_found" };
 
-    const result = await fetchCatalogue(`/api/public/courses/${citechCourseId}`);
+    const result = await fetchCatalogue(`/public/courses/${citechCourseId}`);
     if (result.status !== "ok") return result;
     if (!isPublicCourse(result.data) || result.data.courseId !== citechCourseId) {
         console.error(`[citech] course ${citechCourseId} returned an unexpected body`);
@@ -284,6 +285,6 @@ export async function getCourse(courseId: string): Promise<CourseLookup> {
     }
 
     const apiUrl = readBaseUrl("NEXT_PUBLIC_LMS_API_URL")!;
-    const lmsUrl = readBaseUrl("CITECH_LMS_URL", DEFAULT_LMS_URL);
+    const lmsUrl = readBaseUrl("LMS_BACKEND_URL", DEFAULT_LMS_URL);
     return { status: "found", course: toCourse(result.data, apiUrl, lmsUrl) };
 }
