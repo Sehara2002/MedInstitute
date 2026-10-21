@@ -49,12 +49,13 @@ export function SessionGallery() {
     };
 
     return (
-        <section className="py-20 bg-gray-50 overflow-hidden">
+        <section className="py-16 sm:py-24 bg-ink-50/60 border-y border-ink-100 overflow-hidden">
             <div className="container mx-auto px-4 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <span className="eyebrow mb-3">Inside our classes</span>
+                <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-ink-900 mb-3">
                     Our Training <span className="text-medical-green-600">Sessions</span>
                 </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-12">
+                <p className="text-base sm:text-lg text-ink-600 max-w-2xl mx-auto mb-12">
                     Glimpses from our interactive workshops and hands-on training sessions.
                 </p>
 
@@ -66,7 +67,7 @@ export function SessionGallery() {
                     {/* Navigation Buttons */}
                     <button
                         onClick={prevSlide}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 bg-white/80 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition-all backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-medical-green-500"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 bg-white hover:bg-medical-green-50 text-ink-800 p-3 rounded-full shadow-lift ring-1 ring-ink-100 transition-all focus:outline-none focus:ring-2 focus:ring-medical-green-500"
                         aria-label="Previous slide"
                     >
                         <ChevronLeft className="w-6 h-6" />
@@ -74,7 +75,7 @@ export function SessionGallery() {
 
                     <button
                         onClick={nextSlide}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 bg-white/80 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition-all backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-medical-green-500"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 bg-white hover:bg-medical-green-50 text-ink-800 p-3 rounded-full shadow-lift ring-1 ring-ink-100 transition-all focus:outline-none focus:ring-2 focus:ring-medical-green-500"
                         aria-label="Next slide"
                     >
                         <ChevronRight className="w-6 h-6" />
@@ -85,7 +86,7 @@ export function SessionGallery() {
                         {getVisibleSlides().map((slide, i) => (
                             <div
                                 key={`${slide.index}-${i}`}
-                                className={`relative w-full md:w-1/3 aspect-[4/3] rounded-2xl overflow-hidden shadow-xl transform transition-all duration-500 hover:scale-105 group ${i > 0 ? 'hidden md:block' : ''
+                                className={`relative w-full md:w-1/3 aspect-[4/3] rounded-2xl overflow-hidden shadow-lift ring-1 ring-ink-100 transform transition-all duration-500 hover:scale-105 group ${i > 0 ? 'hidden md:block' : ''
                                     }`}
                             >
                                 <Image
@@ -109,7 +110,7 @@ export function SessionGallery() {
                                 onClick={() => setCurrentIndex(idx)}
                                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentIndex
                                     ? 'bg-medical-green-600 w-8'
-                                    : 'bg-gray-300 hover:bg-medical-green-400'
+                                    : 'bg-ink-200 hover:bg-medical-green-400'
                                     }`}
                                 aria-label={`Go to slide ${idx + 1}`}
                             />
