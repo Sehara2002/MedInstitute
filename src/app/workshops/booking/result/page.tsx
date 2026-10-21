@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
+import { SessionLinkNotice } from "@/components/SessionLinkNotice";
 import { formatWorkshopDate, formatWorkshopTime, formatFee, WorkshopBooking, verifyBooking } from "@/lib/workshops";
 
 /** Where the payment gateway sends the candidate back after paying */
@@ -59,15 +60,8 @@ function ResultContent() {
               <span className="font-semibold">{formatFee(booking.amount, booking.currencyCode)}</span>
             </div>
           </div>
-          {booking.joinUrl && (
-            <a
-              href={booking.joinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary mb-3 w-full"
-            >
-              Join the workshop
-            </a>
+          {booking.workshop?.isOnline && (
+            <SessionLinkNotice kind="workshop" reference={booking.reference} email={booking.email} />
           )}
           <Link href="/workshops" className="glass-btn inline-block px-4 py-2 rounded-md">
             Back to Workshops
