@@ -7,6 +7,7 @@ const quickLinks = [
     { href: "/", label: "Home" },
     { href: "/courses", label: "Courses" },
     { href: "/exams", label: "Mock Exams" },
+    { href: "/workshops", label: "Workshops" },
     { href: "/testimonials", label: "Success Stories" },
     { href: "/staff", label: "Faculty" },
     { href: "/contact", label: "Contact Us" },

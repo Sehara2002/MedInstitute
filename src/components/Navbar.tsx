@@ -15,6 +15,7 @@ const navLinks = [
     { href: "/", label: "Home" },
     { href: "/courses", label: "Courses" },
     { href: "/exams", label: "Mock Exams" },
+    { href: "/workshops", label: "Workshops" },
     { href: "/testimonials", label: "Success Stories" },
     { href: "/staff", label: "Faculty" },
     { href: "/contact", label: "Contact" },
@@ -78,14 +79,14 @@ export function Navbar() {
                         </Link>
 
                         {/* Desktop navigation */}
-                        <div className="hidden items-center gap-1 lg:flex">
+                        <div className="hidden items-center gap-1 xl:flex">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
                                     aria-current={isActive(link.href) ? "page" : undefined}
                                     className={cn(
-                                        "relative rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors",
+                                        "relative whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-semibold transition-colors",
                                         isActive(link.href)
                                             ? "text-medical-green-700 bg-medical-green-50"
                                             : "text-ink-600 hover:text-ink-900 hover:bg-ink-50"
@@ -96,10 +97,10 @@ export function Navbar() {
                             ))}
                         </div>
 
-                        <div className="hidden items-center gap-2 lg:flex">
+                        <div className="hidden items-center gap-2 xl:flex">
                             <Link
                                 href={LMS_URL}
-                                className="inline-flex items-center gap-2 rounded-xl border border-medical-green-200 bg-medical-green-50 px-4 py-2 text-sm font-semibold text-medical-green-800 transition-colors hover:bg-medical-green-100"
+                                className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl border border-medical-green-200 bg-medical-green-50 px-3.5 py-2 text-sm font-semibold text-medical-green-800 transition-colors hover:bg-medical-green-100"
                             >
                                 <GraduationCap className="h-4 w-4" aria-hidden="true" />
                                 LMS Portal
@@ -167,13 +168,13 @@ export function Navbar() {
                                 <div className="flex items-center gap-1.5">
                                     <Link
                                         href="/login"
-                                        className="rounded-lg px-3.5 py-2 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-50"
+                                        className="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-50"
                                     >
                                         Log in
                                     </Link>
                                     <Link
                                         href="/signup"
-                                        className="rounded-xl bg-medical-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-medical-green-700"
+                                        className="whitespace-nowrap rounded-xl bg-medical-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-medical-green-700"
                                     >
                                         Sign up free
                                     </Link>
@@ -183,7 +184,7 @@ export function Navbar() {
 
                         {/* Mobile menu button */}
                         <button
-                            className="rounded-lg p-2 text-ink-700 hover:bg-ink-50 lg:hidden"
+                            className="rounded-lg p-2 text-ink-700 hover:bg-ink-50 xl:hidden"
                             onClick={toggleMenu}
                             aria-label={isOpen ? "Close menu" : "Open menu"}
                             aria-expanded={isOpen}
@@ -195,7 +196,7 @@ export function Navbar() {
 
                 {/* Mobile navigation */}
                 {isOpen && (
-                    <div className="border-t border-ink-100 bg-white lg:hidden">
+                    <div className="border-t border-ink-100 bg-white xl:hidden">
                         <div className="container mx-auto flex flex-col gap-1 px-4 py-4 sm:px-6">
                             {navLinks.map((link) => (
                                 <Link
