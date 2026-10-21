@@ -163,7 +163,7 @@ export default function Home() {
                 <span className="absolute -bottom-3 -right-2 z-20 inline-flex items-center rounded-full bg-medical-green-600 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-lg ring-2 ring-white sm:-right-4">
                   Seats filling fast
                 </span>
-                <div className="relative overflow-visible rounded-2xl bg-white shadow-lift ring-1 ring-ink-100">
+                <div className="relative">
                   <PosterSlideshow
                     slides={[
                       {
@@ -178,6 +178,7 @@ export default function Home() {
                       },
                     ]}
                     intervalMs={5000}
+                    className="shadow-lift ring-1 ring-ink-100"
                   />
                 </div>
               </div>

@@ -46,7 +46,7 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className }: Poster
 
   return (
     <div
-      className={cn("group relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-ink-900", className)}
+      className="w-full"
       role="region"
       aria-roledescription="carousel"
       aria-label="Featured posters"
@@ -55,6 +55,7 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className }: Poster
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
+      <div className={cn("relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-ink-900", className)}>
       {slides.map((slide, i) => {
         const active = i === index;
         return (
@@ -88,25 +89,20 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className }: Poster
         );
       })}
 
+      </div>
+
+      {/* Controls sit below the poster so they never cover its text */}
       {count > 1 && (
-        <>
+        <div className="mt-4 flex items-center justify-center gap-3">
           <button
             type="button"
             onClick={() => go(index - 1)}
             aria-label="Previous poster"
-            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 p-2 text-ink-800 shadow-lift ring-1 ring-ink-100 transition-opacity hover:bg-white focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+            className="rounded-full bg-white p-1.5 text-ink-700 shadow-soft ring-1 ring-ink-100 transition-colors hover:bg-medical-green-50 hover:text-medical-green-800"
           >
-            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           </button>
-          <button
-            type="button"
-            onClick={() => go(index + 1)}
-            aria-label="Next poster"
-            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 p-2 text-ink-800 shadow-lift ring-1 ring-ink-100 transition-opacity hover:bg-white focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-          >
-            <ChevronRight className="h-5 w-5" aria-hidden="true" />
-          </button>
-          <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-2 rounded-full bg-ink-900/60 px-3 py-1.5 backdrop-blur-sm">
+          <div className="flex items-center gap-2">
             {slides.map((slide, i) => (
               <button
                 key={i}
@@ -116,12 +112,20 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className }: Poster
                 aria-current={i === index}
                 className={cn(
                   "h-2 rounded-full transition-all",
-                  i === index ? "w-6 bg-white" : "w-2 bg-white/50 hover:bg-white/80"
+                  i === index ? "w-6 bg-medical-green-600" : "w-2 bg-ink-300 hover:bg-medical-green-400"
                 )}
               />
             ))}
           </div>
-        </>
+          <button
+            type="button"
+            onClick={() => go(index + 1)}
+            aria-label="Next poster"
+            className="rounded-full bg-white p-1.5 text-ink-700 shadow-soft ring-1 ring-ink-100 transition-colors hover:bg-medical-green-50 hover:text-medical-green-800"
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
       )}
     </div>
   );
