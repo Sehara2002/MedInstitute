@@ -26,6 +26,8 @@ export interface Workshop {
   bookedSlots: number;
   availableSlots: number;
   isBookable: boolean;
+  /** Set by an admin in the LMS: listed first and shown in the home slideshow */
+  isFeatured?: boolean;
   /** Backend path (no origin) of the poster image, or null */
   posterUrl: string | null;
 }

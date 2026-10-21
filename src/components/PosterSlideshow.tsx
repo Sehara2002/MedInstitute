@@ -1,22 +1,26 @@
 "use client";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface PosterSlide {
   src: StaticImageData | string;
   href: string;
   alt: string;
+  /** Marks the slide as featured and names it, e.g. "Featured workshop" */
+  badge?: string;
+  /** For images served by the LMS backend (signed redirects) that next/image cannot optimise */
+  unoptimized?: boolean;
+  /** Tags hanging off the poster's corners while this slide is showing */
+  cornerTags?: { topLeft?: string; bottomRight?: string };
 }
 
 interface PosterSlideshowProps {
   slides: PosterSlide[];
   intervalMs?: number;
   className?: string;
-  /** Badges that sit on the poster's edges, anchored to the poster frame (not the controls below it) */
-  overlay?: ReactNode;
 }
 
 /**
@@ -24,7 +28,7 @@ interface PosterSlideshowProps {
  * cropped) over a blurred copy of itself, so posters of different shapes never leave a gap.
  * Auto-advance pauses on hover or focus and is off for visitors who prefer reduced motion.
  */
-export function PosterSlideshow({ slides, intervalMs = 5000, className, overlay }: PosterSlideshowProps) {
+export function PosterSlideshow({ slides, intervalMs = 5000, className }: PosterSlideshowProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -58,7 +62,13 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className, overlay 
       onBlur={() => setPaused(false)}
     >
       <div className="relative">
-      <div className={cn("relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-ink-900", className)}>
+      <div
+        className={cn(
+          "relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-ink-900 transition-shadow",
+          className,
+          slides[index]?.badge && "ring-2 ring-amber-400 shadow-[0_0_0_4px_rgb(251_191_36/0.25)]"
+        )}
+      >
       {slides.map((slide, i) => {
         const active = i === index;
         return (
@@ -78,6 +88,7 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className, overlay 
               aria-hidden="true"
               fill
               sizes="(max-width: 768px) 90vw, 480px"
+              unoptimized={slide.unoptimized}
               className="scale-125 object-cover opacity-80 blur-2xl"
             />
             <Image
@@ -86,14 +97,30 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className, overlay 
               fill
               priority={i === 0}
               sizes="(max-width: 768px) 90vw, 480px"
+              unoptimized={slide.unoptimized}
               className="object-contain"
             />
+            {slide.badge && (
+              <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-amber-950 shadow-md">
+                <Star className="h-3.5 w-3.5 fill-amber-900/80" aria-hidden="true" />
+                {slide.badge}
+              </span>
+            )}
           </Link>
         );
       })}
 
       </div>
-      {overlay}
+      {slides[index]?.cornerTags?.topLeft && (
+        <span className="absolute -left-2 -top-3 z-20 inline-flex items-center rounded-full bg-red-600 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white shadow-lg ring-2 ring-white sm:-left-4">
+          {slides[index].cornerTags?.topLeft}
+        </span>
+      )}
+      {slides[index]?.cornerTags?.bottomRight && (
+        <span className="absolute -bottom-3 -right-2 z-20 inline-flex items-center rounded-full bg-medical-green-600 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-lg ring-2 ring-white sm:-right-4">
+          {slides[index].cornerTags?.bottomRight}
+        </span>
+      )}
       </div>
 
       {/* Controls sit below the poster so they never cover its text */}

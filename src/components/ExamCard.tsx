@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Calendar, Clock, ArrowRight, MapPin, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar, Clock, ArrowRight, MapPin, Users, Star } from "lucide-react";
 import { MockExam, formatExamDate, formatExamTime, formatFee } from "@/lib/mockExams";
 import { posterSrc } from "@/lib/mockExams.server";
 
@@ -14,7 +15,18 @@ export function ExamCard({ exam }: ExamCardProps) {
   const filledPct = exam.totalSlots > 0 ? Math.min((exam.bookedSlots / exam.totalSlots) * 100, 100) : 0;
 
   return (
-    <article className="group relative flex h-full flex-col rounded-2xl border border-ink-100 bg-white p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
+    <article
+      className={cn(
+        "group relative flex h-full flex-col rounded-2xl border bg-white p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift",
+        exam.isFeatured ? "border-amber-300 ring-2 ring-amber-200/70" : "border-ink-100"
+      )}
+    >
+      {exam.isFeatured && (
+        <span className="absolute -top-3 left-5 inline-flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-950 shadow-md">
+          <Star className="h-3 w-3 fill-amber-900/80" aria-hidden="true" />
+          Featured
+        </span>
+      )}
       <div className="flex items-center justify-between gap-2 mb-4">
         <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-medical-blue-50 text-medical-blue-700">
           Mock Exam
