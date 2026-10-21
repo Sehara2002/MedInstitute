@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -15,6 +15,8 @@ interface PosterSlideshowProps {
   slides: PosterSlide[];
   intervalMs?: number;
   className?: string;
+  /** Badges that sit on the poster's edges, anchored to the poster frame (not the controls below it) */
+  overlay?: ReactNode;
 }
 
 /**
@@ -22,7 +24,7 @@ interface PosterSlideshowProps {
  * cropped) over a blurred copy of itself, so posters of different shapes never leave a gap.
  * Auto-advance pauses on hover or focus and is off for visitors who prefer reduced motion.
  */
-export function PosterSlideshow({ slides, intervalMs = 5000, className }: PosterSlideshowProps) {
+export function PosterSlideshow({ slides, intervalMs = 5000, className, overlay }: PosterSlideshowProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -55,6 +57,7 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className }: Poster
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
+      <div className="relative">
       <div className={cn("relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-ink-900", className)}>
       {slides.map((slide, i) => {
         const active = i === index;
@@ -89,6 +92,8 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className }: Poster
         );
       })}
 
+      </div>
+      {overlay}
       </div>
 
       {/* Controls sit below the poster so they never cover its text */}

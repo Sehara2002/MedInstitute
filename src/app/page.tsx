@@ -157,12 +157,6 @@ export default function Home() {
             <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
               <div className="relative w-full max-w-[420px] sm:max-w-[460px] lg:max-w-[480px]">
                 <div aria-hidden="true" className="absolute -inset-3 rounded-[28px] bg-gradient-to-br from-medical-green-200 to-medical-blue-200 opacity-70 blur-2xl" />
-                <span className="absolute -left-2 -top-3 z-20 inline-flex items-center rounded-full bg-red-600 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white shadow-lg ring-2 ring-white sm:-left-4">
-                  Limited time offer
-                </span>
-                <span className="absolute -bottom-3 -right-2 z-20 inline-flex items-center rounded-full bg-medical-green-600 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-lg ring-2 ring-white sm:-right-4">
-                  Seats filling fast
-                </span>
                 <div className="relative">
                   <PosterSlideshow
                     slides={[
@@ -179,6 +173,16 @@ export default function Home() {
                     ]}
                     intervalMs={5000}
                     className="shadow-lift ring-1 ring-ink-100"
+                    overlay={
+                      <>
+                        <span className="absolute -left-2 -top-3 z-20 inline-flex items-center rounded-full bg-red-600 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white shadow-lg ring-2 ring-white sm:-left-4">
+                          Limited time offer
+                        </span>
+                        <span className="absolute -bottom-3 -right-2 z-20 inline-flex items-center rounded-full bg-medical-green-600 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-lg ring-2 ring-white sm:-right-4">
+                          Seats filling fast
+                        </span>
+                      </>
+                    }
                   />
                 </div>
               </div>
