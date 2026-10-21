@@ -12,6 +12,7 @@ import {
   FileText,
   CheckCircle2,
   PlayCircle,
+  Presentation,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -20,26 +21,8 @@ import { TypewriterEffect } from "@/components/TypewriterEffect";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { SessionGallery } from "@/components/SessionGallery";
 import { testimonials } from "@/data/testimonials";
-// import ExamPost from "@/data/images/Posts/exam_post4.png";
-import ExamPost from "@/data/images/Posts/exam_post5.png";
-import { PosterSlideshow, type PosterSlide } from "@/components/PosterSlideshow";
+import { PosterSlideshow } from "@/components/PosterSlideshow";
 import { getFeaturedSlides } from "@/lib/featured";
-
-/** The standing promotions: shown after anything an admin has featured in the LMS */
-const standingSlides: PosterSlide[] = [
-  {
-    src: ExamPost,
-    href: "/exams",
-    alt: "Family Medicine Forum - MRCGP INT OSCE Mock Exam",
-    cornerTags: { topLeft: "Limited time offer", bottomRight: "Seats filling fast" },
-  },
-  {
-    src: "/images/new-osce-flyer.jpeg",
-    href: "/courses/mrcgp-int-osce-5-day-virtual-training-2026",
-    alt: "Family Medicine Forum - MRCGP INT OSCE & AKT Training Program by Dr Malkanthi Galhena",
-    cornerTags: { topLeft: "Limited time offer", bottomRight: "Seats filling fast" },
-  },
-];
 
 const pathways = [
   {
@@ -179,13 +162,42 @@ export default async function Home() {
             <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
               <div className="relative w-full max-w-[420px] sm:max-w-[460px] lg:max-w-[480px]">
                 <div aria-hidden="true" className="absolute -inset-3 rounded-[28px] bg-gradient-to-br from-medical-green-200 to-medical-blue-200 opacity-70 blur-2xl" />
-                <div className="relative">
-                  <PosterSlideshow
-                    slides={[...featuredSlides, ...standingSlides]}
-                    intervalMs={5000}
-                    className="shadow-lift ring-1 ring-ink-100"
-                  />
-                </div>
+                {featuredSlides.length > 0 ? (
+                  <div className="relative">
+                    <PosterSlideshow
+                      slides={featuredSlides}
+                      intervalMs={5000}
+                      className="shadow-lift ring-1 ring-ink-100"
+                    />
+                  </div>
+                ) : (
+                  <div className="relative rounded-2xl border border-ink-100 bg-white p-6 shadow-lift sm:p-7">
+                    <p className="eyebrow mb-4">What&apos;s on</p>
+                    <ul className="space-y-3">
+                      {[
+                        { href: "/courses", icon: BookOpen, title: "Courses", text: "MRCGP [INT] programmes with recordings and marking grids" },
+                        { href: "/workshops", icon: Presentation, title: "Workshops", text: "Focused live sessions, online or in person" },
+                        { href: "/exams", icon: CalendarCheck, title: "Mock exams", text: "Practise under real exam conditions" },
+                      ].map((item) => (
+                        <li key={item.href}>
+                          <Link
+                            href={item.href}
+                            className="group flex items-center gap-4 rounded-xl border border-ink-100 p-4 transition-all hover:border-medical-green-200 hover:bg-medical-green-50/60"
+                          >
+                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-medical-green-50 text-medical-green-700 ring-1 ring-medical-green-100 transition-colors group-hover:bg-medical-green-600 group-hover:text-white">
+                              <item.icon className="h-5 w-5" aria-hidden="true" />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block font-display font-extrabold text-ink-900">{item.title}</span>
+                              <span className="block text-sm leading-snug text-ink-600">{item.text}</span>
+                            </span>
+                            <ArrowRight className="h-4 w-4 shrink-0 text-ink-400 transition-transform group-hover:translate-x-1 group-hover:text-medical-green-700" aria-hidden="true" />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           </div>

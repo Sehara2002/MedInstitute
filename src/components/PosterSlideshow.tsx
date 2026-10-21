@@ -13,8 +13,6 @@ export interface PosterSlide {
   badge?: string;
   /** For images served by the LMS backend (signed redirects) that next/image cannot optimise */
   unoptimized?: boolean;
-  /** Tags hanging off the poster's corners while this slide is showing */
-  cornerTags?: { topLeft?: string; bottomRight?: string };
 }
 
 interface PosterSlideshowProps {
@@ -111,16 +109,6 @@ export function PosterSlideshow({ slides, intervalMs = 5000, className }: Poster
       })}
 
       </div>
-      {slides[index]?.cornerTags?.topLeft && (
-        <span className="absolute -left-2 -top-3 z-20 inline-flex items-center rounded-full bg-red-600 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white shadow-lg ring-2 ring-white sm:-left-4">
-          {slides[index].cornerTags?.topLeft}
-        </span>
-      )}
-      {slides[index]?.cornerTags?.bottomRight && (
-        <span className="absolute -bottom-3 -right-2 z-20 inline-flex items-center rounded-full bg-medical-green-600 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-lg ring-2 ring-white sm:-right-4">
-          {slides[index].cornerTags?.bottomRight}
-        </span>
-      )}
       </div>
 
       {/* Controls sit below the poster so they never cover its text */}
