@@ -22,7 +22,7 @@ import { SessionGallery } from "@/components/SessionGallery";
 import { testimonials } from "@/data/testimonials";
 // import ExamPost from "@/data/images/Posts/exam_post4.png";
 import ExamPost from "@/data/images/Posts/exam_post5.png";
-import { FlipCard } from "@/components/FlipCard";
+import { PosterSlideshow } from "@/components/PosterSlideshow";
 
 const pathways = [
   {
@@ -164,15 +164,20 @@ export default function Home() {
                   Seats filling fast
                 </span>
                 <div className="relative overflow-visible rounded-2xl bg-white shadow-lift ring-1 ring-ink-100">
-                  <FlipCard
-                    frontSrc={ExamPost}
-                    frontHref="/exams"
-                    frontAlt="Family Medicine Forum - MRCGP INT OSCE Mock Exam"
-                    backSrc="/images/new-osce-flyer.jpeg"
-                    backHref="/courses/mrcgp-int-osce-5-day-virtual-training-2026"
-                    backAlt="Family Medicine Forum - MRCGP INT OSCE & AKT Training Program by Dr Malkanthi Galhena"
-                    intervalMs={4000}
-                    transitionMs={1400}
+                  <PosterSlideshow
+                    slides={[
+                      {
+                        src: ExamPost,
+                        href: "/exams",
+                        alt: "Family Medicine Forum - MRCGP INT OSCE Mock Exam",
+                      },
+                      {
+                        src: "/images/new-osce-flyer.jpeg",
+                        href: "/courses/mrcgp-int-osce-5-day-virtual-training-2026",
+                        alt: "Family Medicine Forum - MRCGP INT OSCE & AKT Training Program by Dr Malkanthi Galhena",
+                      },
+                    ]}
+                    intervalMs={5000}
                   />
                 </div>
               </div>
