@@ -59,7 +59,7 @@ export default async function CoursePage({ params }: PageProps) {
             <Navbar />
             <main className="min-h-screen">
                 {/* Course Header */}
-                <div className={`relative overflow-hidden py-24 ${course.imageUrl}`}>
+                <div className="relative isolate overflow-hidden bg-ink-900 py-14 sm:py-20">
                     {course.coverImageUrl && (
                         // Decorative blurred backdrop only; the full cover is shown uncropped below.
                         // Covers are redirects to short-lived signed URLs, so they bypass next/image
@@ -68,43 +68,43 @@ export default async function CoursePage({ params }: PageProps) {
                             src={course.coverImageUrl}
                             alt=""
                             aria-hidden="true"
-                            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl"
+                            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-2xl"
                         />
                     )}
-                    <div className="absolute inset-0 bg-white/40 backdrop-blur-sm" />
+                    <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-ink-900/90 via-ink-900/85 to-medical-green-900/90" />
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         <Link
                             href="/courses"
-                            className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-medical-green-700 mb-6 bg-white/50 backdrop-blur rounded-lg px-3 py-1 transition-colors"
+                            className="inline-flex items-center text-sm font-semibold text-ink-200 hover:text-white mb-6 rounded-lg bg-white/10 px-3 py-1.5 ring-1 ring-white/15 transition-colors"
                         >
                             <ArrowLeft className="h-4 w-4 mr-1" /> Back to Courses
                         </Link>
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{course.title}</h1>
-                        <div className="flex flex-wrap gap-4">
+                        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-white mb-5 max-w-4xl">{course.title}</h1>
+                        <div className="flex flex-wrap gap-2.5">
                             {course.isFree && (
-                                <span className="inline-flex items-center rounded-full bg-gradient-to-r from-red-500 to-orange-500 px-3 py-1 text-sm font-bold text-white shadow-sm">
+                                <span className="inline-flex items-center rounded-full bg-rose-600 px-3 py-1 text-sm font-bold text-white shadow-sm">
                                     <Gift className="h-4 w-4 mr-2" />
                                     Free Offer
                                 </span>
                             )}
                             {course.isFeatured && (
-                                <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 px-3 py-1 text-sm font-bold text-amber-950 shadow-sm">
+                                <span className="inline-flex items-center rounded-full bg-amber-400 px-3 py-1 text-sm font-bold text-amber-950 shadow-sm">
                                     <Star className="h-4 w-4 mr-2 fill-amber-900/80" aria-hidden="true" />
                                     Featured
                                 </span>
                             )}
                             {course.offer && (
-                                <span className="inline-flex items-center rounded-full bg-gradient-to-r from-rose-500 to-orange-400 px-3 py-1 text-sm font-bold text-white shadow-sm">
+                                <span className="inline-flex items-center rounded-full bg-rose-600 px-3 py-1 text-sm font-bold text-white shadow-sm">
                                     <Flame className="h-4 w-4 mr-2" aria-hidden="true" />
                                     {course.offer.label || "Limited-Time Offer"}
                                 </span>
                             )}
-                            <span className="inline-flex items-center rounded-full bg-white/60 px-3 py-1 text-sm font-medium text-gray-800 shadow-sm">
-                                <GraduationCap className="h-4 w-4 mr-2 text-medical-green-600" />
+                            <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white ring-1 ring-white/20">
+                                <GraduationCap className="h-4 w-4 mr-2 text-medical-green-300" />
                                 {course.level}
                             </span>
-                            <span className="inline-flex items-center rounded-full bg-white/60 px-3 py-1 text-sm font-medium text-gray-800 shadow-sm">
-                                <Clock className="h-4 w-4 mr-2 text-medical-blue-600" />
+                            <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white ring-1 ring-white/20">
+                                <Clock className="h-4 w-4 mr-2 text-medical-green-300" />
                                 {course.duration}
                             </span>
                             <span className="inline-flex items-center rounded-full bg-medical-green-600 px-3 py-1 text-sm font-bold text-white shadow-sm">
@@ -124,7 +124,7 @@ export default async function CoursePage({ params }: PageProps) {
                                     src={course.coverImageUrl}
                                     alt={`${course.title} cover`}
                                     eager
-                                    className="w-full aspect-video rounded-[1.75rem] shadow-lg ring-1 ring-white/60"
+                                    className="w-full aspect-video rounded-2xl shadow-lift ring-1 ring-ink-100"
                                     fallbackClassName={course.imageUrl}
                                 />
                             )}
@@ -180,11 +180,11 @@ export default async function CoursePage({ params }: PageProps) {
                         </div>
 
                         {/* Sidebar */}
-                        <div className="space-y-6">
+                        <div className="space-y-6 lg:sticky lg:top-28 lg:self-start">
                             <GlassCard className="p-6">
                                 <h3 className="text-xl font-bold text-gray-900 mb-4">Course Details</h3>
                                 {course.offer && (
-                                    <div className="relative isolate mb-5 overflow-hidden rounded-2xl bg-gradient-to-br from-rose-50 via-white to-amber-50 p-4 ring-1 ring-rose-200">
+                                    <div className="relative isolate mb-5 overflow-hidden rounded-2xl bg-rose-50 p-4 ring-1 ring-rose-200">
                                         <span aria-hidden="true" className="absolute -top-6 -right-6 -z-10 h-20 w-20 rounded-full bg-rose-200/60 blur-xl" />
                                         <p className="flex items-center gap-1.5 text-sm font-bold text-rose-700">
                                             <Flame className="h-4 w-4" aria-hidden="true" />
@@ -209,7 +209,7 @@ export default async function CoursePage({ params }: PageProps) {
                                                         <div
                                                             key={fee.key}
                                                             className={`flex items-center justify-between gap-2 rounded-xl px-3 py-2 ${
-                                                                saving !== null ? "bg-rose-50/80 ring-1 ring-rose-100" : "bg-white/60"
+                                                                saving !== null ? "bg-rose-50/80 ring-1 ring-rose-100" : "bg-ink-50"
                                                             }`}
                                                         >
                                                             <span className="text-sm font-medium text-gray-700">
@@ -251,7 +251,7 @@ export default async function CoursePage({ params }: PageProps) {
                                             href={course.lmsUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex items-center justify-center gap-2 w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors"
+                                            className="flex items-center justify-center gap-2 w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-sm hover:bg-medical-green-700 transition-colors"
                                         >
                                             Join for Free <ExternalLink className="h-4 w-4" />
                                         </a>
@@ -265,7 +265,7 @@ export default async function CoursePage({ params }: PageProps) {
                                 ) : (
                                     <Link
                                         href="/contact"
-                                        className="block w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors"
+                                        className="block w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-sm hover:bg-medical-green-700 transition-colors"
                                     >
                                         Contact Us to Enroll
                                     </Link>
@@ -277,7 +277,7 @@ export default async function CoursePage({ params }: PageProps) {
                                                 key={i}
                                                 href={brochure.url}
                                                 download
-                                                className="flex items-center justify-center gap-2 w-full text-center py-3 rounded-xl bg-white border-2 border-medical-green-600 text-medical-green-700 font-semibold hover:bg-medical-green-50 transition-colors"
+                                                className="flex items-center justify-center gap-2 w-full text-center py-3 rounded-xl bg-white border border-medical-green-300 text-medical-green-800 font-semibold hover:bg-medical-green-50 transition-colors"
                                             >
                                                 <Download className="h-5 w-5" />
                                                 Download {brochure.label}

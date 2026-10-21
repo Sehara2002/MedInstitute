@@ -28,7 +28,7 @@ export function PromoModal() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                className="absolute inset-0 bg-ink-950/60 backdrop-blur-sm"
                 onClick={handleClose}
             />
 
@@ -44,7 +44,7 @@ export function PromoModal() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2">
                     {/* Left panel — card payments announcement */}
-                    <div className="bg-gradient-to-br from-medical-blue-600 to-medical-blue-800 p-5 sm:p-8 md:p-10 text-white flex flex-col justify-center">
+                    <div className="bg-gradient-to-br from-ink-900 to-medical-green-900 p-5 sm:p-8 md:p-10 text-white flex flex-col justify-center">
                         <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-[10px] sm:text-xs font-bold uppercase tracking-wide mb-3 sm:mb-5 w-fit">
                             <CreditCard className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                             Now Live
@@ -52,7 +52,7 @@ export function PromoModal() {
                         <h2 className="text-lg sm:text-2xl md:text-3xl font-bold leading-tight mb-2 sm:mb-3">
                             We Now Accept Card Payments
                         </h2>
-                        <p className="text-blue-100 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
+                        <p className="text-ink-200 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
                             Register and pay securely online with your Visa or Mastercard, powered by
                             Commercial Bank — no more waiting, enroll instantly.
                         </p>
@@ -89,7 +89,7 @@ export function PromoModal() {
                         <Link
                             href="/signup"
                             onClick={handleClose}
-                            className="w-full text-center py-2.5 sm:py-3.5 rounded-xl bg-medical-green-600 text-white font-bold text-sm sm:text-base shadow-lg hover:bg-medical-green-500 hover:shadow-xl transition-all"
+                            className="w-full text-center py-2.5 sm:py-3.5 rounded-xl bg-medical-green-600 text-white font-bold text-sm sm:text-base shadow-sm hover:bg-medical-green-700 transition-all"
                         >
                             Sign Up Free
                         </Link>

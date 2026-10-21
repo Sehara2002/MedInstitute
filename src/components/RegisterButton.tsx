@@ -16,7 +16,7 @@ export function RegisterButton({ courseId, requiresAccount, courseTitle }: Props
 
   const href = `/register?id=${encodeURIComponent(courseId)}`;
   const className =
-    "block w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors";
+    "block w-full text-center py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-sm hover:bg-medical-green-700 transition-colors";
 
   const needsGate = requiresAccount && status !== "loading" && !session?.user;
 

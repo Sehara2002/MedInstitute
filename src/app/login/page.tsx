@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { GlassCard } from "@/components/GlassCard";
 import { Navbar } from "@/components/Navbar";
+import { AuthShell } from "@/components/AuthShell";
 import { Footer } from "@/components/Footer";
 
 function LoginForm() {
@@ -41,12 +42,13 @@ function LoginForm() {
 
     return (
         <div className="w-full max-w-md">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Student Login</h1>
+            <h1 className="font-display text-3xl font-extrabold text-ink-900">Welcome back</h1>
+            <p className="mt-2 mb-6 text-ink-600">Sign in to your student account.</p>
 
             <GlassCard className="p-8">
                 <button
                     onClick={() => signIn("google", { callbackUrl })}
-                    className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border-2 border-gray-200 bg-white font-semibold text-gray-700 hover:bg-gray-50 transition-colors mb-6"
+                    className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border border-ink-200 bg-white font-semibold text-ink-700 hover:bg-ink-50 transition-colors mb-6"
                 >
                     <svg className="h-5 w-5" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -65,23 +67,23 @@ function LoginForm() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
+                        <label className="block text-sm font-semibold text-ink-700">Email</label>
                         <input
                             required
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 bg-white/60 focus:outline-none focus:ring-2 focus:ring-medical-green-200 focus:border-medical-green-500 transition"
+                            className="mt-1 block w-full rounded-xl border border-ink-200 px-4 py-3 bg-white text-ink-900 focus:outline-none focus:ring-2 focus:ring-medical-green-200 focus:border-medical-green-500 transition"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Password</label>
+                        <label className="block text-sm font-semibold text-ink-700">Password</label>
                         <input
                             required
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 bg-white/60 focus:outline-none focus:ring-2 focus:ring-medical-green-200 focus:border-medical-green-500 transition"
+                            className="mt-1 block w-full rounded-xl border border-ink-200 px-4 py-3 bg-white text-ink-900 focus:outline-none focus:ring-2 focus:ring-medical-green-200 focus:border-medical-green-500 transition"
                         />
                     </div>
 
@@ -90,7 +92,7 @@ function LoginForm() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3 rounded-xl bg-medical-green-600 text-white font-semibold shadow-lg hover:bg-medical-green-500 transition-colors disabled:opacity-60"
+                        className="w-full py-3.5 rounded-xl bg-medical-green-600 text-white font-semibold shadow-sm hover:bg-medical-green-700 transition-colors disabled:opacity-60"
                     >
                         {loading ? "Signing in..." : "Sign In"}
                     </button>
@@ -111,10 +113,12 @@ export default function LoginPage() {
     return (
         <>
             <Navbar />
-            <main className="min-h-screen flex items-center justify-center py-12 px-4">
-                <Suspense fallback={<p>Loading...</p>}>
-                    <LoginForm />
-                </Suspense>
+            <main>
+                <AuthShell>
+                    <Suspense fallback={<p>Loading...</p>}>
+                        <LoginForm />
+                    </Suspense>
+                </AuthShell>
             </main>
             <Footer />
         </>
