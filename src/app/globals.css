@@ -1,51 +1,157 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens.
+ * The `medical-green` and `medical-blue` names are used all over the site, so
+ * they keep their names but now hold the clinical teal / trust blue palette.
+ * `ink` is the deep navy used for headings, the footer and dark call-to-action bands.
+ */
 @theme {
   --font-sans: var(--font-inter);
+  --font-display: var(--font-manrope);
 
-  --color-medical-green-50: #ecfdf5;
-  --color-medical-green-100: #d1fae5;
-  --color-medical-green-200: #a7f3d0;
-  --color-medical-green-300: #6ee7b7;
-  --color-medical-green-400: #34d399;
-  --color-medical-green-500: #10b981;
-  --color-medical-green-600: #059669;
-  --color-medical-green-700: #047857;
-  --color-medical-green-800: #065f46;
-  --color-medical-green-900: #064e3b;
+  /* Primary: clinical teal */
+  --color-medical-green-50: #effcf9;
+  --color-medical-green-100: #d5f6ef;
+  --color-medical-green-200: #ade9de;
+  --color-medical-green-300: #78d6c9;
+  --color-medical-green-400: #3fbcb0;
+  --color-medical-green-500: #1f9f96;
+  --color-medical-green-600: #0f8179;
+  --color-medical-green-700: #0e6762;
+  --color-medical-green-800: #0f524f;
+  --color-medical-green-900: #0f4241;
 
-  --color-medical-blue-50: #f0f9ff;
-  --color-medical-blue-100: #e0f2fe;
-  --color-medical-blue-200: #bae6fd;
-  --color-medical-blue-300: #7dd3fc;
-  --color-medical-blue-400: #38bdf8;
-  --color-medical-blue-500: #0ea5e9;
-  --color-medical-blue-600: #0284c7;
-  --color-medical-blue-700: #0369a1;
-  --color-medical-blue-800: #075985;
-  --color-medical-blue-900: #0c4a6e;
+  /* Secondary: trust blue */
+  --color-medical-blue-50: #f0f7ff;
+  --color-medical-blue-100: #e0eefe;
+  --color-medical-blue-200: #bddbfc;
+  --color-medical-blue-300: #8abdf8;
+  --color-medical-blue-400: #539af1;
+  --color-medical-blue-500: #2e7be6;
+  --color-medical-blue-600: #1f60cb;
+  --color-medical-blue-700: #1d4ea3;
+  --color-medical-blue-800: #1d4385;
+  --color-medical-blue-900: #1c3a6b;
+
+  /* Ink: deep navy for text, footer and dark bands */
+  --color-ink-50: #f4f7fa;
+  --color-ink-100: #e6ecf2;
+  --color-ink-200: #cdd8e3;
+  --color-ink-300: #a7b9cb;
+  --color-ink-400: #7c93ab;
+  --color-ink-500: #5c758f;
+  --color-ink-600: #475d76;
+  --color-ink-700: #3a4b60;
+  --color-ink-800: #1b2b3e;
+  --color-ink-900: #0f1c2b;
+  --color-ink-950: #0a1420;
+
+  /* Pages that still use Tailwind's gray-* pick up the same cool navy-tinted greys */
+  --color-gray-50: #f4f7fa;
+  --color-gray-100: #e6ecf2;
+  --color-gray-200: #cdd8e3;
+  --color-gray-300: #a7b9cb;
+  --color-gray-400: #7c93ab;
+  --color-gray-500: #5c758f;
+  --color-gray-600: #475d76;
+  --color-gray-700: #3a4b60;
+  --color-gray-800: #1b2b3e;
+  --color-gray-900: #0f1c2b;
+  --color-gray-950: #0a1420;
+
+  /* Tailwind slate / emerald / sky are mapped to ink / teal / blue so older form pages match the new look */
+  --color-slate-50: #f4f7fa;
+  --color-slate-100: #e6ecf2;
+  --color-slate-200: #cdd8e3;
+  --color-slate-300: #a7b9cb;
+  --color-slate-400: #7c93ab;
+  --color-slate-500: #5c758f;
+  --color-slate-600: #475d76;
+  --color-slate-700: #3a4b60;
+  --color-slate-800: #1b2b3e;
+  --color-slate-900: #0f1c2b;
+  --color-slate-950: #0a1420;
+  --color-emerald-50: #effcf9;
+  --color-emerald-100: #d5f6ef;
+  --color-emerald-200: #ade9de;
+  --color-emerald-300: #78d6c9;
+  --color-emerald-400: #3fbcb0;
+  --color-emerald-500: #1f9f96;
+  --color-emerald-600: #0f8179;
+  --color-emerald-700: #0e6762;
+  --color-emerald-800: #0f524f;
+  --color-emerald-900: #0f4241;
+  --color-emerald-950: #0a302f;
+  --color-sky-50: #f0f7ff;
+  --color-sky-100: #e0eefe;
+  --color-sky-200: #bddbfc;
+  --color-sky-300: #8abdf8;
+  --color-sky-400: #539af1;
+  --color-sky-500: #2e7be6;
+  --color-sky-600: #1f60cb;
+  --color-sky-700: #1d4ea3;
+  --color-sky-800: #1d4385;
+  --color-sky-900: #1c3a6b;
+  --color-sky-950: #142a4f;
+
+  --shadow-soft: 0 1px 2px rgb(15 28 43 / 0.04), 0 4px 16px rgb(15 28 43 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(15 28 43 / 0.05), 0 12px 32px rgb(15 28 43 / 0.1);
 }
 
-/* Custom Utilities for Glassmorphism */
+/* Surfaces. `glass-*` keep their names (many pages use them) but are now clean, solid cards. */
 @utility glass-panel {
-  @apply backdrop-blur-md bg-white/60 border border-white/40 shadow-xl;
+  @apply bg-white border border-ink-100 shadow-soft;
 }
 
 @utility glass-card {
-  @apply backdrop-blur-sm bg-white/40 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300;
+  @apply bg-white border border-ink-100 shadow-soft hover:shadow-lift transition-shadow duration-300;
 }
 
 @utility glass-btn {
-  @apply backdrop-blur-sm bg-medical-green-600/90 text-white hover:bg-medical-green-500 transition-colors shadow-md;
+  @apply bg-medical-green-600 text-white hover:bg-medical-green-700 transition-colors shadow-sm;
 }
 
-/* Base Styles */
+/* Small reusable pieces */
+@utility eyebrow {
+  @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-medical-green-700;
+}
+
+@utility btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-medical-green-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-medical-green-700 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-medical-green-600;
+}
+
+@utility btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl border border-ink-200 bg-white px-6 py-3 text-sm font-semibold text-ink-800 transition-all hover:border-medical-green-300 hover:bg-medical-green-50 hover:text-medical-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-medical-green-600;
+}
+
+/* Base */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background:
-    radial-gradient(circle at top left, var(--color-medical-green-50), transparent 40%),
-    radial-gradient(circle at bottom right, var(--color-medical-blue-50), transparent 40%);
-  background-attachment: fixed;
+  background: #f7fafb;
+  color: var(--color-ink-900);
   min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), var(--font-inter), system-ui, sans-serif;
+  letter-spacing: -0.015em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-medical-green-600);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 @keyframes float-slow {
@@ -60,4 +166,12 @@ body {
 
 .animate-float-slow {
   animation: float-slow 3.5s ease-in-out infinite;
+}
+
+/* A faint clinical grid used behind hero and banner sections */
+.bg-grid-faint {
+  background-image:
+    linear-gradient(to right, rgb(15 82 79 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(15 82 79 / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
 }

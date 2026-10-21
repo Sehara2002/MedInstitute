@@ -1,7 +1,6 @@
 import React from 'react';
-import { Star } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
 import Image from 'next/image';
-import { GlassCard } from './GlassCard';
 import { Testimonial } from '@/data/testimonials';
 
 interface TestimonialCardProps {
@@ -10,20 +9,20 @@ interface TestimonialCardProps {
 
 export function TestimonialCard({ testimonial }: TestimonialCardProps) {
     return (
-        <GlassCard className="h-full flex flex-col p-6">
-            <div className="flex gap-1 mb-4">
+        <figure className="relative flex h-full flex-col rounded-2xl border border-ink-100 bg-white p-7 shadow-soft transition-shadow hover:shadow-lift">
+            <Quote className="absolute right-6 top-6 h-8 w-8 text-medical-green-100" aria-hidden="true" />
+            <div className="mb-4 flex gap-0.5" role="img" aria-label={`${testimonial.rating} out of 5 stars`}>
                 {[...Array(5)].map((_, i) => (
                     <Star
                         key={i}
                         size={16}
-                        className={`${i < testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                            }`}
+                        className={i < testimonial.rating ? 'fill-amber-400 text-amber-400' : 'text-ink-200'}
                     />
                 ))}
             </div>
-            <p className="text-gray-700 mb-6 flex-grow italic">"{testimonial.content}"</p>
-            <div className="flex items-center gap-4 mt-auto">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden bg-medical-green-100 flex items-center justify-center text-medical-green-700 font-bold text-lg shrink-0 border-2 border-medical-green-200">
+            <blockquote className="mb-6 flex-grow leading-relaxed text-ink-700">&ldquo;{testimonial.content}&rdquo;</blockquote>
+            <figcaption className="mt-auto flex items-center gap-3 border-t border-ink-100 pt-5">
+                <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-medical-green-100 text-lg font-bold text-medical-green-700 ring-2 ring-medical-green-100">
                     {testimonial.image ? (
                         <Image
                             src={testimonial.image}
@@ -37,10 +36,10 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
                     )}
                 </div>
                 <div>
-                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-sm text-medical-green-600 font-medium">{testimonial.role}</p>
+                    <p className="font-semibold text-ink-900">{testimonial.name}</p>
+                    <p className="text-sm font-medium text-medical-green-700">{testimonial.role}</p>
                 </div>
-            </div>
-        </GlassCard>
+            </figcaption>
+        </figure>
     );
 }

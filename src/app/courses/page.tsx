@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { CourseCard } from "@/components/CourseCard";
 import { CourseHighlightSection } from "@/components/CourseHighlightSection";
 import { OfferCard } from "@/components/OfferCard";
-import { GlassCard } from "@/components/GlassCard";
+import { PageHeader } from "@/components/PageHeader";
 import { listCourses } from "@/lib/citech";
 
 // Rendered on every visit so courses added or changed in the LMS appear at once
@@ -29,26 +29,25 @@ export default async function CoursesPage() {
     return (
         <>
             <Navbar />
-            <main className="min-h-screen py-16">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Programs</h1>
-                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                            Explore our range of accredited medical and healthcare courses designed to launch your career.
-                        </p>
-                    </div>
+            <main className="min-h-screen">
+                <PageHeader
+                    eyebrow="Courses"
+                    title="Our programmes"
+                    description="Explore our range of medical and healthcare courses designed to launch your career."
+                />
+                <div className="container mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
 
                     {courses === null ? (
-                        <GlassCard className="p-10 text-center max-w-2xl mx-auto" variant="panel">
-                            <p className="text-gray-900 font-semibold mb-2">Our course list is temporarily unavailable</p>
-                            <p className="text-sm text-gray-600 mb-6">Please try again in a few minutes, or contact us and we&apos;ll help you enroll.</p>
+                        <div className="mx-auto max-w-2xl rounded-2xl border border-ink-100 bg-white p-10 text-center shadow-soft">
+                            <p className="font-display text-lg font-extrabold text-ink-900 mb-2">Our course list is temporarily unavailable</p>
+                            <p className="text-sm text-ink-600 mb-6">Please try again in a few minutes, or contact us and we&apos;ll help you enroll.</p>
                             <Link
                                 href="/contact"
-                                className="inline-block px-6 py-2.5 rounded-xl bg-medical-green-600 text-white font-semibold hover:bg-medical-green-500 transition-colors"
+                                className="btn-primary"
                             >
                                 Contact Us
                             </Link>
-                        </GlassCard>
+                        </div>
                     ) : (
                         <>
                         <CourseHighlightSection kind="offers" courses={offerCourses} />
@@ -57,8 +56,8 @@ export default async function CoursesPage() {
                             {/* Offers — free courses from the LMS, sticky on desktop, newest first */}
                             {offers.length > 0 && (
                                 <div className="lg:sticky lg:top-24 space-y-6">
-                                    <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
-                                        <Gift className="h-5 w-5 text-red-500" />
+                                    <h2 className="flex items-center gap-2 font-display text-xl font-extrabold text-ink-900">
+                                        <Gift className="h-5 w-5 text-rose-500" />
                                         Free Courses
                                     </h2>
                                     {offers.map((offer) => (
@@ -75,7 +74,7 @@ export default async function CoursesPage() {
                                     ))}
                                 </div>
                             ) : highlightedCount === 0 ? (
-                                <p className="text-center text-gray-600">New courses are coming soon.</p>
+                                <p className="text-center text-ink-600">New courses are coming soon.</p>
                             ) : null}
                         </div>
                         </>
