@@ -18,7 +18,7 @@ function describe(ms: number): string {
  * Counts down to the moment the join link appears, and reloads the page then so
  * the guest does not have to. Also reloads once a minute close to that moment.
  */
-export function PassCountdown({ opensAt }: { opensAt: string }) {
+export function PassCountdown({ opensAt, label = "The join button appears in" }: { opensAt: string; label?: string }) {
     const router = useRouter();
     const target = new Date(opensAt).getTime();
     const [remaining, setRemaining] = useState<number | null>(null);
@@ -38,7 +38,7 @@ export function PassCountdown({ opensAt }: { opensAt: string }) {
     return (
         <p className="inline-flex items-center gap-2 rounded-full bg-medical-green-50 px-4 py-2 text-sm font-semibold text-medical-green-800 ring-1 ring-medical-green-100">
             <Clock className="h-4 w-4" aria-hidden="true" />
-            The join button appears in {describe(remaining)}
+            {label} {describe(remaining)}
         </p>
     );
 }
