@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { CalendarDays, Clock, MapPin, Armchair, Video, ShieldCheck, CheckCircle2, Hourglass, LockKeyhole, AlertTriangle, ArrowRight } from "lucide-react";
-import Logo from "@/app/logo.png";
 import { Footer } from "@/components/Footer";
+import { PassBrandBar } from "@/components/PassBrandBar";
+import { PassNotice } from "@/components/PassNotice";
+import { ExamCard } from "@/components/exam/ExamCard";
 import { PageHeader, SectionHeading } from "@/components/PageHeader";
 import { CourseCard } from "@/components/CourseCard";
 import { PassCountdown } from "@/components/PassCountdown";
@@ -24,56 +25,17 @@ interface PageProps {
     params: Promise<{ token: string }>;
 }
 
-function BrandBar() {
-    return (
-        <div className="border-b border-ink-100 bg-white">
-            <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-                <Link href="/" className="flex items-center gap-3" aria-label="MRCGP Fast Track home">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-medical-green-50 ring-1 ring-medical-green-100">
-                        <Image src={Logo} alt="" className="h-7 w-7 object-contain" />
-                    </span>
-                    <span className="font-display text-lg font-extrabold text-ink-900">
-                        MRCGP <span className="text-medical-green-600">Fast Track</span>
-                    </span>
-                </Link>
-                <span className="hidden items-center gap-1.5 text-xs font-semibold text-ink-500 sm:flex">
-                    <ShieldCheck className="h-4 w-4 text-medical-green-600" aria-hidden="true" />
-                    Your personal session link
-                </span>
-            </div>
-        </div>
-    );
-}
-
-function Notice({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
-    return (
-        <>
-            <BrandBar />
-            <main className="flex min-h-[60vh] items-center justify-center px-4 py-16">
-                <div className="w-full max-w-lg rounded-2xl border border-ink-100 bg-white p-8 text-center shadow-soft">
-                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-ink-50 text-ink-500">{icon}</div>
-                    <h1 className="font-display text-2xl font-extrabold text-ink-900">{title}</h1>
-                    <div className="mt-3 space-y-3 leading-relaxed text-ink-600">{children}</div>
-                    <div className="mt-6 flex flex-wrap justify-center gap-3">
-                        <Link href="/contact" className="btn-secondary">
-                            Contact us
-                        </Link>
-                        <Link href="/courses" className="btn-primary">
-                            View courses
-                        </Link>
-                    </div>
-                </div>
-            </main>
-            <Footer />
-        </>
-    );
-}
-
-function StateCard({ pass }: { pass: EventPass }) {
+function StateCard({ pass, token }: { pass: EventPass; token: string }) {
     const noun = KIND_LABEL[pass.kind];
+
+    if (pass.state === "LIVE" && !pass.joinUrl) {
+        // An online exam with no live session to join: the exam is the whole thing
+        return pass.exam ? <ExamCard token={token} exam={pass.exam} /> : null;
+    }
 
     if (pass.state === "LIVE" && pass.joinUrl) {
         return (
+            <div className="space-y-6">
             <div className="rounded-2xl border border-medical-green-200 bg-medical-green-50 p-7">
                 <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-medical-green-800">
                     <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
@@ -91,11 +53,14 @@ function StateCard({ pass }: { pass: EventPass }) {
                     Join the {noun}
                 </a>
             </div>
+            {pass.exam && <ExamCard token={token} exam={pass.exam} />}
+            </div>
         );
     }
 
     if (pass.state === "UPCOMING") {
         return (
+            <div className="space-y-6">
             <div className="rounded-2xl border border-ink-100 bg-white p-7 shadow-soft">
                 <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-ink-500">
                     <Hourglass className="h-4 w-4" aria-hidden="true" />
@@ -105,12 +70,17 @@ function StateCard({ pass }: { pass: EventPass }) {
                     Starts on {formatSessionDate(pass.event.startsAt)}
                 </h2>
                 <p className="mt-2 leading-relaxed text-ink-600">
-                    Come back to this page about 30 minutes before the start: the join button appears here. You can keep this link and the
-                    email it came in.
+                    {pass.hasJoinLink
+                        ? "Come back to this page about 30 minutes before the start: the join button appears here. You can keep this link and the email it came in."
+                        : "Come back to this page at the start time. You can keep this link and the email it came in."}
                 </p>
-                <div className="mt-4">
-                    <PassCountdown opensAt={pass.opensAt} />
-                </div>
+                {pass.hasJoinLink && (
+                    <div className="mt-4">
+                        <PassCountdown opensAt={pass.opensAt} />
+                    </div>
+                )}
+            </div>
+            {pass.exam && <ExamCard token={token} exam={pass.exam} />}
             </div>
         );
     }
@@ -154,18 +124,18 @@ export default async function JoinPage({ params }: PageProps) {
 
     if (lookup.status === "not_found") {
         return (
-            <Notice icon={<AlertTriangle className="h-7 w-7" />} title="This link isn’t valid">
+            <PassNotice icon={<AlertTriangle className="h-7 w-7" />} title="This link isn’t valid">
                 <p>The link may be incomplete or mistyped. Please open the link from your confirmation email again.</p>
                 <p>If you can’t find the email, open your booking page and choose “Send my link again”, or contact us.</p>
-            </Notice>
+            </PassNotice>
         );
     }
 
     if (lookup.status === "unavailable") {
         return (
-            <Notice icon={<Clock className="h-7 w-7" />} title="We couldn’t load your session">
+            <PassNotice icon={<Clock className="h-7 w-7" />} title="We couldn’t load your session">
                 <p>This is usually temporary. Please refresh the page in a moment.</p>
-            </Notice>
+            </PassNotice>
         );
     }
 
@@ -179,7 +149,7 @@ export default async function JoinPage({ params }: PageProps) {
 
     return (
         <>
-            <BrandBar />
+            <PassBrandBar />
             <main>
                 <PageHeader
                     align="left"
@@ -194,7 +164,7 @@ export default async function JoinPage({ params }: PageProps) {
 
                 <div className="container mx-auto grid grid-cols-1 gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8">
                     <div className="space-y-6">
-                        <StateCard pass={pass} />
+                        <StateCard pass={pass} token={token} />
 
                         <div className="flex items-start gap-3 rounded-2xl border border-ink-100 bg-white p-5 text-sm leading-relaxed text-ink-600">
                             <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-medical-green-600" aria-hidden="true" />
