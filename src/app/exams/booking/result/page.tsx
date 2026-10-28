@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
+import { SessionLinkNotice } from "@/components/SessionLinkNotice";
 import { formatExamDate, formatExamTime, formatFee, MockExamBooking, verifyBooking } from "@/lib/mockExams";
 
 /** Where the payment gateway sends the candidate back after paying */
@@ -59,6 +60,7 @@ function ResultContent() {
               <span className="font-semibold">{formatFee(booking.amount, booking.currencyCode)}</span>
             </div>
           </div>
+          {booking.exam?.isOnline && <SessionLinkNotice kind="mock_exam" reference={booking.reference} email={booking.email} />}
           <Link href="/exams" className="glass-btn inline-block px-4 py-2 rounded-md">
             Back to Mock Exams
           </Link>

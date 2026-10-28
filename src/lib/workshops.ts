@@ -28,6 +28,8 @@ export interface Workshop {
   isBookable: boolean;
   /** Set by an admin in the LMS: listed first and shown in the home slideshow */
   isFeatured?: boolean;
+  /** Held online: guests join through a personal link in their confirmation email */
+  isOnline?: boolean;
   /** Backend path (no origin) of the poster image, or null */
   posterUrl: string | null;
 }
@@ -45,8 +47,8 @@ export interface WorkshopBooking {
   currencyCode: string;
   slotNumber: number | null;
   paidAt: string | null;
-  /** Link to join an online workshop; sent by the backend only once the seat is paid */
-  joinUrl?: string | null;
+  /** The guest has a personal session link (the link itself is only ever emailed) */
+  hasPass?: boolean;
   workshop?: Workshop;
 }
 
