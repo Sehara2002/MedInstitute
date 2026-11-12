@@ -35,8 +35,11 @@ export function Footer() {
                             </span>
                         </Link>
                         <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink-300">
-                            Family Medicine Forum supports doctors pursuing postgraduate qualifications in Family
-                            Medicine and Primary Care, with exam-focused training for MRCGP [INT].
+                            Family Medicine Forum (FMF) is a Sri Lanka-based medical education initiative supporting
+                            doctors in Family Medicine, General Practice, and Primary Care locally and internationally.
+                        </p>
+                        <p className="mt-3 text-xs font-semibold tracking-wide text-medical-green-300">
+                            Empowering Family Physicians. Advancing Primary Care.
                         </p>
                     </div>
 
@@ -76,7 +79,7 @@ export function Footer() {
                             <li className="flex items-start gap-3">
                                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-medical-green-300" aria-hidden="true" />
                                 <span>
-                                    29 C, Perera Avenue,
+                                    29C, Perera Avenue,
                                     <br />
                                     Kohuwala, Nugegoda,
                                     <br />
@@ -92,10 +95,10 @@ export function Footer() {
                             <li className="flex items-center gap-3">
                                 <Mail className="h-4 w-4 shrink-0 text-medical-green-300" aria-hidden="true" />
                                 <a
-                                    href="mailto:mrcgpinternationalosce@gmail.com"
+                                    href="mailto:familymedforum@gmail.com"
                                     className="break-all transition-colors hover:text-white"
                                 >
-                                    mrcgpinternationalosce@gmail.com
+                                    familymedforum@gmail.com
                                 </a>
                             </li>
                         </ul>
@@ -104,7 +107,7 @@ export function Footer() {
 
                 <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-ink-400 sm:flex-row">
                     <p>© {new Date().getFullYear()} Family Medicine Forum. All rights reserved.</p>
-                    <p>MRCGP Fast Track by Family Medicine Forum</p>
+                    <p>FAMILY MEDICINE FORUM | MRCGP FAST TRACK — Empowering Family Physicians. Advancing Primary Care.</p>
                 </div>
             </div>
         </footer>

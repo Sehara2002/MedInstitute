@@ -13,6 +13,10 @@ import {
   CheckCircle2,
   PlayCircle,
   Presentation,
+  Globe,
+  HeartHandshake,
+  Laptop,
+  Eye,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -48,24 +52,49 @@ const pathways = [
   },
 ];
 
-const reasons = [
+const trainingProgrammes = [
   {
-    icon: ClipboardCheck,
-    title: "Exam-focused",
-    text: "Teaching methodology aimed squarely at improving first-attempt success in the MRCGP exams.",
-    tone: "bg-medical-blue-50 text-medical-blue-700 ring-medical-blue-100",
+    title: "MRCGP International OSCE",
+    text: "Consultation techniques, communication, focused examination, counselling, simulated patients, and mock OSCE circuits.",
   },
+  {
+    title: "MRCGP International AKT",
+    text: "Systematic syllabus review, guideline-based teaching, applied clinical knowledge, SBA practice, and mock tests.",
+  },
+  {
+    title: "MD Family Medicine & DFM",
+    text: "Postgraduate examination support including clinical reasoning, applied knowledge, structured revision, and examination techniques.",
+  },
+  {
+    title: "Mock exams & intensive coaching",
+    text: "Realistic practice examinations, examiner feedback, targeted individual sessions, and small-group coaching.",
+  },
+];
+
+const reasons = [
   {
     icon: Stethoscope,
     title: "Experienced faculty",
-    text: "Learn from clinicians with extensive exposure to postgraduate medical training and examining.",
+    text: "Teaching is supported by clinicians and educators with postgraduate examination experience, including Dr. Malkanthi Galhena, an experienced MRCGP International OSCE trainer.",
     tone: "bg-medical-green-50 text-medical-green-700 ring-medical-green-100",
   },
   {
-    icon: FileText,
-    title: "Guideline-based",
-    text: "Clinically relevant content built on the latest guidelines and medical evidence.",
+    icon: ClipboardCheck,
+    title: "Practical examination focus",
+    text: "Mock examinations, clinical simulations, applied case discussions, and feedback help candidates identify strengths and prioritise areas for improvement.",
+    tone: "bg-medical-blue-50 text-medical-blue-700 ring-medical-blue-100",
+  },
+  {
+    icon: Globe,
+    title: "International accessibility",
+    text: "Online learning and individual coaching options support doctors based in Sri Lanka and abroad.",
     tone: "bg-ink-50 text-ink-700 ring-ink-100",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Beyond passing an examination",
+    text: "Training reinforces ethical practice, patient-centred communication, sound clinical reasoning, and continuing professional development.",
+    tone: "bg-medical-green-50 text-medical-green-700 ring-medical-green-100",
   },
 ];
 
@@ -98,7 +127,7 @@ export default async function Home() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-medical-green-500 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-medical-green-600" />
                 </span>
-                MRCGP [INT] · OSCE &amp; AKT preparation
+                PROFESSIONAL EDUCATION • PRIMARY CARE • CLINICAL EXCELLENCE
               </span>
 
               <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.1] text-ink-900 sm:text-5xl lg:text-[3.5rem]">
@@ -233,61 +262,133 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* About */}
+        {/* About & Vision */}
         <section className="bg-white py-16 sm:py-24">
-          <div className="container mx-auto grid grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
+          <div className="container mx-auto grid grid-cols-1 items-start gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
             <div>
               <span className="eyebrow mb-3">About us</span>
               <h2 className="font-display text-2xl font-extrabold text-ink-900 sm:text-3xl md:text-4xl">
                 About Family Medicine Forum
               </h2>
               <p className="mt-5 text-base leading-relaxed text-ink-600 sm:text-lg">
-                Family Medicine Forum is a professional academic platform dedicated to supporting doctors pursuing
-                careers and postgraduate qualifications in Family Medicine and Primary Care.
+                Family Medicine Forum (FMF) is a Sri Lanka-based medical education initiative supporting doctors in
+                Family Medicine, General Practice, and Primary Care. The Forum delivers structured postgraduate
+                examination preparation, practical clinical-skills development, and accessible professional education
+                for medical practitioners locally and internationally.
               </p>
-              <p className="mt-4 text-base leading-relaxed text-ink-600 sm:text-lg">
-                We specialise in exam-focused preparatory courses for doctors appearing for the MRCGP International
-                (INT) examinations.
-              </p>
+
+              <div className="mt-6">
+                <h3 className="font-display text-lg font-extrabold text-ink-900">Who we are</h3>
+                <p className="mt-2 text-base leading-relaxed text-ink-600">
+                  Our programmes combine clinically relevant teaching, case-based discussion, realistic examination
+                  practice, and individualised feedback. The emphasis is not only on examination readiness, but also on
+                  confident, compassionate, evidence-based patient care.
+                </p>
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-medical-green-100 bg-medical-green-50/50 p-5">
+                <div className="flex items-center gap-2.5">
+                  <Eye className="h-5 w-5 text-medical-green-600" aria-hidden="true" />
+                  <h3 className="font-display text-lg font-extrabold text-ink-900">Our vision</h3>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-ink-600 sm:text-base">
+                  To advance excellence in Family Medicine and Primary Care education, helping doctors develop the
+                  clinical competence, communication skills, and professional values needed for high-quality,
+                  patient-centred healthcare.
+                </p>
+              </div>
+
               <Link href="/staff" className="btn-secondary mt-8">
                 Meet our faculty
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </div>
 
-            <div className="rounded-3xl border border-medical-green-100 bg-gradient-to-br from-medical-green-50 to-white p-7 sm:p-9">
-              <p className="text-sm font-bold uppercase tracking-wider text-medical-green-800">Our emphasis</p>
-              <ul className="mt-5 space-y-5">
-                {[
-                  ["Examiner expectations", "Understand exactly what examiners look for and how marks are awarded."],
-                  ["Real-world clinical reasoning", "Practise the thinking you will use with patients, not just for the exam."],
-                  ["Structured consultation skills", "Build a consistent, repeatable approach to every station."],
-                ].map(([title, text]) => (
-                  <li key={title} className="flex gap-4">
-                    <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-medical-green-600" aria-hidden="true" />
-                    <div>
-                      <p className="font-semibold text-ink-900">{title}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-ink-600">{text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+            <div className="space-y-6">
+              {/* Digital Learning & Professional Development */}
+              <div className="rounded-3xl border border-medical-green-100 bg-gradient-to-br from-medical-green-50 to-white p-7 sm:p-9">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-medical-green-700">
+                  LEARN • PRACTISE • SUCCEED
+                </p>
+                <h3 className="mt-2 font-display text-xl font-extrabold text-ink-900 sm:text-2xl">
+                  Digital Learning &amp; Professional Development
+                </h3>
+                <p className="mt-1 text-sm font-medium text-ink-600">
+                  Flexible postgraduate learning supported by experienced clinical educators.
+                </p>
+
+                <div className="mt-5 rounded-2xl border border-white/80 bg-white/90 p-5 shadow-soft">
+                  <div className="flex items-center gap-2.5">
+                    <Laptop className="h-5 w-5 text-medical-green-600" aria-hidden="true" />
+                    <h4 className="font-display text-base font-extrabold text-ink-900">
+                      MRCGP Fast Track online platform
+                    </h4>
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-600">
+                    The MRCGP Fast Track platform extends Family Medicine Forum teaching beyond the classroom, with
+                    access to live online sessions, recorded learning, revision materials, online assessments, and
+                    structured course resources. The Learning Management System supports self-directed learning
+                    alongside faculty-led preparation.
+                  </p>
+                </div>
+
+                <p className="mt-6 text-sm font-bold uppercase tracking-wider text-medical-green-800">Our emphasis</p>
+                <ul className="mt-4 space-y-4">
+                  {[
+                    ["Examiner expectations", "Understand exactly what examiners look for and how marks are awarded."],
+                    ["Real-world clinical reasoning", "Practise the thinking you will use with patients, not just for the exam."],
+                    ["Structured consultation skills", "Build a consistent, repeatable approach to every station."],
+                  ].map(([title, text]) => (
+                    <li key={title} className="flex gap-3.5">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-medical-green-600" aria-hidden="true" />
+                      <div>
+                        <p className="font-semibold text-ink-900">{title}</p>
+                        <p className="mt-0.5 text-sm leading-relaxed text-ink-600">{text}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Training programmes */}
+          <div className="container mx-auto mt-16 px-4 sm:mt-20 sm:px-6 lg:px-8">
+            <div className="mb-8">
+              <span className="eyebrow mb-2">Curriculum</span>
+              <h3 className="font-display text-2xl font-extrabold text-ink-900 sm:text-3xl">
+                Training programmes
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {trainingProgrammes.map((prog) => (
+                <div
+                  key={prog.title}
+                  className="rounded-2xl border border-medical-green-100 bg-medical-green-50/40 p-6 shadow-soft"
+                >
+                  <h4 className="font-display text-lg font-extrabold text-medical-green-800">{prog.title}</h4>
+                  <p className="mt-2.5 text-sm leading-relaxed text-ink-600">{prog.text}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Why choose us */}
+        {/* Why choose us / What makes the Forum distinctive */}
         <section className="border-y border-ink-100 bg-ink-50/60 py-16 sm:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <SectionHeading eyebrow="Why us" title="Why choose Family Medicine Forum" />
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <SectionHeading
+              eyebrow="Why us"
+              title="What makes the Forum distinctive"
+            />
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {reasons.map((r) => (
-                <div key={r.title} className="rounded-2xl border border-ink-100 bg-white p-8 shadow-soft">
+                <div key={r.title} className="rounded-2xl border border-ink-100 bg-white p-7 shadow-soft">
                   <span className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl ring-1 ${r.tone}`}>
                     <r.icon className="h-6 w-6" aria-hidden="true" />
                   </span>
-                  <h3 className="font-display text-xl font-extrabold text-ink-900">{r.title}</h3>
-                  <p className="mt-2 leading-relaxed text-ink-600">{r.text}</p>
+                  <h3 className="font-display text-lg font-extrabold text-ink-900">{r.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-600">{r.text}</p>
                 </div>
               ))}
             </div>
@@ -347,6 +448,9 @@ export default async function Home() {
               <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-br from-ink-900 via-ink-900 to-medical-green-900" />
               <div aria-hidden="true" className="absolute -left-20 -top-20 -z-10 h-64 w-64 rounded-full bg-medical-green-500/25 blur-3xl" />
               <div aria-hidden="true" className="absolute -bottom-24 -right-16 -z-10 h-72 w-72 rounded-full bg-medical-blue-500/20 blur-3xl" />
+              <p className="mx-auto mb-3 text-sm font-bold uppercase tracking-[0.14em] text-medical-green-300">
+                Empowering Family Physicians. Advancing Primary Care.
+              </p>
               <h2 className="mx-auto max-w-2xl font-display text-3xl font-extrabold text-white md:text-4xl">
                 Ready to take the next step?
               </h2>
