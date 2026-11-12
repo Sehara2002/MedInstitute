@@ -1,28 +1,34 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PageHeader } from "@/components/PageHeader";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Globe, GraduationCap } from "lucide-react";
 
 const details = [
     {
-        icon: MapPin,
-        title: "Address",
+        icon: Globe,
+        title: "Website",
         body: (
-            <>
-                29 C, Perera Avenue,
-                <br />
-                Kohuwala, Nugegoda,
-                <br />
-                Sri Lanka
-            </>
+            <a
+                href="https://www.mrcgpfasttrack.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-medical-green-700 transition-colors"
+            >
+                www.mrcgpfasttrack.com
+            </a>
         ),
     },
     {
-        icon: Phone,
-        title: "Make an inquiry",
+        icon: GraduationCap,
+        title: "Learning platform",
         body: (
-            <a href="tel:+94718739060" className="hover:text-medical-green-700 transition-colors">
-                +94 71 873 9060
+            <a
+                href="https://lms.mrcgpfasttrack.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-medical-green-700 transition-colors"
+            >
+                lms.mrcgpfasttrack.com
             </a>
         ),
     },
@@ -30,9 +36,27 @@ const details = [
         icon: Mail,
         title: "Email",
         body: (
-            <a href="mailto:mrcgpinternationalosce@gmail.com" className="break-all hover:text-medical-green-700 transition-colors">
-                mrcgpinternationalosce@gmail.com
+            <a href="mailto:familymedforum@gmail.com" className="break-all hover:text-medical-green-700 transition-colors">
+                familymedforum@gmail.com
             </a>
+        ),
+    },
+    {
+        icon: Phone,
+        title: "Telephone",
+        body: (
+            <a href="tel:+94718739060" className="hover:text-medical-green-700 transition-colors">
+                +94 71 873 9060
+            </a>
+        ),
+    },
+    {
+        icon: MapPin,
+        title: "Location",
+        body: (
+            <>
+                29C, Perera Avenue, Kohuwala, Nugegoda, Sri Lanka
+            </>
         ),
     },
 ];
@@ -51,7 +75,7 @@ export default function ContactPage() {
                     <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
                         {/* Contact info */}
                         <section id="contact-details" className="rounded-2xl border border-ink-100 bg-white p-7 shadow-soft sm:p-8">
-                            <h2 className="mb-6 font-display text-2xl font-extrabold text-ink-900">Contact information</h2>
+                            <h2 className="mb-6 font-display text-2xl font-extrabold text-ink-900">Connect with us</h2>
                             <ul className="space-y-6">
                                 {details.map((d) => (
                                     <li key={d.title} className="flex items-start gap-4">

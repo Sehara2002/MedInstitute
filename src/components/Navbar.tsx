@@ -46,18 +46,20 @@ export function Navbar() {
             {/* Contact strip */}
             <div className="hidden bg-ink-900 text-ink-200 lg:block">
                 <div className="container mx-auto flex h-9 items-center justify-between px-4 text-xs sm:px-6 lg:px-8">
-                    <p className="text-ink-300">MRCGP [INT] exam preparation for doctors in primary care</p>
+                    <p className="text-ink-300 font-medium tracking-wide">
+                        PROFESSIONAL EDUCATION • PRIMARY CARE • CLINICAL EXCELLENCE
+                    </p>
                     <div className="flex items-center gap-6">
                         <a href="tel:+94718739060" className="flex items-center gap-1.5 hover:text-white transition-colors">
                             <Phone className="h-3 w-3 text-medical-green-300" aria-hidden="true" />
                             +94 71 873 9060
                         </a>
                         <a
-                            href="mailto:mrcgpinternationalosce@gmail.com"
+                            href="mailto:familymedforum@gmail.com"
                             className="flex items-center gap-1.5 hover:text-white transition-colors"
                         >
                             <Mail className="h-3 w-3 text-medical-green-300" aria-hidden="true" />
-                            mrcgpinternationalosce@gmail.com
+                            familymedforum@gmail.com
                         </a>
                     </div>
                 </div>
